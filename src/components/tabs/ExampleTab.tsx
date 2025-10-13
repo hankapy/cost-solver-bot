@@ -10,9 +10,9 @@ import { getBotTieredPrice } from "@/lib/pricingCalculations";
 export default function ExampleTab() {
   const { settings } = usePricing();
   const [expertSalary, setExpertSalary] = useState(3000);
-  const [expertHours, setExpertHours] = useState(11);
+  const [expertHours, setExpertHours] = useState(12);
   const [managerSalary, setManagerSalary] = useState(6500);
-  const [managerHours, setManagerHours] = useState(1);
+  const [managerHours, setManagerHours] = useState(2);
   const [overheadPercent, setOverheadPercent] = useState(30);
   const [estimatedQueries, setEstimatedQueries] = useState(100);
   const [botCoveragePercent, setBotCoveragePercent] = useState(50);
@@ -21,11 +21,11 @@ export default function ExampleTab() {
     const expertCost = (expertSalary / 160) * (expertHours * 4) * (1 + overheadPercent / 100);
     const managerCost = (managerSalary / 160) * (managerHours * 4) * (1 + overheadPercent / 100);
     const totalWithoutBot = expertCost + managerCost;
-    
+
     // Laske botin hinta asetusten mukaan kyselymäärän perusteella
     const botPricing = getBotTieredPrice(estimatedQueries, settings);
     const botMonthlyFee = botPricing.price + botPricing.systemCosts;
-    
+
     const humanWorkRemaining = totalWithoutBot * (1 - botCoveragePercent / 100);
     const totalWithBot = botMonthlyFee + humanWorkRemaining;
     const monthlySavings = totalWithoutBot - totalWithBot;
@@ -37,7 +37,7 @@ export default function ExampleTab() {
       botMonthlyFee,
       humanWorkRemaining,
       totalWithBot,
-      monthlySavings
+      monthlySavings,
     };
   };
 
@@ -48,16 +48,16 @@ export default function ExampleTab() {
       name: "Vertailu",
       "Nykyinen tilanne": Math.round(costs.totalWithoutBot),
       "Botin kanssa": Math.round(costs.totalWithBot),
-      "Säästö": Math.round(costs.monthlySavings)
-    }
+      Säästö: Math.round(costs.monthlySavings),
+    },
   ];
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('fi-FI', {
-      style: 'currency',
-      currency: 'EUR',
+    return new Intl.NumberFormat("fi-FI", {
+      style: "currency",
+      currency: "EUR",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -66,36 +66,28 @@ export default function ExampleTab() {
       <div className="bg-muted/50 p-6 rounded-lg border">
         <h2 className="text-2xl font-bold mb-4">Esimerkki kustannushyödyistä</h2>
         <p className="text-muted-foreground mb-4">
-          Tällä välilehdellä voit luoda oman esimerkin kustannuslaskelmasta. Kaikki arvot ovat muokattavia,
-          jotta voit testata erilaisia skenaarioita omilla luvuillasi.
+          Tällä välilehdellä voit luoda oman esimerkin kustannuslaskelmasta. Kaikki arvot ovat muokattavia, jotta voit
+          testata erilaisia skenaarioita omilla luvuillasi.
         </p>
         <p className="text-muted-foreground">
-          Muokkaa alla olevia kenttiä ja katso, miten kustannukset ja säästöt muuttuvat reaaliajassa
-          graafissa ja taulukossa.
+          Muokkaa alla olevia kenttiä ja katso, miten kustannukset ja säästöt muuttuvat reaaliajassa graafissa ja
+          taulukossa.
         </p>
       </div>
 
       <Card className="p-6">
         <h3 className="text-xl font-semibold mb-4">Muokattavat arvot</h3>
-        
+
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <div className="space-y-4">
             <h4 className="font-medium">Asiantuntija</h4>
             <div className="space-y-2">
               <Label>Kuukausipalkka (€)</Label>
-              <Input
-                type="number"
-                value={expertSalary}
-                onChange={(e) => setExpertSalary(Number(e.target.value))}
-              />
+              <Input type="number" value={expertSalary} onChange={(e) => setExpertSalary(Number(e.target.value))} />
             </div>
             <div className="space-y-2">
               <Label>Työtunnit viikossa</Label>
-              <Input
-                type="number"
-                value={expertHours}
-                onChange={(e) => setExpertHours(Number(e.target.value))}
-              />
+              <Input type="number" value={expertHours} onChange={(e) => setExpertHours(Number(e.target.value))} />
             </div>
           </div>
 
@@ -103,19 +95,11 @@ export default function ExampleTab() {
             <h4 className="font-medium">Päällikkö</h4>
             <div className="space-y-2">
               <Label>Kuukausipalkka (€)</Label>
-              <Input
-                type="number"
-                value={managerSalary}
-                onChange={(e) => setManagerSalary(Number(e.target.value))}
-              />
+              <Input type="number" value={managerSalary} onChange={(e) => setManagerSalary(Number(e.target.value))} />
             </div>
             <div className="space-y-2">
               <Label>Työtunnit viikossa</Label>
-              <Input
-                type="number"
-                value={managerHours}
-                onChange={(e) => setManagerHours(Number(e.target.value))}
-              />
+              <Input type="number" value={managerHours} onChange={(e) => setManagerHours(Number(e.target.value))} />
             </div>
           </div>
 
@@ -187,13 +171,13 @@ export default function ExampleTab() {
           <TableBody>
             <TableRow>
               <TableCell>
-                Asiantuntija (€ {expertSalary.toLocaleString('fi-FI')}, {expertHours} h/viikko = {expertHours * 4} h/kk)
+                Asiantuntija (€ {expertSalary.toLocaleString("fi-FI")}, {expertHours} h/viikko = {expertHours * 4} h/kk)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.expertCost)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
-                Päällikkö (€ {managerSalary.toLocaleString('fi-FI')}, {managerHours} h/viikko = {managerHours * 4} h/kk)
+                Päällikkö (€ {managerSalary.toLocaleString("fi-FI")}, {managerHours} h/viikko = {managerHours * 4} h/kk)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.managerCost)}</TableCell>
             </TableRow>
@@ -206,9 +190,7 @@ export default function ExampleTab() {
               <TableCell className="text-right">{formatCurrency(costs.botMonthlyFee)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>
-                Ihmisen työksi jää ({100 - botCoveragePercent} %)
-              </TableCell>
+              <TableCell>Ihmisen työksi jää ({100 - botCoveragePercent} %)</TableCell>
               <TableCell className="text-right">{formatCurrency(costs.humanWorkRemaining)}</TableCell>
             </TableRow>
             <TableRow className="bg-muted/50">
@@ -217,7 +199,9 @@ export default function ExampleTab() {
             </TableRow>
             <TableRow className="bg-primary/10">
               <TableCell className="font-bold">Nettosäästö kuukaudessa</TableCell>
-              <TableCell className="text-right font-bold text-primary">{formatCurrency(costs.monthlySavings)}</TableCell>
+              <TableCell className="text-right font-bold text-primary">
+                {formatCurrency(costs.monthlySavings)}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -225,12 +209,11 @@ export default function ExampleTab() {
 
       <div className="bg-muted/50 p-6 rounded-lg border">
         <p className="text-sm text-muted-foreground">
-          <strong>Huomio:</strong> Kaikki ihmistyön kustannukset sisältävät sivukulut ({overheadPercent}%). 
-          Break-even saavutettiin jo ennen {botCoveragePercent}% kattavuutta. 
-          Ihmistyön kokonaiskustannus ({formatCurrency(costs.totalWithoutBot)}/kk) 
-          on suurempi kuin botin ja jäljelle jäävän ihmistyön yhteiskulut ({formatCurrency(costs.totalWithBot)}/kk). 
-          Säästö kuukaudessa: {formatCurrency(costs.monthlySavings)}. 
-          Lisäksi on huomioitava kasvatettavissa työtiimeissä käytettävä työtyytyväisyys.
+          <strong>Huomio:</strong> Kaikki ihmistyön kustannukset sisältävät sivukulut ({overheadPercent}%). Break-even
+          saavutettiin jo ennen {botCoveragePercent}% kattavuutta. Ihmistyön kokonaiskustannus (
+          {formatCurrency(costs.totalWithoutBot)}/kk) on suurempi kuin botin ja jäljelle jäävän ihmistyön yhteiskulut (
+          {formatCurrency(costs.totalWithBot)}/kk). Säästö kuukaudessa: {formatCurrency(costs.monthlySavings)}. Lisäksi
+          on huomioitava kasvatettavissa työtiimeissä käytettävä työtyytyväisyys.
         </p>
       </div>
     </div>
