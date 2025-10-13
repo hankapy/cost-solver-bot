@@ -106,8 +106,12 @@ export default function BotTab() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center pb-2 border-b">
-              <span className="text-muted-foreground">Peruskuukausihinta</span>
-              <span className="font-semibold">{formatCurrency(monthlyCalculation.totalCost)}</span>
+              <span className="text-muted-foreground">Portaistettu hinta (kuukausiveloitus)</span>
+              <span className="font-semibold">{formatCurrency(monthlyCalculation.tieredPrice)}</span>
+            </div>
+            <div className="flex justify-between items-center pb-2 border-b">
+              <span className="text-muted-foreground">Järjestelmäkulut</span>
+              <span className="font-semibold">{formatCurrency(monthlyCalculation.systemCosts)}</span>
             </div>
             <div className="flex justify-between items-center pb-2 border-b">
               <span className="text-muted-foreground">Aloitusmaksu (kertaluonteinen)</span>
