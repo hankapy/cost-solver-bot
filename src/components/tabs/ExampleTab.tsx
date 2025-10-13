@@ -11,16 +11,16 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 export default function ExampleTab() {
   const { settings } = usePricing();
   const [expertSalary, setExpertSalary] = useState(3000);
-  const [expertHours, setExpertHours] = useState(12);
+  const [expertHours, setExpertHours] = useState(48);
   const [managerSalary, setManagerSalary] = useState(6500);
-  const [managerHours, setManagerHours] = useState(2);
+  const [managerHours, setManagerHours] = useState(8);
   const [overheadPercent, setOverheadPercent] = useState(30);
   const [estimatedQueries, setEstimatedQueries] = useState(100);
   const [botCoveragePercent, setBotCoveragePercent] = useState(50);
 
   const calculateCosts = () => {
-    const expertCost = (expertSalary / 160) * (expertHours * 4) * (1 + overheadPercent / 100);
-    const managerCost = (managerSalary / 160) * (managerHours * 4) * (1 + overheadPercent / 100);
+    const expertCost = (expertSalary / 160) * expertHours * (1 + overheadPercent / 100);
+    const managerCost = (managerSalary / 160) * managerHours * (1 + overheadPercent / 100);
     const totalWithoutBot = expertCost + managerCost;
 
     // Laske botin hinta asetusten mukaan kyselymäärän perusteella
@@ -96,7 +96,7 @@ export default function ExampleTab() {
               <Input type="number" value={expertSalary} onChange={(e) => setExpertSalary(Number(e.target.value))} />
             </div>
             <div className="space-y-2">
-              <Label>Työtunnit viikossa</Label>
+              <Label>Työtunnit/kk</Label>
               <Input type="number" value={expertHours} onChange={(e) => setExpertHours(Number(e.target.value))} />
             </div>
           </div>
@@ -108,7 +108,7 @@ export default function ExampleTab() {
               <Input type="number" value={managerSalary} onChange={(e) => setManagerSalary(Number(e.target.value))} />
             </div>
             <div className="space-y-2">
-              <Label>Työtunnit viikossa</Label>
+              <Label>Työtunnit/kk</Label>
               <Input type="number" value={managerHours} onChange={(e) => setManagerHours(Number(e.target.value))} />
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function ExampleTab() {
         <h3 className="text-xl font-semibold mb-6">Kustannusvertailu</h3>
         <ChartContainer config={chartConfig} className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap="8%">
+            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap="2%">
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="name" 
@@ -213,13 +213,13 @@ export default function ExampleTab() {
           <TableBody>
             <TableRow>
               <TableCell>
-                Asiantuntija (€ {expertSalary.toLocaleString("fi-FI")}, {expertHours} h/viikko = {expertHours * 4} h/kk)
+                Asiantuntija (€ {expertSalary.toLocaleString("fi-FI")}, {expertHours} h/kk)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.expertCost)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
-                Päällikkö (€ {managerSalary.toLocaleString("fi-FI")}, {managerHours} h/viikko = {managerHours * 4} h/kk)
+                Päällikkö (€ {managerSalary.toLocaleString("fi-FI")}, {managerHours} h/kk)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.managerCost)}</TableCell>
             </TableRow>
