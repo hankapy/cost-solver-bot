@@ -47,6 +47,12 @@ export function getBotTieredPrice(queries: number, settings: PricingSettings): {
   // Find the appropriate tier
   const sortedTiers = [...settings.botTiers].sort((a, b) => a.queryLimit - b.queryLimit);
   
+  // Jos kyselyjä ei ole, palauta nollakulut
+  if (queries === 0) {
+    return { price: 0, systemCosts: 0 };
+  }
+  
+  // Etsi sopiva tier kyselymäärän perusteella
   for (let i = sortedTiers.length - 1; i >= 0; i--) {
     if (queries >= sortedTiers[i].queryLimit) {
       return { 
@@ -56,11 +62,19 @@ export function getBotTieredPrice(queries: number, settings: PricingSettings): {
     }
   }
   
-  // If no tier matches, return the first tier price
-  return { 
-    price: sortedTiers[0]?.price || 0,
-    systemCosts: sortedTiers[0]?.systemCosts || 0
-  };
+  // Jos kyselymäärä on pienempi kuin pienin tier, käytä pienimmän tierin hintaa
+  // mutta skaalaa se alas kyselymäärän suhteessa
+  if (sortedTiers.length > 0) {
+    const lowestTier = sortedTiers[0];
+    const scaleFactor = queries / lowestTier.queryLimit;
+    return {
+      price: lowestTier.price * scaleFactor,
+      systemCosts: lowestTier.systemCosts * scaleFactor
+    };
+  }
+  
+  // Jos ei tierejä ole, palauta nollakulut
+  return { price: 0, systemCosts: 0 };
 }
 
 export function calculateBotCost(settings: PricingSettings, includeStartupFee = false): BotCostCalculation {
