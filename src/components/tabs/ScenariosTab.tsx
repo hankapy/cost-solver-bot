@@ -115,6 +115,53 @@ export default function ScenariosTab() {
         </CardContent>
       </Card>
 
+      <Card className="shadow-elegant border-primary/20">
+        <CardHeader>
+          <CardTitle>Mitä skenaariovertailu tarkoittaa?</CardTitle>
+          <CardDescription>
+            Ymmärrä, miten säästöt syntyvät ja mihin vertaillaan
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Mitä tarkoittaa "Säästö"?</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Säästö kuvaa, <strong>kuinka paljon rahaa säästät kuukaudessa</strong>, kun käytät hybridiä 
+              (botti + ihminen yhdessä) verrattuna siihen, että kaikki kyselyt hoidettaisiin pelkällä ihmistyöllä.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <h4 className="font-semibold mb-3">Miten säästö lasketaan?</h4>
+            <div className="space-y-2 text-sm">
+              <p className="font-mono bg-background p-2 rounded text-xs">
+                Säästö = Pelkän ihmistyön kustannus - Hybridimallin kustannus
+              </p>
+              <div className="text-muted-foreground space-y-2 mt-3">
+                <p><strong>Pelkän ihmistyön kustannus</strong> tarkoittaa sitä, mitä maksaisi, jos <strong>ihminen käsittelisi kaikki kyselyt</strong> (100% ihminen, 0% botti).</p>
+                <p><strong>Hybridimallin kustannus</strong> tarkoittaa sitä, mitä maksaa, kun <strong>botti hoitaa osan kyselyistä</strong> (esim. 30%, 50%, 70%) ja ihminen loput.</p>
+                <p className="pt-2 border-t"><strong>Säästö syntyy siitä</strong>, että botti hoitaa osan kyselyistä halvemmalla kuin ihminen.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg bg-success/5 border border-success/20">
+            <h4 className="font-semibold mb-3 text-success">Esimerkki:</h4>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>Jos kyselyjä on 200 kpl/kk ja botti hoitaa 50% niistä:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
+                <li><strong>100% ihminen:</strong> Ihminen käsittelee kaikki 200 kyselyä → esim. 450,00 €/kk</li>
+                <li><strong>Hybridi (50% botti):</strong> Botti hoitaa 100 kyselyä + ihminen 100 kyselyä → esim. 320,00 €/kk</li>
+                <li><strong className="text-success">Säästö:</strong> 450,00 € - 320,00 € = <strong className="text-success">130,00 € / kk</strong></li>
+              </ul>
+              <p className="pt-3 italic text-xs">
+                Tämä tarkoittaa, että säästät 130 € kuukaudessa eli 1 560 € vuodessa!
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle>Lisää uusi skenaario</CardTitle>
