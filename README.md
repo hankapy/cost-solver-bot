@@ -1,73 +1,99 @@
-# Welcome to your Lovable project
+# Hinnoittelulaskuri - Pricing Calculator
 
-## Project info
+Tämä sovellus on suunniteltu vertailemaan ihmistyön, botin ja hybridimallin kustannuksia asiakaspalvelukyselyiden käsittelyssä.
 
-**URL**: https://lovable.dev/projects/1f276537-0829-4e38-a9af-a913ffafcfa8
+## Ominaisuudet
 
-## How can I edit this code?
+### 📊 Viisi välilehteä
 
-There are several ways of editing your application.
+1. **Ihminen** - Pelkän ihmistyön kustannuslaskenta
+   - Kuukausittaiset kyselyt ja niiden käsittelyaika
+   - Portaistettu hinnoittelu kyselymäärän mukaan
+   - Tuntityön ja peruskuukausimaksun laskenta
+   - Muokattava kyselymäärä suoraan välilehdellä
 
-**Use Lovable**
+2. **Botti** - Täysautomaation kustannuslaskenta
+   - Kertaluonteinen aloitusmaksu ensimmäisenä kuukautena
+   - Portaistettu kuukausiveloitus + järjestelmäkulut
+   - Eri hinnoittelu eri kyselymäärille
+   - Muokattava kyselymäärä suoraan välilehdellä
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1f276537-0829-4e38-a9af-a913ffafcfa8) and start prompting.
+3. **Hybridi** - Yhdistelmämalli botin ja ihmistyön välillä
+   - Botin osuus kasvaa asteittain kuukausittain
+   - Keskittämisalennuksen huomiointi
+   - Kuukausittainen kehitysnäkymä
+   - Vuosilaskuri (vuodet 0-3)
+   - Säästölaskuri verrattuna pelkkään ihmistyöhön
+   - Muokattava kyselymäärä ja keskittämisalennus suoraan välilehdellä
 
-Changes made via Lovable will be committed automatically to this repo.
+4. **Säästöt** - Kustannusvertailu ja ROI-analyysi
+   - Vertailu: Pelkkä ihminen vs. Pelkkä botti
+   - Vertailu: Pelkkä ihminen vs. Hybridimalli
+   - Säästöjen visualisointi ja prosenttilaskelmat
 
-**Use your preferred IDE**
+5. **Skenaariot** - Eri kyselymäärien vertailu
+   - Vertaile eri skenaarioita rinnakkain
+   - Muokattavat kyselymäärät ja botin osuudet
+   - Nopea kustannusvertailu eri tilanteissa
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+6. **Esimerkki** - Käytännön esimerkkitapaus
+   - Konkreettinen laskentaesimerkki
+   - Yksityiskohtainen kustannuserittely
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+7. **Asetukset** - Konfigurointi
+   - Perusasetukset (kyselymäärä, käsittelyaika, tuntihinta)
+   - Ihmistyön portaistettu hinnoittelu
+   - Botin kiinteät kulut ja portaistettu hinnoittelu
+   - Botin osuuden kehitys (kuukausittain ja vuosittain)
 
-Follow these steps:
+8. **README** - Ohjeet ja dokumentaatio
+
+## Teknologiat
+
+- **Vite** - Kehitysympäristö
+- **TypeScript** - Tyyppiturvallinen JavaScript
+- **React** - UI-kirjasto
+- **shadcn-ui** - Komponenttikirjasto
+- **Tailwind CSS** - Tyylittely
+- **Recharts** - Kaaviot ja visualisoinnit
+
+## Asennus ja käyttö
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Kloonaa repositorio
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Siirry projektin hakemistoon
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Asenna riippuvuudet
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Käynnistä kehityspalvelin
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Projektin rakenne
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `/src/components/tabs/` - Välilehtien komponentit
+- `/src/contexts/` - React Context hinnoitteluasetuksille
+- `/src/lib/pricingCalculations.ts` - Kaikki laskentalogiikka
+- `/src/types/pricing.ts` - TypeScript-tyyppimäärittelyt
 
-**Use GitHub Codespaces**
+## Muokkaus
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+**Lovablessa:**
+[Avaa projekti Lovablessa](https://lovable.dev/projects/1f276537-0829-4e38-a9af-a913ffafcfa8)
 
-## What technologies are used for this project?
+**Paikallisesti:**
+Muokkaa tiedostoja haluamallasi IDE:llä ja pushaa muutokset GitHubiin.
 
-This project is built with:
+## Julkaisu
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Avaa [Lovable](https://lovable.dev/projects/1f276537-0829-4e38-a9af-a913ffafcfa8) ja klikkaa Share -> Publish.
 
-## How can I deploy this project?
+## Custom domain
 
-Simply open [Lovable](https://lovable.dev/projects/1f276537-0829-4e38-a9af-a913ffafcfa8) and click on Share -> Publish.
+Voit yhdistää oman domainin projektiisi: Project > Settings > Domains > Connect Domain
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+[Lue lisää](https://docs.lovable.dev/features/custom-domain#custom-domain)

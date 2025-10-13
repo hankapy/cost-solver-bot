@@ -75,6 +75,25 @@ export default function HybridTab() {
         </p>
       </div>
 
+      <Card className="shadow-card bg-gradient-card">
+        <CardHeader>
+          <CardTitle className="text-lg">Arvioitu kyselymäärä</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="monthlyQueries">Kyselyt / kk</Label>
+            <Input
+              id="monthlyQueries"
+              type="number"
+              min="1"
+              value={settings.monthlyQueries}
+              onChange={(e) => updateSettings({ monthlyQueries: parseInt(e.target.value) || 1 })}
+              className="max-w-xs"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="shadow-card border-primary/20">
         <CardHeader>
           <CardTitle>Keskittämisalennus</CardTitle>
