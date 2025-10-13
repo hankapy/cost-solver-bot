@@ -47,9 +47,12 @@ export default function ExampleTab() {
     {
       name: "Nykyinen tilanne",
       Kokonaiskustannus: Math.round(costs.totalWithoutBot),
+      "Botin kustannus": 0,
+      "Säästö": 0,
     },
     {
       name: "Botin kanssa",
+      Kokonaiskustannus: 0,
       "Botin kustannus": Math.round(costs.totalWithBot),
       "Säästö": Math.round(costs.monthlySavings),
     },
