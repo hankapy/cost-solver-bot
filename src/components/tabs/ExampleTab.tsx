@@ -47,18 +47,12 @@ export default function ExampleTab() {
   const chartData = [
     {
       name: "Nykyinen\ntilanne",
-      value: Math.round(costs.totalWithoutBot),
-      fill: "hsl(var(--destructive))",
+      "Kokonaiskustannus": Math.round(costs.totalWithoutBot),
     },
     {
       name: "Botin\nkanssa",
-      value: Math.round(costs.totalWithBot),
-      fill: "hsl(var(--primary))",
-    },
-    {
-      name: "Säästö",
-      value: Math.round(costs.monthlySavings),
-      fill: "hsl(var(--success))",
+      "Botin kustannus": Math.round(costs.totalWithBot),
+      "Säästö": Math.round(costs.monthlySavings),
     },
   ];
 
@@ -180,18 +174,28 @@ export default function ExampleTab() {
                 content={<ChartTooltipContent formatter={(value) => formatCurrency(Number(value))} />}
                 cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
               />
+              <Legend />
               <Bar 
-                dataKey="value" 
+                dataKey="Kokonaiskustannus" 
+                stackId="a"
+                fill="hsl(var(--destructive))"
                 radius={[8, 8, 0, 0]}
                 maxBarSize={120}
-              >
-                {chartData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={entry.fill}
-                  />
-                ))}
-              </Bar>
+              />
+              <Bar 
+                dataKey="Botin kustannus" 
+                stackId="b"
+                fill="hsl(var(--primary))"
+                radius={[0, 0, 0, 0]}
+                maxBarSize={120}
+              />
+              <Bar 
+                dataKey="Säästö" 
+                stackId="b"
+                fill="hsl(var(--success))"
+                radius={[8, 8, 0, 0]}
+                maxBarSize={120}
+              />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
