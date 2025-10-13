@@ -3,9 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import { usePricing } from "@/contexts/PricingContext";
 import { getBotTieredPrice } from "@/lib/pricingCalculations";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export default function ExampleTab() {
   const { settings } = usePricing();
@@ -45,12 +46,27 @@ export default function ExampleTab() {
 
   const chartData = [
     {
-      name: "Vertailu",
-      "Nykyinen tilanne": Math.round(costs.totalWithoutBot),
-      "Botin kanssa": Math.round(costs.totalWithBot),
-      Säästö: Math.round(costs.monthlySavings),
+      name: "Nykyinen\ntilanne",
+      value: Math.round(costs.totalWithoutBot),
+      fill: "hsl(var(--destructive))",
+    },
+    {
+      name: "Botin\nkanssa",
+      value: Math.round(costs.totalWithBot),
+      fill: "hsl(var(--primary))",
+    },
+    {
+      name: "Säästö",
+      value: Math.round(costs.monthlySavings),
+      fill: "hsl(var(--success))",
     },
   ];
+
+  const chartConfig = {
+    value: {
+      label: "Kustannus",
+    },
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("fi-FI", {
@@ -143,20 +159,55 @@ export default function ExampleTab() {
         </div>
       </Card>
 
-      <Card className="p-6">
-        <h3 className="text-xl font-semibold mb-4">Kustannusvertailu</h3>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={chartData} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category" />
-            <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-            <Legend />
-            <Bar dataKey="Nykyinen tilanne" fill="hsl(var(--destructive))" />
-            <Bar dataKey="Botin kanssa" fill="hsl(var(--primary))" />
-            <Bar dataKey="Säästö" fill="hsl(var(--success))" />
-          </BarChart>
-        </ResponsiveContainer>
+      <Card className="p-6 shadow-elegant">
+        <h3 className="text-xl font-semibold mb-6">Kustannusvertailu</h3>
+        <ChartContainer config={chartConfig} className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+              <defs>
+                <linearGradient id="colorDestructive" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity={0.9} />
+                  <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity={0.6} />
+                </linearGradient>
+                <linearGradient id="colorPrimary" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.9} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6} />
+                </linearGradient>
+                <linearGradient id="colorSuccess" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--success))" stopOpacity={0.9} />
+                  <stop offset="100%" stopColor="hsl(var(--success))" stopOpacity={0.6} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fontSize: 13, fontWeight: 500 }} 
+                stroke="hsl(var(--muted-foreground))"
+              />
+              <YAxis 
+                tick={{ fontSize: 12 }} 
+                stroke="hsl(var(--muted-foreground))"
+                tickFormatter={(value) => `${(value / 1000).toFixed(0)}k €`}
+              />
+              <ChartTooltip 
+                content={<ChartTooltipContent formatter={(value) => formatCurrency(Number(value))} />}
+                cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
+              />
+              <Bar 
+                dataKey="value" 
+                radius={[8, 8, 0, 0]}
+                maxBarSize={100}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={index === 0 ? "url(#colorDestructive)" : index === 1 ? "url(#colorPrimary)" : "url(#colorSuccess)"}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
       </Card>
 
       <Card className="p-6">
