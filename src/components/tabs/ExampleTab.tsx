@@ -177,21 +177,20 @@ export default function ExampleTab() {
               <Legend />
               <Bar 
                 dataKey="Kokonaiskustannus" 
-                stackId="a"
                 fill="hsl(var(--destructive))"
                 radius={[8, 8, 0, 0]}
                 maxBarSize={120}
               />
               <Bar 
                 dataKey="Botin kustannus" 
-                stackId="b"
+                stackId="a"
                 fill="hsl(var(--primary))"
                 radius={[0, 0, 0, 0]}
                 maxBarSize={120}
               />
               <Bar 
                 dataKey="Säästö" 
-                stackId="b"
+                stackId="a"
                 fill="hsl(var(--success))"
                 radius={[8, 8, 0, 0]}
                 maxBarSize={120}
