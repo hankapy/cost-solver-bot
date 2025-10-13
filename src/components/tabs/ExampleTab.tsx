@@ -45,16 +45,17 @@ export default function ExampleTab() {
 
   const chartData = [
     {
-      name: "Nykyinen tilanne",
-      Kokonaiskustannus: Math.round(costs.totalWithoutBot),
-      "Botin kustannus": 0,
-      "Säästö": 0,
+      name: "Ilman bottia",
+      "Kokonaiskustannus": Math.round(costs.totalWithoutBot),
     },
     {
       name: "Botin kanssa",
-      Kokonaiskustannus: 0,
-      "Botin kustannus": Math.round(costs.totalWithBot),
-      "Säästö": Math.round(costs.monthlySavings),
+      "Botin kustannus": Math.round(costs.botMonthlyFee),
+      "Ihmistyö": Math.round(costs.humanWorkRemaining),
+    },
+    {
+      name: "Säästö",
+      "Säästö kuukaudessa": Math.round(costs.monthlySavings),
     },
   ];
 
@@ -156,13 +157,11 @@ export default function ExampleTab() {
             <BarChart 
               data={chartData} 
               margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-              barCategoryGap="20%"
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
               <XAxis 
                 dataKey="name" 
                 tick={{ fontSize: 14, fontWeight: 500 }}
-                angle={0}
               />
               <YAxis 
                 tick={{ fontSize: 12 }}
@@ -184,20 +183,22 @@ export default function ExampleTab() {
                 dataKey="Kokonaiskustannus" 
                 fill="hsl(var(--destructive))"
                 radius={[8, 8, 0, 0]}
-                maxBarSize={150}
               />
               <Bar 
                 dataKey="Botin kustannus" 
-                stackId="stack"
+                stackId="a"
                 fill="hsl(var(--primary))"
-                maxBarSize={150}
               />
               <Bar 
-                dataKey="Säästö" 
-                stackId="stack"
+                dataKey="Ihmistyö" 
+                stackId="a"
+                fill="hsl(var(--primary) / 0.5)"
+                radius={[8, 8, 0, 0]}
+              />
+              <Bar 
+                dataKey="Säästö kuukaudessa" 
                 fill="hsl(var(--success))"
                 radius={[8, 8, 0, 0]}
-                maxBarSize={150}
               />
             </BarChart>
           </ResponsiveContainer>
