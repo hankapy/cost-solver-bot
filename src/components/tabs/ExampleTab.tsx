@@ -156,7 +156,7 @@ export default function ExampleTab() {
             <BarChart 
               data={chartData} 
               margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-              barSize={100}
+              barCategoryGap="20%"
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
               <XAxis 
@@ -184,17 +184,20 @@ export default function ExampleTab() {
                 dataKey="Kokonaiskustannus" 
                 fill="hsl(var(--destructive))"
                 radius={[8, 8, 0, 0]}
+                maxBarSize={150}
               />
               <Bar 
                 dataKey="Botin kustannus" 
                 stackId="stack"
                 fill="hsl(var(--primary))"
+                maxBarSize={150}
               />
               <Bar 
                 dataKey="Säästö" 
                 stackId="stack"
                 fill="hsl(var(--success))"
                 radius={[8, 8, 0, 0]}
+                maxBarSize={150}
               />
             </BarChart>
           </ResponsiveContainer>
