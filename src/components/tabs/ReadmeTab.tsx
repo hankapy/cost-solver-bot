@@ -105,7 +105,7 @@ export default function ReadmeTab() {
           <ul className="list-disc list-inside space-y-1 pl-4">
             <li>Kyselymäärä kuukaudessa</li>
             <li>Portaistettu hinta (hinta vaihtelee kyselymäärän mukaan - mitä enemmän kyselyjä, sitä korkeampi hinta)</li>
-            <li>Järjestelmäkulut (kiinteät kuukausittaiset kulut)</li>
+            <li>Järjestelmäkulut (myös portaistettu kyselymäärän mukaan)</li>
             <li><strong>Kuukausihinta (kk 2 alkaen)</strong> = Portaistettu hinta + Järjestelmäkulut</li>
             <li>Aloitusmaksu (maksetaan vain kerran ensimmäisellä kuukaudella)</li>
           </ul>
@@ -114,8 +114,7 @@ export default function ReadmeTab() {
             <ul className="list-disc list-inside space-y-1 pl-4">
               <li><strong>Kyselymäärä</strong> → "Kyselymäärät" -osio</li>
               <li><strong>Aloitusmaksu</strong> → "Botin kiinteät kulut" -osiosta</li>
-              <li><strong>Järjestelmäkulut</strong> → "Botin kiinteät kulut" -osiosta</li>
-              <li><strong>Portaistettu hinta</strong> → "Botin portaistettu hinnoittelu" -taulukosta (valitaan kyselymäärän perusteella)</li>
+              <li><strong>Portaistettu hinta JA Järjestelmäkulut</strong> → "Botin portaistettu hinnoittelu" -taulukosta (valitaan kyselymäärän perusteella)</li>
             </ul>
             <p className="text-xs mt-2 italic">
               💡 Vinkki: "Botin kiinteät kulut" -osiossa on myös laskuri, jossa voit testata eri kyselymäärillä!
@@ -128,7 +127,7 @@ export default function ReadmeTab() {
           </p>
           <p className="pt-2"><strong>Miksi portaistettu hinnoittelu?</strong></p>
           <p>
-            Mitä enemmän kyselyjä botti käsittelee, sitä enemmän se maksaa - mutta ei suoraan suhteessa. Esimerkiksi 100 kyselyä voi maksaa 400 €, mutta 500 kyselyä ei maksa 2000 € vaan ehkä vain 800 €.
+            Mitä enemmän kyselyjä botti käsittelee, sitä enemmän se maksaa - mutta ei suoraan suhteessa. Myös järjestelmäkulut kasvavat kyselymäärän mukaan, koska suurempi volyymi vaatii enemmän resursseja.
           </p>
         </CardContent>
       </Card>

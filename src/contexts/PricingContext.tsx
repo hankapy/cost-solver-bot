@@ -17,11 +17,11 @@ const DEFAULT_SETTINGS: PricingSettings = {
   botMonthlyFee: 300,
   botSystemCosts: 150,
   botTiers: [
-    { queryLimit: 100, price: 350 },
-    { queryLimit: 150, price: 450 },
-    { queryLimit: 200, price: 550 },
-    { queryLimit: 300, price: 650 },
-    { queryLimit: 500, price: 750 },
+    { queryLimit: 100, price: 350, systemCosts: 150 },
+    { queryLimit: 150, price: 450, systemCosts: 150 },
+    { queryLimit: 200, price: 550, systemCosts: 150 },
+    { queryLimit: 300, price: 650, systemCosts: 200 },
+    { queryLimit: 500, price: 750, systemCosts: 200 },
   ],
   botGrowth: [
     { month: 1, percentage: 10 },

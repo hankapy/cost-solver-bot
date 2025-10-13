@@ -41,8 +41,8 @@ export default function HybridTab() {
     const botQueries = Math.round((settings.monthlyQueries * botPercentage) / 100);
     const humanQueries = settings.monthlyQueries - botQueries;
     
-    const botTieredPrice = getBotTieredPrice(botQueries, settings);
-    const botMonthlyCost = botTieredPrice + settings.botSystemCosts;
+    const botTieredData = getBotTieredPrice(botQueries, settings);
+    const botMonthlyCost = botTieredData.price + botTieredData.systemCosts;
     
     const humanMinutes = humanQueries * settings.minutesPerQuery;
     const humanHours = humanMinutes / 60;

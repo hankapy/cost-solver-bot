@@ -15,12 +15,12 @@ export default function SettingsTab() {
   const [estimatedQueries, setEstimatedQueries] = useState(settings.monthlyQueries);
 
   // Laske portaistettu hinta nykyisellä kyselymäärällä
-  const tieredPrice = getBotTieredPrice(settings.monthlyQueries, settings);
-  const totalMonthlyFee = tieredPrice + settings.botSystemCosts;
+  const tieredData = getBotTieredPrice(settings.monthlyQueries, settings);
+  const totalMonthlyFee = tieredData.price + tieredData.systemCosts;
   
   // Laske portaistettu hinta arvioidulla kyselymäärällä
-  const estimatedTieredPrice = getBotTieredPrice(estimatedQueries, settings);
-  const estimatedTotalMonthlyFee = estimatedTieredPrice + settings.botSystemCosts;
+  const estimatedTieredData = getBotTieredPrice(estimatedQueries, settings);
+  const estimatedTotalMonthlyFee = estimatedTieredData.price + estimatedTieredData.systemCosts;
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
 
@@ -182,11 +182,11 @@ export default function SettingsTab() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between items-center p-2 rounded bg-muted/50">
                   <span className="text-muted-foreground">Portaistettu hinta ({estimatedQueries} kyselyä)</span>
-                  <span className="font-semibold">{formatCurrency(estimatedTieredPrice)}</span>
+                  <span className="font-semibold">{formatCurrency(estimatedTieredData.price)}</span>
                 </div>
                 <div className="flex justify-between items-center p-2 rounded bg-muted/50">
                   <span className="text-muted-foreground">+ Järjestelmäkulut</span>
-                  <span className="font-semibold">{formatCurrency(settings.botSystemCosts)}</span>
+                  <span className="font-semibold">{formatCurrency(estimatedTieredData.systemCosts)}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
                   <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
@@ -232,6 +232,20 @@ export default function SettingsTab() {
                     onChange={(e) => {
                       const newTiers = [...settings.botTiers];
                       newTiers[index].price = Number(e.target.value);
+                      updateSettings({ botTiers: newTiers });
+                    }}
+                    min="0"
+                  />
+                </div>
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor={`tier-systemcosts-${index}`}>Järjestelmäkulut (€)</Label>
+                  <Input
+                    id={`tier-systemcosts-${index}`}
+                    type="number"
+                    value={tier.systemCosts}
+                    onChange={(e) => {
+                      const newTiers = [...settings.botTiers];
+                      newTiers[index].systemCosts = Number(e.target.value);
                       updateSettings({ botTiers: newTiers });
                     }}
                     min="0"

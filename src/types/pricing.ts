@@ -35,6 +35,7 @@ export interface HumanTier {
 export interface BotTier {
   queryLimit: number;
   price: number;
+  systemCosts: number;
 }
 
 export interface BotGrowthMonth {

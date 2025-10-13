@@ -43,22 +43,28 @@ export function calculateHumanCost(settings: PricingSettings): HumanCostCalculat
   };
 }
 
-export function getBotTieredPrice(queries: number, settings: PricingSettings): number {
+export function getBotTieredPrice(queries: number, settings: PricingSettings): { price: number; systemCosts: number } {
   // Find the appropriate tier
   const sortedTiers = [...settings.botTiers].sort((a, b) => a.queryLimit - b.queryLimit);
   
   for (let i = sortedTiers.length - 1; i >= 0; i--) {
     if (queries >= sortedTiers[i].queryLimit) {
-      return sortedTiers[i].price;
+      return { 
+        price: sortedTiers[i].price,
+        systemCosts: sortedTiers[i].systemCosts
+      };
     }
   }
   
   // If no tier matches, return the first tier price
-  return sortedTiers[0]?.price || 0;
+  return { 
+    price: sortedTiers[0]?.price || 0,
+    systemCosts: sortedTiers[0]?.systemCosts || 0
+  };
 }
 
 export function calculateBotCost(settings: PricingSettings, includeStartupFee = false): BotCostCalculation {
-  const tieredPrice = getBotTieredPrice(settings.monthlyQueries, settings);
+  const tieredData = getBotTieredPrice(settings.monthlyQueries, settings);
   
   // Ensimmäinen kuukausi = vain aloitusmaksu
   // Toinen kuukausi alkaen = portaistettu hinta + järjestelmäkulut
@@ -73,14 +79,14 @@ export function calculateBotCost(settings: PricingSettings, includeStartupFee = 
     };
   }
   
-  const monthlyCost = tieredPrice + settings.botSystemCosts;
+  const monthlyCost = tieredData.price + tieredData.systemCosts;
 
   return {
     monthlyQueries: settings.monthlyQueries,
-    tieredPrice,
+    tieredPrice: tieredData.price,
     startupFee: 0,
     monthlyFee: 0,
-    systemCosts: settings.botSystemCosts,
+    systemCosts: tieredData.systemCosts,
     totalCost: monthlyCost
   };
 }
@@ -101,8 +107,8 @@ export function calculateHybridMonth(
   if (month === 1) {
     botCost = settings.botStartupFee;
   } else {
-    const botTieredPrice = getBotTieredPrice(botQueries, settings);
-    botCost = botTieredPrice + settings.botSystemCosts;
+    const botTieredData = getBotTieredPrice(botQueries, settings);
+    botCost = botTieredData.price + botTieredData.systemCosts;
   }
   
   const humanMinutes = humanQueries * settings.minutesPerQuery;
@@ -155,8 +161,8 @@ export function calculateScenario(
   const humanCost = calculateHumanCost(scenarioSettings).totalCost;
   
   const botQueries = Math.round((monthlyQueries * botPercentage) / 100);
-  const botTieredPrice = getBotTieredPrice(botQueries, scenarioSettings);
-  const botMonthlyCost = botTieredPrice + settings.botSystemCosts;
+  const botTieredData = getBotTieredPrice(botQueries, scenarioSettings);
+  const botMonthlyCost = botTieredData.price + botTieredData.systemCosts;
   
   const humanQueries = monthlyQueries - botQueries;
   const humanMinutes = humanQueries * settings.minutesPerQuery;
