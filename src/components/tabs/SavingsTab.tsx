@@ -1,11 +1,34 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateSavings } from "@/lib/pricingCalculations";
-import { PiggyBank, TrendingDown, Percent } from "lucide-react";
+import { calculateSavings, calculateScenario } from "@/lib/pricingCalculations";
+import { PiggyBank, TrendingDown, Percent, BarChart3 } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 export default function SavingsTab() {
   const { settings } = usePricing();
   const calculation = calculateSavings(settings);
+  
+  // Interaktiivinen laskuri
+  const [calculatorQueries, setCalculatorQueries] = useState(200);
+  const [calculatorBotPercentage, setCalculatorBotPercentage] = useState(50);
+  
+  // Laske interaktiivisen laskurin arvot
+  const calculatorScenario = calculateScenario(calculatorQueries, calculatorBotPercentage, settings);
+  
+  // Valmista data graafille
+  const chartData = [
+    {
+      name: '100% Ihminen',
+      Kustannus: Number(calculatorScenario.humanCost.toFixed(2)),
+    },
+    {
+      name: `${calculatorBotPercentage}% Botti`,
+      Kustannus: Number(calculatorScenario.hybridCost.toFixed(2)),
+    },
+  ];
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
   const formatPercentage = (value: number) => `${value.toFixed(1)} %`;
@@ -144,6 +167,116 @@ export default function SavingsTab() {
                   {formatCurrency(calculation.savings * 12)}
                 </p>
               </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-elegant border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Interaktiivinen säästölaskuri
+          </CardTitle>
+          <CardDescription>
+            Kokeile eri kyselymääriä ja botin osuuksia nähdäksesi säästöt
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="calculatorQueries">Kyselymäärä / kk</Label>
+              <Input
+                id="calculatorQueries"
+                type="number"
+                value={calculatorQueries}
+                onChange={(e) => setCalculatorQueries(Number(e.target.value))}
+                min="0"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="calculatorBotPercentage">Botin osuus (%)</Label>
+              <Input
+                id="calculatorBotPercentage"
+                type="number"
+                value={calculatorBotPercentage}
+                onChange={(e) => setCalculatorBotPercentage(Number(e.target.value))}
+                min="0"
+                max="100"
+              />
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis 
+                dataKey="name" 
+                className="text-xs"
+                tick={{ fill: 'hsl(var(--foreground))' }}
+              />
+              <YAxis 
+                className="text-xs"
+                tick={{ fill: 'hsl(var(--foreground))' }}
+                label={{ 
+                  value: 'Kustannus (€)', 
+                  angle: -90, 
+                  position: 'insideLeft',
+                  style: { fill: 'hsl(var(--foreground))' }
+                }}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '8px'
+                }}
+                formatter={(value: number) => `${value.toFixed(2)} €`}
+              />
+              <Bar 
+                dataKey="Kustannus" 
+                fill="hsl(var(--primary))" 
+                radius={[8, 8, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+              <p className="text-sm text-muted-foreground mb-1">Pelkkä ihmistyö</p>
+              <p className="text-2xl font-bold text-destructive">
+                {formatCurrency(calculatorScenario.humanCost)}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+              <p className="text-sm text-muted-foreground mb-1">
+                Hybridi ({calculatorBotPercentage}% botti)
+              </p>
+              <p className="text-2xl font-bold text-primary">
+                {formatCurrency(calculatorScenario.hybridCost)}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-success/10 border border-success/20">
+              <p className="text-sm text-muted-foreground mb-1">Kuukausisäästö</p>
+              <p className="text-2xl font-bold text-success">
+                {formatCurrency(calculatorScenario.savings)}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {formatPercentage(calculatorScenario.savingsPercentage)} säästö
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Laskelma ({calculatorQueries} kyselyä/kk):</h4>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>• Botti hoitaa: <strong>{Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({calculatorBotPercentage}%)</p>
+              <p>• Ihminen hoitaa: <strong>{calculatorQueries - Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({100 - calculatorBotPercentage}%)</p>
+              <p className="pt-2 border-t mt-2">
+                💰 Kun botti hoitaa {calculatorBotPercentage}% kyselyistä, <strong className="text-success">säästät {formatCurrency(calculatorScenario.savings)} kuukaudessa</strong> verrattuna pelkkään ihmistyöhön.
+              </p>
             </div>
           </div>
         </CardContent>
