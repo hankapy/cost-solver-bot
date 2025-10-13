@@ -44,16 +44,29 @@ export function getBotTieredPrice(queries: number, settings: PricingSettings): n
 
 export function calculateBotCost(settings: PricingSettings, includeStartupFee = false): BotCostCalculation {
   const tieredPrice = getBotTieredPrice(settings.monthlyQueries, settings);
+  
+  // Ensimmäinen kuukausi = vain aloitusmaksu
+  // Toinen kuukausi alkaen = portaistettu hinta + järjestelmäkulut
+  if (includeStartupFee) {
+    return {
+      monthlyQueries: settings.monthlyQueries,
+      tieredPrice: 0,
+      startupFee: settings.botStartupFee,
+      monthlyFee: 0,
+      systemCosts: 0,
+      totalCost: settings.botStartupFee
+    };
+  }
+  
   const monthlyCost = tieredPrice + settings.botSystemCosts;
-  const totalCost = includeStartupFee ? monthlyCost + settings.botStartupFee : monthlyCost;
 
   return {
     monthlyQueries: settings.monthlyQueries,
     tieredPrice,
-    startupFee: includeStartupFee ? settings.botStartupFee : 0,
-    monthlyFee: 0, // Ei käytetä, portaistettu hinta on jo kuukausiveloitus
+    startupFee: 0,
+    monthlyFee: 0,
     systemCosts: settings.botSystemCosts,
-    totalCost
+    totalCost: monthlyCost
   };
 }
 
@@ -67,10 +80,15 @@ export function calculateHybridMonth(
   const botQueries = Math.round((settings.monthlyQueries * botPercentage) / 100);
   const humanQueries = settings.monthlyQueries - botQueries;
   
-  const botTieredPrice = getBotTieredPrice(botQueries, settings);
-  const botMonthlyCost = botTieredPrice + settings.botSystemCosts;
-  // Aloitusmaksu vain ensimmäiselle kuukaudelle
-  const botCost = month === 1 ? botMonthlyCost + settings.botStartupFee : botMonthlyCost;
+  // Ensimmäinen kuukausi: vain aloitusmaksu
+  // Toisesta alkaen: portaistettu hinta + järjestelmäkulut
+  let botCost = 0;
+  if (month === 1) {
+    botCost = settings.botStartupFee;
+  } else {
+    const botTieredPrice = getBotTieredPrice(botQueries, settings);
+    botCost = botTieredPrice + settings.botSystemCosts;
+  }
   
   const humanMinutes = humanQueries * settings.minutesPerQuery;
   const humanHours = humanMinutes / 60;

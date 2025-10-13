@@ -102,17 +102,9 @@ export default function BotTab() {
         <Card className="shadow-elegant border-warning/30">
           <CardHeader>
             <CardTitle>Ensimmäinen kuukausi</CardTitle>
-            <CardDescription>Aloituskulut sisältävät kertaluonteisen aloitusmaksun</CardDescription>
+            <CardDescription>Vain kertaluonteinen aloitusmaksu</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex justify-between items-center pb-2 border-b">
-              <span className="text-muted-foreground">Portaistettu hinta (kuukausiveloitus)</span>
-              <span className="font-semibold">{formatCurrency(monthlyCalculation.tieredPrice)}</span>
-            </div>
-            <div className="flex justify-between items-center pb-2 border-b">
-              <span className="text-muted-foreground">Järjestelmäkulut</span>
-              <span className="font-semibold">{formatCurrency(monthlyCalculation.systemCosts)}</span>
-            </div>
             <div className="flex justify-between items-center pb-2 border-b">
               <span className="text-muted-foreground">Aloitusmaksu (kertaluonteinen)</span>
               <span className="font-semibold text-warning">{formatCurrency(firstMonthCalculation.startupFee)}</span>
@@ -120,12 +112,15 @@ export default function BotTab() {
             <div className="flex justify-between items-center pt-4 border-t-2">
               <span className="text-lg font-bold flex items-center gap-2">
                 <Euro className="h-5 w-5 text-warning" />
-                Yhteensä
+                Yhteensä 1. kk
               </span>
               <span className="text-2xl font-bold text-warning">
                 {formatCurrency(firstMonthCalculation.totalCost)}
               </span>
             </div>
+            <p className="text-sm text-muted-foreground mt-4">
+              Kuukausiveloitus alkaa toisesta kuukaudesta
+            </p>
           </CardContent>
         </Card>
       </div>
