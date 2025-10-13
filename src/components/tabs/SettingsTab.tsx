@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,15 +10,23 @@ import { toast } from "sonner";
 
 export default function SettingsTab() {
   const { settings, updateSettings, resetSettings } = usePricing();
+  
+  // Erillinen tila arvioidulle kyselymäärälle laskurissa
+  const [estimatedQueries, setEstimatedQueries] = useState(settings.monthlyQueries);
 
   // Laske portaistettu hinta nykyisellä kyselymäärällä
   const tieredPrice = getBotTieredPrice(settings.monthlyQueries, settings);
   const totalMonthlyFee = tieredPrice + settings.botSystemCosts;
+  
+  // Laske portaistettu hinta arvioidulla kyselymäärällä
+  const estimatedTieredPrice = getBotTieredPrice(estimatedQueries, settings);
+  const estimatedTotalMonthlyFee = estimatedTieredPrice + settings.botSystemCosts;
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
 
   const handleReset = () => {
     resetSettings();
+    setEstimatedQueries(settings.monthlyQueries);
     toast.success("Asetukset palautettu oletusarvoihin");
   };
 
@@ -129,55 +138,67 @@ export default function SettingsTab() {
         </CardContent>
       </Card>
 
-      <Card className="shadow-card">
-        <CardHeader>
-          <CardTitle>Botin kiinteät kulut</CardTitle>
-          <CardDescription>Määritä botin peruskulut</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="botStartupFee">Aloitusmaksu (€)</Label>
-            <Input
-              id="botStartupFee"
-              type="number"
-              value={settings.botStartupFee}
-              onChange={(e) => updateSettings({ botStartupFee: Number(e.target.value) })}
-              min="0"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="botSystemCosts">Järjestelmäkulut (€/kk)</Label>
-            <Input
-              id="botSystemCosts"
-              type="number"
-              value={settings.botSystemCosts}
-              onChange={(e) => updateSettings({ botSystemCosts: Number(e.target.value) })}
-              min="0"
-            />
-          </div>
-
-          <div className="pt-4 border-t space-y-3">
-            <h4 className="font-semibold text-sm">Laskettu kuukausiveloitus</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between items-center p-2 rounded bg-muted/50">
-                <span className="text-muted-foreground">Portaistettu hinta ({settings.monthlyQueries} kyselyä)</span>
-                <span className="font-semibold">{formatCurrency(tieredPrice)}</span>
-              </div>
-              <div className="flex justify-between items-center p-2 rounded bg-muted/50">
-                <span className="text-muted-foreground">+ Järjestelmäkulut</span>
-                <span className="font-semibold">{formatCurrency(settings.botSystemCosts)}</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
-                <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
-                <span className="text-lg font-bold text-primary">{formatCurrency(totalMonthlyFee)}</span>
-              </div>
+        <Card className="shadow-card">
+          <CardHeader>
+            <CardTitle>Botin kiinteät kulut</CardTitle>
+            <CardDescription>Määritä botin peruskulut</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="botStartupFee">Aloitusmaksu (€)</Label>
+              <Input
+                id="botStartupFee"
+                type="number"
+                value={settings.botStartupFee}
+                onChange={(e) => updateSettings({ botStartupFee: Number(e.target.value) })}
+                min="0"
+              />
             </div>
-            <p className="text-xs text-muted-foreground italic">
-              Kuukausiveloitus lasketaan automaattisesti portaistetun hinnan ja järjestelmäkulujen summana
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="space-y-2">
+              <Label htmlFor="botSystemCosts">Järjestelmäkulut (€/kk)</Label>
+              <Input
+                id="botSystemCosts"
+                type="number"
+                value={settings.botSystemCosts}
+                onChange={(e) => updateSettings({ botSystemCosts: Number(e.target.value) })}
+                min="0"
+              />
+            </div>
+
+            <div className="pt-4 border-t space-y-3">
+              <h4 className="font-semibold text-sm">Laskuri: Arvioitu kuukausiveloitus</h4>
+              <div className="space-y-2">
+                <Label htmlFor="estimatedQueries">Arvioitu kyselymäärä / kk</Label>
+                <Input
+                  id="estimatedQueries"
+                  type="number"
+                  value={estimatedQueries}
+                  onChange={(e) => setEstimatedQueries(Number(e.target.value))}
+                  min="0"
+                  placeholder="Syötä kyselymäärä"
+                />
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                  <span className="text-muted-foreground">Portaistettu hinta ({estimatedQueries} kyselyä)</span>
+                  <span className="font-semibold">{formatCurrency(estimatedTieredPrice)}</span>
+                </div>
+                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                  <span className="text-muted-foreground">+ Järjestelmäkulut</span>
+                  <span className="font-semibold">{formatCurrency(settings.botSystemCosts)}</span>
+                </div>
+                <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
+                  <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
+                  <span className="text-lg font-bold text-primary">{formatCurrency(estimatedTotalMonthlyFee)}</span>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground italic">
+                Syötä arvioitu kyselymäärä nähdäksesi kuukausiveloituksen
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
       <Card className="shadow-card">
         <CardHeader>
