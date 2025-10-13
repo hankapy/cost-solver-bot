@@ -154,16 +154,6 @@ export default function SettingsTab() {
                 min="0"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="botSystemCosts">Järjestelmäkulut (€/kk)</Label>
-              <Input
-                id="botSystemCosts"
-                type="number"
-                value={settings.botSystemCosts}
-                onChange={(e) => updateSettings({ botSystemCosts: Number(e.target.value) })}
-                min="0"
-              />
-            </div>
 
             <div className="pt-4 border-t space-y-3">
               <h4 className="font-semibold text-sm">Laskuri: Arvioitu kuukausiveloitus</h4>
