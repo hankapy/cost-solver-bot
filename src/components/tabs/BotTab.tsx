@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
 import { calculateBotCost } from "@/lib/pricingCalculations";
 import { Bot, Euro, TrendingUp } from "lucide-react";
 
 export default function BotTab() {
-  const { settings } = usePricing();
+  const { settings, updateSettings } = usePricing();
   const monthlyCalculation = calculateBotCost(settings, false);
   const firstMonthCalculation = calculateBotCost(settings, true);
 
@@ -21,6 +23,25 @@ export default function BotTab() {
           Aloitusmaksu veloitetaan vain ensimmäisellä kuukaudella
         </p>
       </div>
+
+      <Card className="shadow-card bg-gradient-card">
+        <CardHeader>
+          <CardTitle className="text-lg">Arvioitu kyselymäärä</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="monthlyQueries">Kyselyt / kk</Label>
+            <Input
+              id="monthlyQueries"
+              type="number"
+              min="1"
+              value={settings.monthlyQueries}
+              onChange={(e) => updateSettings({ monthlyQueries: parseInt(e.target.value) || 1 })}
+              className="max-w-xs"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="shadow-elegant">
         <CardHeader>

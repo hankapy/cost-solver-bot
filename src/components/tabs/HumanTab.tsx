@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
 import { calculateHumanCost } from "@/lib/pricingCalculations";
 import { Euro, Clock, Calculator } from "lucide-react";
 
 export default function HumanTab() {
-  const { settings } = usePricing();
+  const { settings, updateSettings } = usePricing();
   const calculation = calculateHumanCost(settings);
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
@@ -18,6 +20,25 @@ export default function HumanTab() {
           Pelkän ihmistyön kustannuslaskenta kaikille kyselyille
         </p>
       </div>
+
+      <Card className="shadow-card bg-gradient-card">
+        <CardHeader>
+          <CardTitle className="text-lg">Arvioitu kyselymäärä</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="monthlyQueries">Kyselyt / kk</Label>
+            <Input
+              id="monthlyQueries"
+              type="number"
+              min="1"
+              value={settings.monthlyQueries}
+              onChange={(e) => updateSettings({ monthlyQueries: parseInt(e.target.value) || 1 })}
+              className="max-w-xs"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="shadow-card bg-gradient-card">
