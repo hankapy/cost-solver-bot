@@ -150,61 +150,6 @@ export default function ExampleTab() {
         </div>
       </Card>
 
-      <Card className="p-6 shadow-elegant">
-        <h3 className="text-xl font-semibold mb-6">Kustannusvertailu</h3>
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart 
-              data={chartData} 
-              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 14, fontWeight: 500 }}
-              />
-              <YAxis 
-                tick={{ fontSize: 12 }}
-                label={{ value: '€', angle: 0, position: 'top', offset: 10 }}
-                tickFormatter={(value) => value.toLocaleString('fi-FI')}
-              />
-              <Tooltip 
-                formatter={(value) => formatCurrency(Number(value))}
-                contentStyle={{ 
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px'
-                }}
-              />
-              <Legend 
-                wrapperStyle={{ paddingTop: '20px' }}
-              />
-              <Bar 
-                dataKey="Kokonaiskustannus" 
-                fill="hsl(var(--destructive))"
-                radius={[8, 8, 0, 0]}
-              />
-              <Bar 
-                dataKey="Botin kustannus" 
-                stackId="a"
-                fill="hsl(var(--primary))"
-              />
-              <Bar 
-                dataKey="Ihmistyö" 
-                stackId="a"
-                fill="hsl(var(--primary) / 0.5)"
-                radius={[8, 8, 0, 0]}
-              />
-              <Bar 
-                dataKey="Säästö kuukaudessa" 
-                fill="hsl(var(--success))"
-                radius={[8, 8, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
-
       <Card className="p-6">
         <h3 className="text-xl font-semibold mb-4">Kustannuserittely</h3>
         <Table>
