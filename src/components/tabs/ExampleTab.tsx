@@ -157,7 +157,7 @@ export default function ExampleTab() {
         <h3 className="text-xl font-semibold mb-6">Kustannusvertailu</h3>
         <ChartContainer config={chartConfig} className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap="1%">
+            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap={0}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="name" 
