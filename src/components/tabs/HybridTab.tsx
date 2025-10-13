@@ -1,11 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
 import { calculateHybridMonth, getBotTieredPrice, getHumanTieredBasePrice } from "@/lib/pricingCalculations";
 import { GitMerge, Calendar } from "lucide-react";
 
 export default function HybridTab() {
-  const { settings } = usePricing();
+  const { settings, updateSettings } = usePricing();
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
   const formatPercentage = (value: number) => `${value.toFixed(0)} %`;
@@ -65,6 +67,31 @@ export default function HybridTab() {
           Yhdistelmä ihmistyöstä ja botista - botin osuus kasvaa kuukausittain
         </p>
       </div>
+
+      <Card className="shadow-card border-primary/20">
+        <CardHeader>
+          <CardTitle>Keskittämisalennus</CardTitle>
+          <CardDescription>
+            Alennus, joka huomioi synergiahyödyt kun molemmat kanavat hoidetaan samassa järjestelmässä
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2 max-w-xs">
+            <Label htmlFor="centralizationDiscount">Alennus (%)</Label>
+            <Input
+              id="centralizationDiscount"
+              type="number"
+              value={settings.centralizationDiscount}
+              onChange={(e) => updateSettings({ centralizationDiscount: Number(e.target.value) })}
+              min="0"
+              max="100"
+            />
+            <p className="text-xs text-muted-foreground">
+              Tämä alennus vähennetään hybridimallin kokonaiskustannuksista
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="shadow-elegant">
         <CardHeader>

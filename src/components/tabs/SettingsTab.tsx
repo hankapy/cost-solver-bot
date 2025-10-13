@@ -39,7 +39,7 @@ export default function SettingsTab() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Kyselymäärät ja alennus</CardTitle>
+            <CardTitle>Kyselymäärät</CardTitle>
             <CardDescription>Määritä kuukausittaiset kyselyt ja käsittelyajat</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -61,17 +61,6 @@ export default function SettingsTab() {
                 value={settings.minutesPerQuery}
                 onChange={(e) => updateSettings({ minutesPerQuery: Number(e.target.value) })}
                 min="0"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="centralizationDiscount">Keskittämisalennus (%)</Label>
-              <Input
-                id="centralizationDiscount"
-                type="number"
-                value={settings.centralizationDiscount}
-                onChange={(e) => updateSettings({ centralizationDiscount: Number(e.target.value) })}
-                min="0"
-                max="100"
               />
             </div>
           </CardContent>
