@@ -97,7 +97,7 @@ export default function SettingsTab() {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Ihmistyön portaistettu peruskuukausihinta</CardTitle>
+          <CardTitle>Ihmistyön portaistettu peruskuukausihinta (/kk)</CardTitle>
           <CardDescription>Määritä kiinteät kuukausikustannukset eri kyselymäärille</CardDescription>
         </CardHeader>
         <CardContent>
@@ -119,7 +119,7 @@ export default function SettingsTab() {
                   />
                 </div>
                 <div className="flex-1 space-y-2">
-                  <Label htmlFor={`human-tier-price-${index}`}>Peruskuukausihinta (€)</Label>
+                  <Label htmlFor={`human-tier-price-${index}`}>Peruskuukausihinta (€/kk)</Label>
                   <Input
                     id={`human-tier-price-${index}`}
                     type="number"
@@ -192,7 +192,7 @@ export default function SettingsTab() {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Botin portaistettu hinnoittelu</CardTitle>
+          <CardTitle>Botin portaistettu hinnoittelu (/kk)</CardTitle>
           <CardDescription>Määritä hinnat eri kyselymäärille</CardDescription>
         </CardHeader>
         <CardContent>
@@ -214,7 +214,7 @@ export default function SettingsTab() {
                   />
                 </div>
                 <div className="flex-1 space-y-2">
-                  <Label htmlFor={`tier-price-${index}`}>Hinta (€)</Label>
+                  <Label htmlFor={`tier-price-${index}`}>Hinta (€/kk)</Label>
                   <Input
                     id={`tier-price-${index}`}
                     type="number"
@@ -228,7 +228,7 @@ export default function SettingsTab() {
                   />
                 </div>
                 <div className="flex-1 space-y-2">
-                  <Label htmlFor={`tier-systemcosts-${index}`}>Järjestelmäkulut (€)</Label>
+                  <Label htmlFor={`tier-systemcosts-${index}`}>Järjestelmäkulut (€/kk)</Label>
                   <Input
                     id={`tier-systemcosts-${index}`}
                     type="number"
