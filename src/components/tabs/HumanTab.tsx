@@ -56,6 +56,40 @@ export default function HumanTab() {
 
       <Card className="shadow-elegant">
         <CardHeader>
+          <CardTitle>Laskentaperuste</CardTitle>
+          <CardDescription>
+            Miten ihmistyön kustannukset lasketaan
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Laskentakaava:</h4>
+            <div className="space-y-2 text-sm">
+              <p className="font-mono bg-background p-2 rounded">
+                Kokonaiskustannus = Työvoimakustannus + Peruskuukausihinta
+              </p>
+              <p className="font-mono bg-background p-2 rounded">
+                Työvoimakustannus = Työtunnit × Tuntihinta
+              </p>
+              <p className="font-mono bg-background p-2 rounded">
+                Työtunnit = (Kyselymäärä × Käsittelyaika minuutteina) ÷ 60
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <h4 className="font-semibold mb-3">Esimerkkikaava nykyisillä arvoilla:</h4>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>Työtunnit = ({calculation.monthlyQueries} kyselyä × {calculation.minutesPerQuery} min) ÷ 60 = {formatHours(calculation.totalHours)}</p>
+              <p>Työvoimakustannus = {formatHours(calculation.totalHours)} × {formatCurrency(calculation.hourlyRate)}/h = {formatCurrency(calculation.hourlyLabor)}</p>
+              <p className="font-semibold text-foreground pt-2">Yhteensä = {formatCurrency(calculation.hourlyLabor)} + {formatCurrency(calculation.basePrice)} = {formatCurrency(calculation.totalCost)}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-elegant">
+        <CardHeader>
           <CardTitle>Kustannuserittely</CardTitle>
           <CardDescription>Yksityiskohtainen kustannuslaskenta</CardDescription>
         </CardHeader>

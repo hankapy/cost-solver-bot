@@ -27,6 +27,64 @@ export default function HybridTab() {
 
       <Card className="shadow-elegant">
         <CardHeader>
+          <CardTitle>Laskentaperuste</CardTitle>
+          <CardDescription>
+            Miten hybridimallin kustannukset lasketaan
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Kuukausittainen laskentakaava:</h4>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="font-semibold">1. Kyselyiden jako:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Botin kyselyt = Kokonaiskyselyt × (Botin osuus % ÷ 100)
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Ihmisen kyselyt = Kokonaiskyselyt - Botin kyselyt
+                </p>
+              </div>
+              
+              <div>
+                <p className="font-semibold">2. Botin kustannus:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Kk 1: Vain aloitusmaksu
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Kk 2+: Portaistettu hinta (botin kyselyiden mukaan) + Järjestelmäkulut
+                </p>
+              </div>
+
+              <div>
+                <p className="font-semibold">3. Ihmistyön kustannus:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Työtunnit = (Ihmisen kyselyt × Käsittelyaika) ÷ 60
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Ihmiskustannus = (Työtunnit × Tuntihinta) + Peruskuukausihinta
+                </p>
+              </div>
+
+              <div>
+                <p className="font-semibold">4. Kokonaiskustannus:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Yhdistetty = Botin kustannus + Ihmiskustannus
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Alennettu = Yhdistetty × (1 - Keskittämisalennus % ÷ 100)
+                </p>
+                <p className="text-muted-foreground text-xs mt-2">
+                  Keskittämisalennus huomioi synergiahyödyt, kun molemmat kanavat hoidetaan samassa järjestelmässä
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-elegant">
+        <CardHeader>
           <CardTitle>Kuukausittainen kehitys</CardTitle>
           <CardDescription>
             Kustannukset hybridimallissa kun botin osuus kasvaa asteittain

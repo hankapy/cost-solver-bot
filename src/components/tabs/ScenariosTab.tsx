@@ -47,6 +47,64 @@ export default function ScenariosTab() {
         </p>
       </div>
 
+      <Card className="shadow-elegant">
+        <CardHeader>
+          <CardTitle>Laskentaperuste</CardTitle>
+          <CardDescription>
+            Miten skenaariot lasketaan ja vertaillaan
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Skenaariovertailun kaava:</h4>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="font-semibold">1. Pelkkä ihmistyö (100% ihminen):</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Ihmiskustannus = ((Kyselyt × Käsittelyaika ÷ 60) × Tuntihinta) + Peruskuukausihinta
+                </p>
+              </div>
+              
+              <div>
+                <p className="font-semibold">2. Hybridimalli:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Botin kyselyt = Kokonaiskyselyt × (Botin osuus % ÷ 100)
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Botin kustannus = Portaistettu hinta (botin kyselyiden mukaan) + Järjestelmäkulut
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Ihmisen kyselyt = Kokonaiskyselyt - Botin kyselyt
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Ihmisen osuus = ((Ihmisen kyselyt × Käsittelyaika ÷ 60) × Tuntihinta) + Peruskuukausihinta
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Hybridikustannus = (Botin kustannus + Ihmisen osuus) × (1 - Keskittämisalennus % ÷ 100)
+                </p>
+              </div>
+
+              <div>
+                <p className="font-semibold">3. Säästö:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Säästö = Ihmiskustannus - Hybridikustannus
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Säästöprosentti = (Säästö ÷ Ihmiskustannus) × 100
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <p className="text-sm text-muted-foreground">
+              <strong>Huom:</strong> Tämä vertailu ei sisällä botin aloitusmaksua, koska verrataan jatkuvia kuukausikustannuksia. 
+              Aloitusmaksu on kertaluonteinen ensimmäisen kuukauden kustannus.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle>Lisää uusi skenaario</CardTitle>

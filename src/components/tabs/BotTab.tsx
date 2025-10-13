@@ -22,6 +22,51 @@ export default function BotTab() {
         </p>
       </div>
 
+      <Card className="shadow-elegant">
+        <CardHeader>
+          <CardTitle>Laskentaperuste</CardTitle>
+          <CardDescription>
+            Miten botin kustannukset lasketaan
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Hinnoittelurakenne:</h4>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="font-semibold">1. Ensimmäinen kuukausi:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1">
+                  Kustannus = Aloitusmaksu (kertaluonteinen)
+                </p>
+                <p className="text-muted-foreground text-xs mt-1">
+                  Ensimmäisenä kuukautena maksetaan vain kertaluonteinen aloitusmaksu botin käyttöönotosta
+                </p>
+              </div>
+              
+              <div>
+                <p className="font-semibold">2. Toisesta kuukaudesta eteenpäin:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1">
+                  Kuukausikustannus = Portaistettu hinta + Järjestelmäkulut
+                </p>
+                <p className="text-muted-foreground text-xs mt-1">
+                  Portaistettu hinta määräytyy kyselymäärän mukaan (katso asetuksista tiered pricing -taulukko)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <h4 className="font-semibold mb-3">Nykyiset arvot ({monthlyCalculation.monthlyQueries} kyselyä/kk):</h4>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>Portaistettu kuukausihinta = {formatCurrency(monthlyCalculation.tieredPrice)}</p>
+              <p>Järjestelmäkulut = {formatCurrency(monthlyCalculation.systemCosts)}</p>
+              <p className="font-semibold text-foreground pt-2">Kuukausikustannus (kk 2+) = {formatCurrency(monthlyCalculation.totalCost)}</p>
+              <p className="text-xs pt-2 italic">Ensimmäisen kuukauden kustannus = {formatCurrency(firstMonthCalculation.totalCost)} (vain aloitusmaksu)</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-card bg-gradient-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
