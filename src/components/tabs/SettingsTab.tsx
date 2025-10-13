@@ -48,7 +48,7 @@ export default function SettingsTab() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Kyselymäärät</CardTitle>
+            <CardTitle>Kyselymäärät (Ihminen, Botti, Hybridi)</CardTitle>
             <CardDescription>Määritä kuukausittaiset kyselyt ja käsittelyajat</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -77,7 +77,7 @@ export default function SettingsTab() {
 
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Ihmistyön kustannukset</CardTitle>
+            <CardTitle>Ihmistyön kustannukset (Ihminen, Hybridi)</CardTitle>
             <CardDescription>Määritä ihmistyön peruskulut</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -97,7 +97,7 @@ export default function SettingsTab() {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Ihmistyön portaistettu peruskuukausihinta (/kk)</CardTitle>
+          <CardTitle>Ihmistyön portaistettu peruskuukausihinta (/kk) (Ihminen, Hybridi)</CardTitle>
           <CardDescription>Määritä kiinteät kuukausikustannukset eri kyselymäärille</CardDescription>
         </CardHeader>
         <CardContent>
@@ -140,7 +140,7 @@ export default function SettingsTab() {
 
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Botin kiinteät kulut</CardTitle>
+            <CardTitle>Botin kiinteät kulut (Botti, Hybridi)</CardTitle>
             <CardDescription>Määritä botin peruskulut</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -192,7 +192,7 @@ export default function SettingsTab() {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Botin portaistettu hinnoittelu (/kk)</CardTitle>
+          <CardTitle>Botin portaistettu hinnoittelu (/kk) (Botti, Hybridi)</CardTitle>
           <CardDescription>Määritä hinnat eri kyselymäärille</CardDescription>
         </CardHeader>
         <CardContent>
@@ -249,7 +249,7 @@ export default function SettingsTab() {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Botin osuuden kehitys</CardTitle>
+          <CardTitle>Botin osuuden kehitys (Hybridi)</CardTitle>
           <CardDescription>Määritä kuinka botin osuus kasvaa kuukausittain ja vuosittain hybridimallissa</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
