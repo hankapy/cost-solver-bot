@@ -29,6 +29,12 @@ const DEFAULT_SETTINGS: PricingSettings = {
     { month: 11, percentage: 38 },
     { month: 12, percentage: 40 },
   ],
+  botYearlyGrowth: [
+    { year: 0, percentage: 40 },
+    { year: 1, percentage: 40 },
+    { year: 2, percentage: 40 },
+    { year: 3, percentage: 40 },
+  ],
 };
 
 interface PricingContextType {

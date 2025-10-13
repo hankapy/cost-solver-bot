@@ -116,9 +116,9 @@ export default function SettingsTab() {
           <CardDescription>Määritä hinnat eri kyselymäärille</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-3">
             {settings.botTiers.map((tier, index) => (
-              <div key={index} className="flex gap-2 items-end">
+              <div key={index} className="flex gap-3 items-end">
                 <div className="flex-1 space-y-2">
                   <Label htmlFor={`tier-limit-${index}`}>Kyselyraja</Label>
                   <Input
@@ -156,30 +156,68 @@ export default function SettingsTab() {
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle>Botin osuuden kehitys</CardTitle>
-          <CardDescription>Määritä kuinka botin osuus kasvaa kuukausittain hybridimallissa</CardDescription>
+          <CardDescription>Määritä kuinka botin osuus kasvaa kuukausittain ja vuosittain hybridimallissa</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {settings.botGrowth.map((growth, index) => (
-              <div key={index} className="space-y-2">
-                <Label htmlFor={`growth-${index}`}>Kuukausi {growth.month}</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id={`growth-${index}`}
-                    type="number"
-                    value={growth.percentage}
-                    onChange={(e) => {
-                      const newGrowth = [...settings.botGrowth];
-                      newGrowth[index].percentage = Number(e.target.value);
-                      updateSettings({ botGrowth: newGrowth });
-                    }}
-                    min="0"
-                    max="100"
-                  />
-                  <span className="text-sm text-muted-foreground">%</span>
+        <CardContent className="space-y-6">
+          <div>
+            <h4 className="font-semibold mb-3 text-sm">Kuukausitaso (1-12 kk)</h4>
+            <div className="space-y-2">
+              {settings.botGrowth.map((growth, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <Label htmlFor={`growth-${index}`} className="w-24 text-sm">Kuukausi {growth.month}</Label>
+                  <div className="flex items-center gap-2 flex-1 max-w-xs">
+                    <Input
+                      id={`growth-${index}`}
+                      type="number"
+                      value={growth.percentage}
+                      onChange={(e) => {
+                        const newGrowth = [...settings.botGrowth];
+                        newGrowth[index].percentage = Number(e.target.value);
+                        updateSettings({ botGrowth: newGrowth });
+                      }}
+                      min="0"
+                      max="100"
+                    />
+                    <span className="text-sm text-muted-foreground min-w-[20px]">%</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t pt-6">
+            <h4 className="font-semibold mb-3 text-sm">Vuositaso (0-3 vuotta)</h4>
+            <div className="space-y-2">
+              {settings.botYearlyGrowth.map((growth, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <Label htmlFor={`yearly-growth-${index}`} className="w-24 text-sm">
+                    {growth.year === 0 ? "Vuosi 0 (kk 1-12)" : `Vuosi ${growth.year}`}
+                  </Label>
+                  <div className="flex items-center gap-2 flex-1 max-w-xs">
+                    <Input
+                      id={`yearly-growth-${index}`}
+                      type="number"
+                      value={growth.percentage}
+                      onChange={(e) => {
+                        const newGrowth = [...settings.botYearlyGrowth];
+                        newGrowth[index].percentage = Number(e.target.value);
+                        updateSettings({ botYearlyGrowth: newGrowth });
+                      }}
+                      min="0"
+                      max="100"
+                    />
+                    <span className="text-sm text-muted-foreground min-w-[20px]">%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <p className="text-sm text-muted-foreground">
+              <strong>Huom:</strong> Kuukausitaso kuvaa kehitystä ensimmäisen vuoden aikana. 
+              Vuositaso määrittää botin osuuden pidemmällä aikavälillä (vuosina 0-3).
+            </p>
           </div>
         </CardContent>
       </Card>

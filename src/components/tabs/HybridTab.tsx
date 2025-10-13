@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateHybridMonth } from "@/lib/pricingCalculations";
+import { calculateHybridMonth, getBotTieredPrice } from "@/lib/pricingCalculations";
 import { GitMerge, Calendar } from "lucide-react";
 
 export default function HybridTab() {
@@ -15,16 +15,37 @@ export default function HybridTab() {
 
   // Vuosilaskuri: laske kustannukset vuosille 0-3
   const calculateYearlyCost = (year: number) => {
-    const startMonth = year * 12 + 1;
-    const endMonth = Math.min(startMonth + 11, 12);
-    
-    let totalCost = 0;
-    for (let month = startMonth; month <= endMonth; month++) {
-      const calc = calculateHybridMonth(month <= 12 ? month : 12, settings);
-      totalCost += calc.discountedCost;
+    // Vuosi 0: käytetään kuukausitason arvoja (kk 1-12)
+    if (year === 0) {
+      let totalCost = 0;
+      for (let month = 1; month <= 12; month++) {
+        const calc = calculateHybridMonth(month, settings);
+        totalCost += calc.discountedCost;
+      }
+      return totalCost;
     }
     
-    return totalCost;
+    // Vuodet 1-3: käytetään vuositason botin osuutta
+    const yearlyGrowth = settings.botYearlyGrowth.find(g => g.year === year);
+    const botPercentage = yearlyGrowth?.percentage || settings.botGrowth[11].percentage;
+    
+    const botQueries = Math.round((settings.monthlyQueries * botPercentage) / 100);
+    const humanQueries = settings.monthlyQueries - botQueries;
+    
+    const botTieredPrice = getBotTieredPrice(botQueries, settings);
+    const botMonthlyCost = botTieredPrice + settings.botSystemCosts;
+    
+    const humanMinutes = humanQueries * settings.minutesPerQuery;
+    const humanHours = humanMinutes / 60;
+    const HOURLY_RATE = 20;
+    const BASE_MONTHLY_PRICE = 250;
+    const humanLaborCost = humanHours * HOURLY_RATE;
+    const humanTotalCost = humanLaborCost + BASE_MONTHLY_PRICE;
+    
+    const combinedCost = botMonthlyCost + humanTotalCost;
+    const monthlyCost = combinedCost * (1 - settings.centralizationDiscount / 100);
+    
+    return monthlyCost * 12; // Koko vuoden kustannus
   };
 
   const yearlyData = [
@@ -234,9 +255,8 @@ export default function HybridTab() {
           
           <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
             <p className="text-sm text-muted-foreground">
-              <strong>Huom:</strong> Vuoden 0 jälkeen botin osuus pysyy 12. kuukauden tasolla (
-              {formatPercentage(calculations[11]?.botPercentage || 0)}). 
-              Kuukausikustannus on {formatCurrency(calculations[11]?.discountedCost || 0)}.
+              <strong>Huom:</strong> Vuosi 0 näyttää ensimmäisen 12 kuukauden kokonaiskustannukset kuukausitason kehityksen mukaan. 
+              Vuodet 1-3 käyttävät asetuksissa määritettyjä vuositason botin osuuksia ja laskevat koko vuoden kustannukset.
             </p>
           </div>
         </CardContent>

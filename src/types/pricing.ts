@@ -13,6 +13,14 @@ export interface PricingSettings {
   
   // Bot percentage growth per month
   botGrowth: BotGrowthMonth[];
+  
+  // Bot percentage for yearly periods (years 0-3)
+  botYearlyGrowth: BotGrowthYear[];
+}
+
+export interface BotGrowthYear {
+  year: number;
+  percentage: number;
 }
 
 export interface BotTier {
