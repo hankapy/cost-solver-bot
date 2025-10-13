@@ -4,21 +4,27 @@ Tämä sovellus on suunniteltu vertailemaan ihmistyön, botin ja hybridimallin k
 
 ## Ominaisuudet
 
-### 📊 Viisi välilehteä
+### 📊 Kahdeksan välilehteä
 
-1. **Ihminen** - Pelkän ihmistyön kustannuslaskenta
+1. **Asetukset** - Konfigurointi
+   - Perusasetukset (kyselymäärä, käsittelyaika, tuntihinta)
+   - Ihmistyön portaistettu hinnoittelu
+   - Botin kiinteät kulut ja portaistettu hinnoittelu
+   - Botin osuuden kehitys (kuukausittain ja vuosittain)
+
+2. **Ihminen** - Pelkän ihmistyön kustannuslaskenta
    - Kuukausittaiset kyselyt ja niiden käsittelyaika
    - Portaistettu hinnoittelu kyselymäärän mukaan
    - Tuntityön ja peruskuukausimaksun laskenta
    - Muokattava kyselymäärä suoraan välilehdellä
 
-2. **Botti** - Täysautomaation kustannuslaskenta
+3. **Botti** - Täysautomaation kustannuslaskenta
    - Kertaluonteinen aloitusmaksu ensimmäisenä kuukautena
    - Portaistettu kuukausiveloitus + järjestelmäkulut
    - Eri hinnoittelu eri kyselymäärille
    - Muokattava kyselymäärä suoraan välilehdellä
 
-3. **Hybridi** - Yhdistelmämalli botin ja ihmistyön välillä
+4. **Hybridi** - Yhdistelmämalli botin ja ihmistyön välillä
    - Botin osuus kasvaa asteittain kuukausittain
    - Keskittämisalennuksen huomiointi
    - Kuukausittainen kehitysnäkymä
@@ -26,25 +32,19 @@ Tämä sovellus on suunniteltu vertailemaan ihmistyön, botin ja hybridimallin k
    - Säästölaskuri verrattuna pelkkään ihmistyöhön
    - Muokattava kyselymäärä ja keskittämisalennus suoraan välilehdellä
 
-4. **Säästöt** - Kustannusvertailu ja ROI-analyysi
+5. **Säästöt** - Kustannusvertailu ja ROI-analyysi
    - Vertailu: Pelkkä ihminen vs. Pelkkä botti
    - Vertailu: Pelkkä ihminen vs. Hybridimalli
    - Säästöjen visualisointi ja prosenttilaskelmat
 
-5. **Skenaariot** - Eri kyselymäärien vertailu
+6. **Skenaariot** - Eri kyselymäärien vertailu
    - Vertaile eri skenaarioita rinnakkain
    - Muokattavat kyselymäärät ja botin osuudet
    - Nopea kustannusvertailu eri tilanteissa
 
-6. **Esimerkki** - Käytännön esimerkkitapaus
+7. **Esimerkki** - Käytännön esimerkkitapaus
    - Konkreettinen laskentaesimerkki
    - Yksityiskohtainen kustannuserittely
-
-7. **Asetukset** - Konfigurointi
-   - Perusasetukset (kyselymäärä, käsittelyaika, tuntihinta)
-   - Ihmistyön portaistettu hinnoittelu
-   - Botin kiinteät kulut ja portaistettu hinnoittelu
-   - Botin osuuden kehitys (kuukausittain ja vuosittain)
 
 8. **README** - Ohjeet ja dokumentaatio
 
