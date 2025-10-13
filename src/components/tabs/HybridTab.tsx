@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
@@ -13,21 +12,15 @@ export default function HybridTab() {
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
   const formatPercentage = (value: number) => `${value.toFixed(0)} %`;
 
-  const months = useMemo(() => settings.botGrowth.map(g => g.month), [settings.botGrowth]);
-  const calculations = useMemo(() => 
-    months.map(month => calculateHybridMonth(month, settings)),
-    [months, settings]
-  );
+  const months = settings.botGrowth.map(g => g.month);
+  const calculations = months.map(month => calculateHybridMonth(month, settings));
   
   // Laske pelkän ihmistyön vuosikustannus vertailua varten
-  const humanYearlyCost = useMemo(() => calculateHumanCost(settings).totalCost * 12, [settings]);
+  const humanYearlyCost = calculateHumanCost(settings).totalCost * 12;
   // Laske hybridimallin todellinen vuosikustannus (summaa kaikki 12 kuukautta)
-  const hybridYearlyCost = useMemo(() => 
-    calculations.reduce((sum, calc) => sum + calc.discountedCost, 0),
-    [calculations]
-  );
+  const hybridYearlyCost = calculations.reduce((sum, calc) => sum + calc.discountedCost, 0);
   // Säästö = pelkkä ihmistyö - hybridi
-  const yearlySavings = useMemo(() => humanYearlyCost - hybridYearlyCost, [humanYearlyCost, hybridYearlyCost]);
+  const yearlySavings = humanYearlyCost - hybridYearlyCost;
 
   // Vuosilaskuri: laske kustannukset vuosille 0-3
   const calculateYearlyCost = (year: number) => {
