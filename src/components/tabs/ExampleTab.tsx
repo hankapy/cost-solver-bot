@@ -156,6 +156,7 @@ export default function ExampleTab() {
             <BarChart 
               data={chartData} 
               margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+              barSize={100}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
               <XAxis 
