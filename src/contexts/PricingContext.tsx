@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import type { PricingSettings } from '@/types/pricing';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import type { PricingSettings } from "@/types/pricing";
 
 const DEFAULT_SETTINGS: PricingSettings = {
   monthlyQueries: 100,
@@ -7,41 +7,41 @@ const DEFAULT_SETTINGS: PricingSettings = {
   centralizationDiscount: 10,
   humanHourlyRate: 20,
   humanTiers: [
-    { queryLimit: 100, basePrice: 200 },
-    { queryLimit: 150, basePrice: 225 },
-    { queryLimit: 200, basePrice: 250 },
+    { queryLimit: 50, basePrice: 200 },
+    { queryLimit: 100, basePrice: 225 },
+    { queryLimit: 150, basePrice: 250 },
     { queryLimit: 300, basePrice: 275 },
     { queryLimit: 500, basePrice: 300 },
   ],
-  botStartupFee: 500,
+  botStartupFee: 3000,
   botMonthlyFee: 300,
   botSystemCosts: 150,
   botTiers: [
-    { queryLimit: 100, price: 350, systemCosts: 150 },
-    { queryLimit: 150, price: 450, systemCosts: 150 },
-    { queryLimit: 200, price: 550, systemCosts: 150 },
-    { queryLimit: 300, price: 650, systemCosts: 200 },
-    { queryLimit: 500, price: 750, systemCosts: 200 },
+    { queryLimit: 50, price: 200, systemCosts: 150 },
+    { queryLimit: 100, price: 250, systemCosts: 150 },
+    { queryLimit: 150, price: 350, systemCosts: 150 },
+    { queryLimit: 300, price: 450, systemCosts: 200 },
+    { queryLimit: 500, price: 600, systemCosts: 200 },
   ],
   botGrowth: [
-    { month: 1, percentage: 10 },
-    { month: 2, percentage: 12 },
-    { month: 3, percentage: 15 },
-    { month: 4, percentage: 18 },
-    { month: 5, percentage: 22 },
-    { month: 6, percentage: 25 },
-    { month: 7, percentage: 28 },
-    { month: 8, percentage: 30 },
-    { month: 9, percentage: 33 },
-    { month: 10, percentage: 36 },
-    { month: 11, percentage: 38 },
-    { month: 12, percentage: 40 },
+    { month: 1, percentage: 5 },
+    { month: 2, percentage: 10 },
+    { month: 3, percentage: 10 },
+    { month: 4, percentage: 15 },
+    { month: 5, percentage: 15 },
+    { month: 6, percentage: 20 },
+    { month: 7, percentage: 25 },
+    { month: 8, percentage: 25 },
+    { month: 9, percentage: 30 },
+    { month: 10, percentage: 40 },
+    { month: 11, percentage: 45 },
+    { month: 12, percentage: 50 },
   ],
   botYearlyGrowth: [
-    { year: 0, percentage: 40 },
-    { year: 1, percentage: 40 },
-    { year: 2, percentage: 40 },
-    { year: 3, percentage: 40 },
+    { year: 0, percentage: 5 },
+    { year: 1, percentage: 50 },
+    { year: 2, percentage: 75 },
+    { year: 3, percentage: 90 },
   ],
 };
 
@@ -57,7 +57,7 @@ export function PricingProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<PricingSettings>(DEFAULT_SETTINGS);
 
   const updateSettings = (newSettings: Partial<PricingSettings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+    setSettings((prev) => ({ ...prev, ...newSettings }));
   };
 
   const resetSettings = () => {
@@ -65,16 +65,14 @@ export function PricingProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <PricingContext.Provider value={{ settings, updateSettings, resetSettings }}>
-      {children}
-    </PricingContext.Provider>
+    <PricingContext.Provider value={{ settings, updateSettings, resetSettings }}>{children}</PricingContext.Provider>
   );
 }
 
 export function usePricing() {
   const context = useContext(PricingContext);
   if (context === undefined) {
-    throw new Error('usePricing must be used within a PricingProvider');
+    throw new Error("usePricing must be used within a PricingProvider");
   }
   return context;
 }
