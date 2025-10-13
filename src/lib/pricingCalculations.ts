@@ -44,17 +44,17 @@ export function calculateHumanCost(settings: PricingSettings): HumanCostCalculat
 }
 
 export function getBotTieredPrice(queries: number, settings: PricingSettings): { price: number; systemCosts: number } {
-  // Find the appropriate tier
-  const sortedTiers = [...settings.botTiers].sort((a, b) => a.queryLimit - b.queryLimit);
-  
   // Jos kyselyjä ei ole, palauta nollakulut
   if (queries === 0) {
     return { price: 0, systemCosts: 0 };
   }
   
-  // Etsi sopiva tier kyselymäärän perusteella
-  for (let i = sortedTiers.length - 1; i >= 0; i--) {
-    if (queries >= sortedTiers[i].queryLimit) {
+  // Järjestä tierit pienimmästä suurimpaan queryLimitin mukaan
+  const sortedTiers = [...settings.botTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+  
+  // Etsi PIENIN tier johon kyselymäärä mahtuu (queries <= queryLimit)
+  for (let i = 0; i < sortedTiers.length; i++) {
+    if (queries <= sortedTiers[i].queryLimit) {
       return { 
         price: sortedTiers[i].price,
         systemCosts: sortedTiers[i].systemCosts
@@ -62,19 +62,12 @@ export function getBotTieredPrice(queries: number, settings: PricingSettings): {
     }
   }
   
-  // Jos kyselymäärä on pienempi kuin pienin tier, käytä pienimmän tierin hintaa
-  // mutta skaalaa se alas kyselymäärän suhteessa
-  if (sortedTiers.length > 0) {
-    const lowestTier = sortedTiers[0];
-    const scaleFactor = queries / lowestTier.queryLimit;
-    return {
-      price: lowestTier.price * scaleFactor,
-      systemCosts: lowestTier.systemCosts * scaleFactor
-    };
-  }
-  
-  // Jos ei tierejä ole, palauta nollakulut
-  return { price: 0, systemCosts: 0 };
+  // Jos kyselymäärä ylittää kaikki tierit, käytä korkeimman tierin hintaa
+  const highestTier = sortedTiers[sortedTiers.length - 1];
+  return {
+    price: highestTier?.price || 0,
+    systemCosts: highestTier?.systemCosts || 0
+  };
 }
 
 export function calculateBotCost(settings: PricingSettings, includeStartupFee = false): BotCostCalculation {
