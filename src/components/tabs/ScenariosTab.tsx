@@ -21,6 +21,9 @@ export default function ScenariosTab() {
 
   const [newQueries, setNewQueries] = useState(100);
   const [newBotPercentage, setNewBotPercentage] = useState(30);
+  
+  // Vertailutyökaluun kyselymäärä
+  const [comparisonQueries, setComparisonQueries] = useState(200);
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
   const formatPercentage = (value: number) => `${value.toFixed(1)} %`;
@@ -44,6 +47,19 @@ export default function ScenariosTab() {
     Hybridi: Number(scenario.hybridCost.toFixed(2)),
     Säästö: Number(scenario.savings.toFixed(2)),
   }));
+
+  // Vertailutyökalun data: sama kyselymäärä, eri botin osuudet
+  const botPercentages = [0, 25, 50, 75, 100];
+  const comparisonData = botPercentages.map(botPct => {
+    const scenario = calculateScenario(comparisonQueries, botPct, settings);
+    return {
+      botPercentage: botPct,
+      humanCost: scenario.humanCost,
+      hybridCost: scenario.hybridCost,
+      savings: scenario.savings,
+      savingsPercentage: scenario.savingsPercentage,
+    };
+  });
 
   return (
     <div className="space-y-6">
@@ -158,6 +174,76 @@ export default function ScenariosTab() {
                 Tämä tarkoittaa, että säästät 130 € kuukaudessa eli 1 560 € vuodessa!
               </p>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-elegant border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Botin osuuden vaikutus
+          </CardTitle>
+          <CardDescription>
+            Vertaile, miten eri botin osuudet vaikuttavat kustannuksiin samalla kyselymäärällä
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="comparisonQueries">Kyselymäärä / kk</Label>
+            <Input
+              id="comparisonQueries"
+              type="number"
+              value={comparisonQueries}
+              onChange={(e) => setComparisonQueries(Number(e.target.value))}
+              min="0"
+              className="max-w-xs"
+            />
+          </div>
+
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Botin osuus</TableHead>
+                  <TableHead>Botti kyselyt</TableHead>
+                  <TableHead>Ihminen kyselyt</TableHead>
+                  <TableHead className="text-right">Kustannus</TableHead>
+                  <TableHead className="text-right text-success">Säästö</TableHead>
+                  <TableHead className="text-right text-success">Säästö %</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {comparisonData.map((data) => {
+                  const botQueries = Math.round((comparisonQueries * data.botPercentage) / 100);
+                  const humanQueries = comparisonQueries - botQueries;
+                  
+                  return (
+                    <TableRow key={data.botPercentage}>
+                      <TableCell className="font-medium">{data.botPercentage} %</TableCell>
+                      <TableCell>{botQueries}</TableCell>
+                      <TableCell>{humanQueries}</TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {formatCurrency(data.hybridCost)}
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-success">
+                        {formatCurrency(data.savings)}
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-success">
+                        {formatPercentage(data.savingsPercentage)}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 mt-4">
+            <p className="text-sm text-muted-foreground">
+              <strong>Tulkinta:</strong> Kun botin osuus kasvaa, kustannukset laskevat ja säästö kasvaa. 
+              Esimerkiksi {comparisonQueries} kyselyllä näet tarkalleen, kuinka paljon säästät eri automatisointiasteilla.
+            </p>
           </div>
         </CardContent>
       </Card>
