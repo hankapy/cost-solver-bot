@@ -202,7 +202,7 @@ export default function ExampleTab() {
               <TableCell className="text-right font-semibold">{formatCurrency(costs.totalWithoutBot)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Botin kuukausimaksu ({estimatedQueries} kyselyä/kk, Asetukset-välilehden mukaan)</TableCell>
+              <TableCell>Botin kuukausimaksu ({estimatedQueries} kyselyä/kk)</TableCell>
               <TableCell className="text-right">{formatCurrency(costs.botMonthlyFee)}</TableCell>
             </TableRow>
             <TableRow>
