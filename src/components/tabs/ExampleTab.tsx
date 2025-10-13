@@ -3,10 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { usePricing } from "@/contexts/PricingContext";
 import { getBotTieredPrice } from "@/lib/pricingCalculations";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export default function ExampleTab() {
   const { settings } = usePricing();
@@ -46,21 +45,15 @@ export default function ExampleTab() {
 
   const chartData = [
     {
-      name: "Nykyinen\ntilanne",
-      "Kokonaiskustannus": Math.round(costs.totalWithoutBot),
+      name: "Nykyinen tilanne",
+      Kokonaiskustannus: Math.round(costs.totalWithoutBot),
     },
     {
-      name: "Botin\nkanssa",
+      name: "Botin kanssa",
       "Botin kustannus": Math.round(costs.totalWithBot),
       "Säästö": Math.round(costs.monthlySavings),
     },
   ];
-
-  const chartConfig = {
-    value: {
-      label: "Kustannus",
-    },
-  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("fi-FI", {
@@ -155,49 +148,53 @@ export default function ExampleTab() {
 
       <Card className="p-6 shadow-elegant">
         <h3 className="text-xl font-semibold mb-6">Kustannusvertailu</h3>
-        <ChartContainer config={chartConfig} className="h-[400px]">
+        <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap={0}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
+            <BarChart 
+              data={chartData} 
+              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
               <XAxis 
                 dataKey="name" 
-                tick={{ fontSize: 13, fontWeight: 500 }} 
-                stroke="hsl(var(--muted-foreground))"
+                tick={{ fontSize: 14, fontWeight: 500 }}
+                angle={0}
               />
               <YAxis 
-                tick={{ fontSize: 12 }} 
-                stroke="hsl(var(--muted-foreground))"
+                tick={{ fontSize: 12 }}
                 label={{ value: '€', angle: 0, position: 'top', offset: 10 }}
                 tickFormatter={(value) => value.toLocaleString('fi-FI')}
               />
-              <ChartTooltip 
-                content={<ChartTooltipContent formatter={(value) => formatCurrency(Number(value))} />}
-                cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
+              <Tooltip 
+                formatter={(value) => formatCurrency(Number(value))}
+                contentStyle={{ 
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '8px'
+                }}
               />
-              <Legend />
+              <Legend 
+                wrapperStyle={{ paddingTop: '20px' }}
+              />
               <Bar 
                 dataKey="Kokonaiskustannus" 
                 fill="hsl(var(--destructive))"
                 radius={[8, 8, 0, 0]}
-                maxBarSize={120}
               />
               <Bar 
                 dataKey="Botin kustannus" 
-                stackId="a"
+                stackId="stack"
                 fill="hsl(var(--primary))"
-                radius={[0, 0, 0, 0]}
-                maxBarSize={120}
               />
               <Bar 
                 dataKey="Säästö" 
-                stackId="a"
+                stackId="stack"
                 fill="hsl(var(--success))"
                 radius={[8, 8, 0, 0]}
-                maxBarSize={120}
               />
             </BarChart>
           </ResponsiveContainer>
-        </ChartContainer>
+        </div>
       </Card>
 
       <Card className="p-6">
