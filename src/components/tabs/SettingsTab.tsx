@@ -3,11 +3,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { usePricing } from "@/contexts/PricingContext";
+import { getBotTieredPrice } from "@/lib/pricingCalculations";
 import { RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 export default function SettingsTab() {
   const { settings, updateSettings, resetSettings } = usePricing();
+
+  // Laske portaistettu hinta nykyisellä kyselymäärällä
+  const tieredPrice = getBotTieredPrice(settings.monthlyQueries, settings);
+  const totalMonthlyFee = tieredPrice + settings.botSystemCosts;
+
+  const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
 
   const handleReset = () => {
     resetSettings();
@@ -87,17 +94,7 @@ export default function SettingsTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="botMonthlyFee">Kuukausiveloitus (€)</Label>
-              <Input
-                id="botMonthlyFee"
-                type="number"
-                value={settings.botMonthlyFee}
-                onChange={(e) => updateSettings({ botMonthlyFee: Number(e.target.value) })}
-                min="0"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="botSystemCosts">Järjestelmäkulut (€)</Label>
+              <Label htmlFor="botSystemCosts">Järjestelmäkulut (€/kk)</Label>
               <Input
                 id="botSystemCosts"
                 type="number"
@@ -105,6 +102,27 @@ export default function SettingsTab() {
                 onChange={(e) => updateSettings({ botSystemCosts: Number(e.target.value) })}
                 min="0"
               />
+            </div>
+
+            <div className="pt-4 border-t space-y-3">
+              <h4 className="font-semibold text-sm">Laskettu kuukausiveloitus</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                  <span className="text-muted-foreground">Portaistettu hinta ({settings.monthlyQueries} kyselyä)</span>
+                  <span className="font-semibold">{formatCurrency(tieredPrice)}</span>
+                </div>
+                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                  <span className="text-muted-foreground">+ Järjestelmäkulut</span>
+                  <span className="font-semibold">{formatCurrency(settings.botSystemCosts)}</span>
+                </div>
+                <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
+                  <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
+                  <span className="text-lg font-bold text-primary">{formatCurrency(totalMonthlyFee)}</span>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground italic">
+                Kuukausiveloitus lasketaan automaattisesti portaistetun hinnan ja järjestelmäkulujen summana
+              </p>
             </div>
           </CardContent>
         </Card>
