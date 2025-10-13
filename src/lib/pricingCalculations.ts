@@ -42,15 +42,16 @@ export function getBotTieredPrice(queries: number, settings: PricingSettings): n
   return sortedTiers[0]?.price || 0;
 }
 
-export function calculateBotCost(settings: PricingSettings): BotCostCalculation {
+export function calculateBotCost(settings: PricingSettings, includeStartupFee = false): BotCostCalculation {
   const tieredPrice = getBotTieredPrice(settings.monthlyQueries, settings);
-  const totalCost = tieredPrice + settings.botStartupFee + settings.botMonthlyFee + settings.botSystemCosts;
+  const monthlyCost = tieredPrice + settings.botSystemCosts;
+  const totalCost = includeStartupFee ? monthlyCost + settings.botStartupFee : monthlyCost;
 
   return {
     monthlyQueries: settings.monthlyQueries,
     tieredPrice,
-    startupFee: settings.botStartupFee,
-    monthlyFee: settings.botMonthlyFee,
+    startupFee: includeStartupFee ? settings.botStartupFee : 0,
+    monthlyFee: 0, // Ei käytetä, portaistettu hinta on jo kuukausiveloitus
     systemCosts: settings.botSystemCosts,
     totalCost
   };
@@ -66,14 +67,17 @@ export function calculateHybridMonth(
   const botQueries = Math.round((settings.monthlyQueries * botPercentage) / 100);
   const humanQueries = settings.monthlyQueries - botQueries;
   
-  const botCost = getBotTieredPrice(botQueries, settings);
+  const botTieredPrice = getBotTieredPrice(botQueries, settings);
+  const botMonthlyCost = botTieredPrice + settings.botSystemCosts;
+  // Aloitusmaksu vain ensimmäiselle kuukaudelle
+  const botCost = month === 1 ? botMonthlyCost + settings.botStartupFee : botMonthlyCost;
   
   const humanMinutes = humanQueries * settings.minutesPerQuery;
   const humanHours = humanMinutes / 60;
   const humanLaborCost = humanHours * HOURLY_RATE;
   const humanTotalCost = humanLaborCost + BASE_MONTHLY_PRICE;
   
-  const combinedCost = botCost + humanTotalCost + settings.botMonthlyFee + settings.botSystemCosts;
+  const combinedCost = botCost + humanTotalCost;
   const discountedCost = combinedCost * (1 - settings.centralizationDiscount / 100);
 
   return {
@@ -94,7 +98,8 @@ export function calculateHybridMonth(
 
 export function calculateSavings(settings: PricingSettings): SavingsCalculation {
   const humanCost = calculateHumanCost(settings).totalCost;
-  const botCost = calculateBotCost(settings).totalCost;
+  // Käytetään peruskuukausihintaa ilman aloitusmaksua vertailussa
+  const botCost = calculateBotCost(settings, false).totalCost;
   const savings = humanCost - botCost;
   const savingsPercentage = (savings / humanCost) * 100;
 
@@ -116,9 +121,8 @@ export function calculateScenario(
   const humanCost = calculateHumanCost(scenarioSettings).totalCost;
   
   const botQueries = Math.round((monthlyQueries * botPercentage) / 100);
-  const botCost = getBotTieredPrice(botQueries, scenarioSettings) + 
-                  settings.botMonthlyFee + 
-                  settings.botSystemCosts;
+  const botTieredPrice = getBotTieredPrice(botQueries, scenarioSettings);
+  const botMonthlyCost = botTieredPrice + settings.botSystemCosts;
   
   const humanQueries = monthlyQueries - botQueries;
   const humanMinutes = humanQueries * settings.minutesPerQuery;
@@ -126,7 +130,7 @@ export function calculateScenario(
   const humanLaborCost = humanHours * HOURLY_RATE;
   const humanPartCost = humanLaborCost + BASE_MONTHLY_PRICE;
   
-  const hybridCost = (botCost + humanPartCost) * (1 - settings.centralizationDiscount / 100);
+  const hybridCost = (botMonthlyCost + humanPartCost) * (1 - settings.centralizationDiscount / 100);
   
   const savings = humanCost - hybridCost;
   const savingsPercentage = (savings / humanCost) * 100;
@@ -135,7 +139,7 @@ export function calculateScenario(
     monthlyQueries,
     botPercentage,
     humanCost,
-    botCost,
+    botCost: botMonthlyCost,
     hybridCost,
     savings,
     savingsPercentage
