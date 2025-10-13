@@ -163,21 +163,7 @@ export default function ExampleTab() {
         <h3 className="text-xl font-semibold mb-6">Kustannusvertailu</h3>
         <ChartContainer config={chartConfig} className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-              <defs>
-                <linearGradient id="colorDestructive" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity={0.6} />
-                </linearGradient>
-                <linearGradient id="colorPrimary" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6} />
-                </linearGradient>
-                <linearGradient id="colorSuccess" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--success))" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="hsl(var(--success))" stopOpacity={0.6} />
-                </linearGradient>
-              </defs>
+            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap="15%">
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="name" 
@@ -196,12 +182,12 @@ export default function ExampleTab() {
               <Bar 
                 dataKey="value" 
                 radius={[8, 8, 0, 0]}
-                maxBarSize={100}
+                maxBarSize={120}
               >
                 {chartData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={index === 0 ? "url(#colorDestructive)" : index === 1 ? "url(#colorPrimary)" : "url(#colorSuccess)"}
+                    fill={entry.fill}
                   />
                 ))}
               </Bar>
