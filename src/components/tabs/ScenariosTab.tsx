@@ -1,0 +1,191 @@
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { usePricing } from "@/contexts/PricingContext";
+import { calculateScenario } from "@/lib/pricingCalculations";
+import type { ScenarioComparison } from "@/types/pricing";
+import { Plus, Trash2, TrendingUp } from "lucide-react";
+import { toast } from "sonner";
+
+export default function ScenariosTab() {
+  const { settings } = usePricing();
+  const [scenarios, setScenarios] = useState<ScenarioComparison[]>([
+    calculateScenario(100, 30, settings),
+    calculateScenario(200, 50, settings),
+    calculateScenario(500, 70, settings),
+  ]);
+
+  const [newQueries, setNewQueries] = useState(100);
+  const [newBotPercentage, setNewBotPercentage] = useState(30);
+
+  const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
+  const formatPercentage = (value: number) => `${value.toFixed(1)} %`;
+
+  const addScenario = () => {
+    const newScenario = calculateScenario(newQueries, newBotPercentage, settings);
+    setScenarios([...scenarios, newScenario]);
+    toast.success("Skenaario lisätty");
+  };
+
+  const removeScenario = (index: number) => {
+    setScenarios(scenarios.filter((_, i) => i !== index));
+    toast.success("Skenaario poistettu");
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          <TrendingUp className="h-6 w-6 text-primary" />
+          Skenaariot
+        </h2>
+        <p className="text-muted-foreground">
+          Vertaile eri kyselymääriä ja botin osuuksia
+        </p>
+      </div>
+
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle>Lisää uusi skenaario</CardTitle>
+          <CardDescription>
+            Syötä kyselymäärä ja botin osuus vertaillaksesi eri vaihtoehtoja
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="newQueries">Kyselymäärä / kk</Label>
+              <Input
+                id="newQueries"
+                type="number"
+                value={newQueries}
+                onChange={(e) => setNewQueries(Number(e.target.value))}
+                min="0"
+              />
+            </div>
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="newBotPercentage">Botin osuus (%)</Label>
+              <Input
+                id="newBotPercentage"
+                type="number"
+                value={newBotPercentage}
+                onChange={(e) => setNewBotPercentage(Number(e.target.value))}
+                min="0"
+                max="100"
+              />
+            </div>
+            <Button onClick={addScenario} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 mr-2" />
+              Lisää skenaario
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-elegant">
+        <CardHeader>
+          <CardTitle>Skenaariovertailu</CardTitle>
+          <CardDescription>
+            Kustannusvertailu eri tilanteissa
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Kyselyt/kk</TableHead>
+                  <TableHead>Botti %</TableHead>
+                  <TableHead>Ihminen</TableHead>
+                  <TableHead>Botti</TableHead>
+                  <TableHead>Hybridi</TableHead>
+                  <TableHead className="text-success font-semibold">Säästö</TableHead>
+                  <TableHead className="text-success font-semibold">Säästö %</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {scenarios.map((scenario, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{scenario.monthlyQueries}</TableCell>
+                    <TableCell>{formatPercentage(scenario.botPercentage)}</TableCell>
+                    <TableCell className="text-destructive">
+                      {formatCurrency(scenario.humanCost)}
+                    </TableCell>
+                    <TableCell className="text-primary">
+                      {formatCurrency(scenario.botCost)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      {formatCurrency(scenario.hybridCost)}
+                    </TableCell>
+                    <TableCell className="font-bold text-success">
+                      {formatCurrency(scenario.savings)}
+                    </TableCell>
+                    <TableCell className="font-bold text-success">
+                      {formatPercentage(scenario.savingsPercentage)}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeScenario(index)}
+                        className="h-8 w-8"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {scenarios.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground">
+              <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Ei skenaarioita. Lisää ensimmäinen skenaario yllä olevalla lomakkeella.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {scenarios.length > 0 && (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {scenarios.map((scenario, index) => (
+            <Card key={index} className="shadow-card bg-gradient-card">
+              <CardHeader>
+                <CardTitle className="text-sm">
+                  Skenaario {index + 1}: {scenario.monthlyQueries} kyselyä
+                </CardTitle>
+                <CardDescription>Botin osuus: {formatPercentage(scenario.botPercentage)}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Ihminen:</span>
+                  <span className="font-semibold text-destructive">
+                    {formatCurrency(scenario.humanCost)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Hybridi:</span>
+                  <span className="font-semibold">
+                    {formatCurrency(scenario.hybridCost)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm pt-2 border-t">
+                  <span className="font-semibold text-success">Säästö:</span>
+                  <span className="font-bold text-success">
+                    {formatCurrency(scenario.savings)}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
