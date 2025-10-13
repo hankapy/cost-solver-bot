@@ -4,15 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { usePricing } from "@/contexts/PricingContext";
+import { getBotTieredPrice } from "@/lib/pricingCalculations";
 
 export default function ExampleTab() {
+  const { settings } = usePricing();
   const [expertSalary, setExpertSalary] = useState(3000);
   const [expertHours, setExpertHours] = useState(11);
   const [managerSalary, setManagerSalary] = useState(6500);
   const [managerHours, setManagerHours] = useState(1);
   const [overheadPercent, setOverheadPercent] = useState(30);
-  const [botBaseFee, setBotBaseFee] = useState(500);
-  const [botSystemCost, setBotSystemCost] = useState(150);
+  const [estimatedQueries, setEstimatedQueries] = useState(100);
   const [botCoveragePercent, setBotCoveragePercent] = useState(50);
 
   const calculateCosts = () => {
@@ -20,14 +22,19 @@ export default function ExampleTab() {
     const managerCost = (managerSalary / 160) * (managerHours * 4) * (1 + overheadPercent / 100);
     const totalWithoutBot = expertCost + managerCost;
     
+    // Laske botin hinta asetusten mukaan kyselymäärän perusteella
+    const botPricing = getBotTieredPrice(estimatedQueries, settings);
+    const botMonthlyFee = botPricing.price + botPricing.systemCosts;
+    
     const humanWorkRemaining = totalWithoutBot * (1 - botCoveragePercent / 100);
-    const totalWithBot = botBaseFee + botSystemCost + humanWorkRemaining;
+    const totalWithBot = botMonthlyFee + humanWorkRemaining;
     const monthlySavings = totalWithoutBot - totalWithBot;
 
     return {
       expertCost,
       managerCost,
       totalWithoutBot,
+      botMonthlyFee,
       humanWorkRemaining,
       totalWithBot,
       monthlySavings
@@ -113,22 +120,18 @@ export default function ExampleTab() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-medium">Botin kustannukset</h4>
+            <h4 className="font-medium">Botin asetukset</h4>
             <div className="space-y-2">
-              <Label>Perusmaksu (€/kk)</Label>
+              <Label>Arvioitu kyselymäärä (kk)</Label>
               <Input
                 type="number"
-                value={botBaseFee}
-                onChange={(e) => setBotBaseFee(Number(e.target.value))}
+                value={estimatedQueries}
+                onChange={(e) => setEstimatedQueries(Number(e.target.value))}
+                min="0"
               />
-            </div>
-            <div className="space-y-2">
-              <Label>Järjestelmäkulu (€/kk)</Label>
-              <Input
-                type="number"
-                value={botSystemCost}
-                onChange={(e) => setBotSystemCost(Number(e.target.value))}
-              />
+              <p className="text-xs text-muted-foreground">
+                Botin hinta lasketaan Asetukset-välilehden portaiden mukaan
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Botin kattavuus (%)</Label>
@@ -199,12 +202,8 @@ export default function ExampleTab() {
               <TableCell className="text-right font-semibold">{formatCurrency(costs.totalWithoutBot)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Botin perusmaksu</TableCell>
-              <TableCell className="text-right">{formatCurrency(botBaseFee)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Järjestelmäkulu</TableCell>
-              <TableCell className="text-right">{formatCurrency(botSystemCost)}</TableCell>
+              <TableCell>Botin kuukausimaksu ({estimatedQueries} kyselyä/kk, Asetukset-välilehden mukaan)</TableCell>
+              <TableCell className="text-right">{formatCurrency(costs.botMonthlyFee)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
