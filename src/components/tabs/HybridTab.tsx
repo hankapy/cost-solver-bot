@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateHybridMonth, getBotTieredPrice, getHumanTieredBasePrice } from "@/lib/pricingCalculations";
+import { calculateHybridMonth, getBotTieredPrice, getHumanTieredBasePrice, calculateHumanCost } from "@/lib/pricingCalculations";
 import { GitMerge, Calendar } from "lucide-react";
 
 export default function HybridTab() {
@@ -14,6 +14,13 @@ export default function HybridTab() {
 
   const months = settings.botGrowth.map(g => g.month);
   const calculations = months.map(month => calculateHybridMonth(month, settings));
+  
+  // Laske pelkän ihmistyön vuosikustannus vertailua varten
+  const humanYearlyCost = calculateHumanCost(settings).totalCost * 12;
+  // Laske hybridimallin todellinen vuosikustannus (summaa kaikki 12 kuukautta)
+  const hybridYearlyCost = calculations.reduce((sum, calc) => sum + calc.discountedCost, 0);
+  // Säästö = pelkkä ihmistyö - hybridi
+  const yearlySavings = humanYearlyCost - hybridYearlyCost;
 
   // Vuosilaskuri: laske kustannukset vuosille 0-3
   const calculateYearlyCost = (year: number) => {
@@ -165,7 +172,7 @@ export default function HybridTab() {
                 <TableRow>
                   <TableHead>Kk</TableHead>
                   <TableHead>Botti %</TableHead>
-                  <TableHead>Botti kyselyt</TableHead>
+                  <TableHead>Bottikyselyt</TableHead>
                   <TableHead>Botin hinta</TableHead>
                   <TableHead>Ihminen kyselyt</TableHead>
                   <TableHead>Ihmisen työtunnit</TableHead>
@@ -225,10 +232,11 @@ export default function HybridTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success-foreground">
-              {formatCurrency(
-                (calculations[0]?.discountedCost || 0) - (calculations[11]?.discountedCost || 0)
-              )}
+              {formatCurrency(yearlySavings)}
             </div>
+            <p className="text-xs text-success-foreground/90 mt-2">
+              vs. pelkkä ihmistyö
+            </p>
           </CardContent>
         </Card>
       </div>

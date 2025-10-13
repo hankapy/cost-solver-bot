@@ -158,7 +158,7 @@ export default function ScenariosTab() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Botin osuus</TableHead>
-                  <TableHead>Botti kyselyt</TableHead>
+                  <TableHead>Bottikyselyt</TableHead>
                   <TableHead>Ihminen kyselyt</TableHead>
                   <TableHead className="text-right">Kustannus</TableHead>
                   <TableHead className="text-right text-success">Säästö</TableHead>
