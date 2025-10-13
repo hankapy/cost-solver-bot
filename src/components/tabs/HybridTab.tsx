@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { usePricing } from "@/contexts/PricingContext";
 import { calculateHybridMonth } from "@/lib/pricingCalculations";
-import { GitMerge } from "lucide-react";
+import { GitMerge, Calendar } from "lucide-react";
 
 export default function HybridTab() {
   const { settings } = usePricing();
@@ -12,6 +12,27 @@ export default function HybridTab() {
 
   const months = settings.botGrowth.map(g => g.month);
   const calculations = months.map(month => calculateHybridMonth(month, settings));
+
+  // Vuosilaskuri: laske kustannukset vuosille 0-3
+  const calculateYearlyCost = (year: number) => {
+    const startMonth = year * 12 + 1;
+    const endMonth = Math.min(startMonth + 11, 12);
+    
+    let totalCost = 0;
+    for (let month = startMonth; month <= endMonth; month++) {
+      const calc = calculateHybridMonth(month <= 12 ? month : 12, settings);
+      totalCost += calc.discountedCost;
+    }
+    
+    return totalCost;
+  };
+
+  const yearlyData = [
+    { year: 0, cost: calculateYearlyCost(0) },
+    { year: 1, cost: calculateYearlyCost(1) },
+    { year: 2, cost: calculateYearlyCost(2) },
+    { year: 3, cost: calculateYearlyCost(3) },
+  ];
 
   return (
     <div className="space-y-6">
@@ -164,6 +185,62 @@ export default function HybridTab() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="shadow-elegant">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            Vuosilaskuri
+          </CardTitle>
+          <CardDescription>
+            Kustannukset useamman vuoden aikana (kk 12 taso jatkuu)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Vuosi</TableHead>
+                  <TableHead>Ajanjakso</TableHead>
+                  <TableHead className="text-right">Vuosikustannus</TableHead>
+                  <TableHead className="text-right">Kumulatiivinen</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {yearlyData.map((data, index) => {
+                  const cumulativeCost = yearlyData
+                    .slice(0, index + 1)
+                    .reduce((sum, d) => sum + d.cost, 0);
+                  
+                  return (
+                    <TableRow key={data.year}>
+                      <TableCell className="font-medium">Vuosi {data.year}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {data.year === 0 ? "Kk 1-12" : `Vuosi ${data.year}`}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {formatCurrency(data.cost)}
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-primary">
+                        {formatCurrency(cumulativeCost)}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+          
+          <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <p className="text-sm text-muted-foreground">
+              <strong>Huom:</strong> Vuoden 0 jälkeen botin osuus pysyy 12. kuukauden tasolla (
+              {formatPercentage(calculations[11]?.botPercentage || 0)}). 
+              Kuukausikustannus on {formatCurrency(calculations[11]?.discountedCost || 0)}.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
