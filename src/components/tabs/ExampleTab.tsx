@@ -62,19 +62,6 @@ export default function ExampleTab() {
     },
   ];
 
-  const stackedData = [
-    {
-      name: "Nykyinen",
-      Asiantuntija: Math.round(costs.expertCost),
-      Päällikkö: Math.round(costs.managerCost),
-    },
-    {
-      name: "Botin kanssa",
-      "Botin kulu": Math.round(costs.botMonthlyFee),
-      "Ihmistyö jäljellä": Math.round(costs.humanWorkRemaining),
-    },
-  ];
-
   const chartConfig = {
     value: {
       label: "Kustannus",
@@ -172,76 +159,43 @@ export default function ExampleTab() {
         </div>
       </Card>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="p-6 shadow-elegant">
-          <h3 className="text-lg font-semibold mb-4">Kustannusvertailu</h3>
-          <ChartContainer config={chartConfig} className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 40 }} barCategoryGap="8%">
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 13, fontWeight: 500 }} 
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis 
-                  tick={{ fontSize: 12 }} 
-                  stroke="hsl(var(--muted-foreground))"
-                  label={{ value: '€', angle: 0, position: 'top', offset: 10 }}
-                  tickFormatter={(value) => value.toLocaleString('fi-FI')}
-                />
-                <ChartTooltip 
-                  content={<ChartTooltipContent formatter={(value) => formatCurrency(Number(value))} />}
-                  cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
-                />
-                <Bar 
-                  dataKey="value" 
-                  radius={[8, 8, 0, 0]}
-                  maxBarSize={120}
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={entry.fill}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        </Card>
-
-        <Card className="p-6 shadow-elegant">
-          <h3 className="text-lg font-semibold mb-4">Kustannusten jakautuminen</h3>
-          <ChartContainer config={chartConfig} className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stackedData} margin={{ top: 20, right: 20, left: 20, bottom: 40 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 13, fontWeight: 500 }} 
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis 
-                  tick={{ fontSize: 12 }} 
-                  stroke="hsl(var(--muted-foreground))"
-                  label={{ value: '€', angle: 0, position: 'top', offset: 10 }}
-                  tickFormatter={(value) => value.toLocaleString('fi-FI')}
-                />
-                <ChartTooltip 
-                  content={<ChartTooltipContent formatter={(value) => formatCurrency(Number(value))} />}
-                  cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
-                />
-                <Legend />
-                <Bar dataKey="Asiantuntija" stackId="a" fill="hsl(var(--destructive))" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="Päällikkö" stackId="a" fill="hsl(0 84% 70%)" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="Botin kulu" stackId="a" fill="hsl(var(--primary))" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="Ihmistyö jäljellä" stackId="a" fill="hsl(217 91% 70%)" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        </Card>
-      </div>
+      <Card className="p-6 shadow-elegant">
+        <h3 className="text-xl font-semibold mb-6">Kustannusvertailu</h3>
+        <ChartContainer config={chartConfig} className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap="8%">
+              <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="hsl(var(--border))" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fontSize: 13, fontWeight: 500 }} 
+                stroke="hsl(var(--muted-foreground))"
+              />
+              <YAxis 
+                tick={{ fontSize: 12 }} 
+                stroke="hsl(var(--muted-foreground))"
+                label={{ value: '€', angle: 0, position: 'top', offset: 10 }}
+                tickFormatter={(value) => value.toLocaleString('fi-FI')}
+              />
+              <ChartTooltip 
+                content={<ChartTooltipContent formatter={(value) => formatCurrency(Number(value))} />}
+                cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
+              />
+              <Bar 
+                dataKey="value" 
+                radius={[8, 8, 0, 0]}
+                maxBarSize={120}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.fill}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </Card>
 
       <Card className="p-6">
         <h3 className="text-xl font-semibold mb-4">Kustannuserittely</h3>
