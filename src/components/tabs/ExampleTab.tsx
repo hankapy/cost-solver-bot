@@ -38,16 +38,10 @@ export default function ExampleTab() {
 
   const chartData = [
     {
-      name: "Ilman bottia",
-      Kustannus: Math.round(costs.totalWithoutBot)
-    },
-    {
-      name: "Botin kanssa",
-      Kustannus: Math.round(costs.totalWithBot)
-    },
-    {
-      name: "Säästö",
-      Kustannus: Math.round(costs.monthlySavings)
+      name: "Vertailu",
+      "Nykyinen tilanne": Math.round(costs.totalWithoutBot),
+      "Botin kanssa": Math.round(costs.totalWithBot),
+      "Säästö": Math.round(costs.monthlySavings)
     }
   ];
 
@@ -164,14 +158,16 @@ export default function ExampleTab() {
 
       <Card className="p-6">
         <h3 className="text-xl font-semibold mb-4">Kustannusvertailu</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={chartData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
+            <XAxis type="number" />
+            <YAxis dataKey="name" type="category" />
             <Tooltip formatter={(value) => formatCurrency(Number(value))} />
             <Legend />
-            <Bar dataKey="Kustannus" fill="hsl(var(--primary))" />
+            <Bar dataKey="Nykyinen tilanne" fill="hsl(var(--destructive))" />
+            <Bar dataKey="Botin kanssa" fill="hsl(var(--primary))" />
+            <Bar dataKey="Säästö" fill="hsl(var(--success))" />
           </BarChart>
         </ResponsiveContainer>
       </Card>
