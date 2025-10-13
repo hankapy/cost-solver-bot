@@ -72,6 +72,15 @@ export default function ReadmeTab() {
             <li>Peruskuukausihinta (kiinteä kuukausikustannus kyselymäärästä riippuen)</li>
             <li><strong>Kokonaiskustannus</strong> (työvoimakustannus + peruskuukausihinta)</li>
           </ul>
+          <div className="pt-3 border-t mt-3 bg-primary/5 p-3 rounded">
+            <p className="font-semibold text-foreground mb-2">📋 Mistä arvot tulevat (Asetukset-välilehdeltä):</p>
+            <ul className="list-disc list-inside space-y-1 pl-4">
+              <li><strong>Kyselymäärä / kk</strong> → "Kyselymäärät" -osio</li>
+              <li><strong>Työaika / vastaus</strong> → "Kyselymäärät" -osiosta "Työaika / vastaus (min)"</li>
+              <li><strong>Tuntiveloitus</strong> → "Ihmistyön kustannukset" -osiosta</li>
+              <li><strong>Peruskuukausihinta</strong> → "Ihmistyön portaistettu peruskuukausihinta" -taulukosta (valitaan kyselymäärän perusteella)</li>
+            </ul>
+          </div>
           <p className="pt-2 border-t"><strong>Miksi tämä on hyödyllistä?</strong></p>
           <p>
             Näet selkeästi, paljonko pelkkä ihmistyö maksaa. Tätä lukua verrataan muihin vaihtoehtoihin (botti, hybridi) säästöjen laskemiseksi.
@@ -100,6 +109,18 @@ export default function ReadmeTab() {
             <li><strong>Kuukausihinta (kk 2 alkaen)</strong> = Portaistettu hinta + Järjestelmäkulut</li>
             <li>Aloitusmaksu (maksetaan vain kerran ensimmäisellä kuukaudella)</li>
           </ul>
+          <div className="pt-3 border-t mt-3 bg-primary/5 p-3 rounded">
+            <p className="font-semibold text-foreground mb-2">📋 Mistä arvot tulevat (Asetukset-välilehdeltä):</p>
+            <ul className="list-disc list-inside space-y-1 pl-4">
+              <li><strong>Kyselymäärä</strong> → "Kyselymäärät" -osio</li>
+              <li><strong>Aloitusmaksu</strong> → "Botin kiinteät kulut" -osiosta</li>
+              <li><strong>Järjestelmäkulut</strong> → "Botin kiinteät kulut" -osiosta</li>
+              <li><strong>Portaistettu hinta</strong> → "Botin portaistettu hinnoittelu" -taulukosta (valitaan kyselymäärän perusteella)</li>
+            </ul>
+            <p className="text-xs mt-2 italic">
+              💡 Vinkki: "Botin kiinteät kulut" -osiossa on myös laskuri, jossa voit testata eri kyselymäärillä!
+            </p>
+          </div>
           <p className="pt-2 border-t"><strong>TÄRKEÄÄ ymmärtää:</strong></p>
           <p>
             <strong>Ensimmäinen kuukausi:</strong> Maksat vain aloitusmaksun (kertaluonteinen).<br/>
@@ -141,6 +162,20 @@ export default function ReadmeTab() {
             <li><strong>Vuosilaskuri:</strong> Laskee kustannukset 0-3 vuoden ajalta</li>
             <li><strong>Säästö vuodessa:</strong> Näyttää, paljonko säästät ensimmäisen vuoden aikana verrattuna pelkkään ihmistyöhön</li>
           </ul>
+          <div className="pt-3 border-t mt-3 bg-primary/5 p-3 rounded">
+            <p className="font-semibold text-foreground mb-2">📋 Mistä arvot tulevat (Asetukset-välilehdeltä):</p>
+            <ul className="list-disc list-inside space-y-1 pl-4">
+              <li><strong>Kyselymäärä</strong> → "Kyselymäärät" -osio (jaetaan botin ja ihmisen kesken)</li>
+              <li><strong>Keskittämisalennus</strong> → Suoraan Hybridi-välilehdellä (ei asetuksissa!)</li>
+              <li><strong>Botin osuus kehitys (kuukausittain)</strong> → "Botin osuuden kehitys" → "Kuukausitaso (1-12 kk)"</li>
+              <li><strong>Botin osuus (vuosittain)</strong> → "Botin osuuden kehitys" → "Vuositaso (0-3 vuotta)"</li>
+              <li><strong>Botin kustannukset</strong> → Sama logiikka kuin Botti-välilehdellä (aloitusmaksu kk 1, portaistettu hinta + järjestelmäkulut kk 2+)</li>
+              <li><strong>Ihmisen kustannukset</strong> → Sama logiikka kuin Ihmistyö-välilehdellä, mutta vain sille osuudelle joka jää ihmisille</li>
+            </ul>
+            <p className="text-xs mt-2 italic">
+              💡 Esimerkki: Jos kuukausi 6:lla botti hoitaa 25% kyselyistä ja kokonaiskyselyjä on 200, niin botti hoitaa 50 kyselyä ja ihminen 150 kyselyä.
+            </p>
+          </div>
           <p className="pt-2 border-t"><strong>Miksi hybridimalli?</strong></p>
           <p>
             Harvoin kannattaa siirtyä suoraan 100% bottiin. Hybridimallissa botti oppii vähitellen ja hoitaa ensin helpommat kyselyt, kun taas monimutkaiset kyselyt menevät edelleen ihmisille.
@@ -185,6 +220,18 @@ export default function ReadmeTab() {
               </ul>
             </div>
           </div>
+          <div className="pt-3 border-t mt-3 bg-primary/5 p-3 rounded">
+            <p className="font-semibold text-foreground mb-2">📋 Mistä arvot tulevat:</p>
+            <ul className="list-disc list-inside space-y-1 pl-4">
+              <li><strong>Perusvertailu:</strong> Käyttää nykyisiä asetuksia (kyselymäärä asetuksista)</li>
+              <li><strong>Ihmistyön kustannus:</strong> Sama kuin Ihmistyö-välilehdellä</li>
+              <li><strong>Botin kustannus:</strong> Sama kuin Botti-välilehdellä (ilman aloitusmaksua, koska vertaillaan jatkuvia kuukausikuluja)</li>
+              <li><strong>Interaktiivinen laskuri:</strong> Voit itse syöttää haluamasi kyselymäärän ja botin osuuden - ei käytä asetuksia vaan omia valintojasi!</li>
+            </ul>
+            <p className="text-xs mt-2 italic">
+              💡 Interaktiivisessa laskurissa voit testata mitä tahansa arvoja riippumatta siitä, mitä asetuksissa on!
+            </p>
+          </div>
           <p className="pt-2 border-t"><strong>Miksi tämä on hyödyllistä?</strong></p>
           <p>
             Voit nopeasti testata: "Entä jos meillä on 300 kyselyä kuukaudessa ja botti hoitaa 60% niistä - paljonko säästän?"
@@ -219,6 +266,18 @@ export default function ReadmeTab() {
             </li>
             <li>Näet graafin ja taulukon, jossa vertaillaan kaikkia näitä</li>
           </ol>
+          <div className="pt-3 border-t mt-3 bg-primary/5 p-3 rounded">
+            <p className="font-semibold text-foreground mb-2">📋 Mistä arvot tulevat:</p>
+            <ul className="list-disc list-inside space-y-1 pl-4">
+              <li><strong>Kyselymäärä:</strong> Voit itse syöttää haluamasi määrän - ei sidottu asetuksiin!</li>
+              <li><strong>Botin osuudet (0%, 25%, 50%, 75%, 100%):</strong> Lasketaan automaattisesti kaikille tasoille</li>
+              <li><strong>Kustannuslaskenta:</strong> Käyttää asetuksista portaistettua hinnoittelua, järjestelmäkuluja, tuntiveloitusta jne.</li>
+              <li><strong>Keskittämisalennus:</strong> Otetaan huomioon laskennassa (arvo Hybridi-välilehdeltä)</li>
+            </ul>
+            <p className="text-xs mt-2 italic">
+              💡 Tämä on "what-if" -työkalu: testaa eri kyselymääriä ja näet heti miten eri botin osuudet vaikuttavat!
+            </p>
+          </div>
           <p className="pt-2 border-t"><strong>Mitä opin tästä?</strong></p>
           <p>
             Näet selkeästi: <strong>"Jos botti hoitaa enemmän kyselyjä, kustannukset laskevat."</strong> Mutta näet myös tarkat euromäärät jokaiselle osuudelle.
