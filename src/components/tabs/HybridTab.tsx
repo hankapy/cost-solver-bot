@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
 import { calculateHybridMonth, getBotTieredPrice, getHumanTieredBasePrice, calculateHumanCost } from "@/lib/pricingCalculations";
-import { GitMerge, Calendar } from "lucide-react";
+import { GitMerge, Calendar, PiggyBank } from "lucide-react";
 
 export default function HybridTab() {
   const { settings, updateSettings } = usePricing();
@@ -203,40 +203,21 @@ export default function HybridTab() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="shadow-card bg-gradient-card">
-          <CardHeader>
-            <CardTitle className="text-sm">Aloituskustannus (Kk 1)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">
-              {formatCurrency(calculations[0]?.discountedCost || 0)}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-card bg-gradient-card">
-          <CardHeader>
-            <CardTitle className="text-sm">Lopullinen kustannus (Kk 12)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">
-              {formatCurrency(calculations[11]?.discountedCost || 0)}
-            </div>
-          </CardContent>
-        </Card>
-
+      <div className="grid gap-6 md:grid-cols-1">
         <Card className="shadow-card bg-gradient-success">
           <CardHeader>
-            <CardTitle className="text-sm text-success-foreground">Säästö vuodessa</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <PiggyBank className="h-5 w-5 text-success-foreground" />
+              Säästö vuodessa
+            </CardTitle>
+            <CardDescription className="text-success-foreground/80">
+              Verrattuna pelkkään ihmistyöhön (12 kuukautta)
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success-foreground">
+            <div className="text-3xl font-bold text-success-foreground">
               {formatCurrency(yearlySavings)}
             </div>
-            <p className="text-xs text-success-foreground/90 mt-2">
-              vs. pelkkä ihmistyö
-            </p>
           </CardContent>
         </Card>
       </div>
