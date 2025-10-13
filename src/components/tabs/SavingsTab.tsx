@@ -76,6 +76,15 @@ export default function SavingsTab() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-muted border border-border">
+              <h4 className="font-semibold mb-3">Laskentaperuste:</h4>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p><strong>Ihmistyön kustannus</strong> = (Kyselymäärä × Käsittelyaika × Tuntihinta) + Peruskuukausihinta (250 €)</p>
+                <p><strong>Botin kustannus</strong> = Portaistettu kuukausihinta kyselymäärän mukaan + Järjestelmäkulut</p>
+                <p className="text-xs mt-2 italic">Huom: Botin aloitusmaksu ei sisälly vertailuun, koska se on kertaluonteinen kustannus</p>
+              </div>
+            </div>
+
             <div className="flex justify-between items-center p-4 rounded-lg bg-destructive/10">
               <div>
                 <p className="text-sm text-muted-foreground">Ihmistyön kustannus</p>

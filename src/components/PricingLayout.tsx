@@ -16,7 +16,7 @@ export default function PricingLayout() {
             Hinnoittelutyökalu
           </h1>
           <p className="text-primary-foreground/90 mt-1">
-            Asiakaspalvelun dynaaminen kustannuslaskuri
+            Kuluttajapalvelun dynaaminen kustannuslaskuri
           </p>
         </div>
       </header>
