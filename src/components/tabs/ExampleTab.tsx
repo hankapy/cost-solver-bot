@@ -16,8 +16,8 @@ export default function ExampleTab() {
   const [botCoveragePercent, setBotCoveragePercent] = useState(50);
 
   const calculateCosts = () => {
-    const expertCost = (expertSalary / 160) * expertHours * (1 + overheadPercent / 100);
-    const managerCost = (managerSalary / 160) * managerHours * (1 + overheadPercent / 100);
+    const expertCost = (expertSalary / 160) * (expertHours * 4) * (1 + overheadPercent / 100);
+    const managerCost = (managerSalary / 160) * (managerHours * 4) * (1 + overheadPercent / 100);
     const totalWithoutBot = expertCost + managerCost;
     
     const humanWorkRemaining = totalWithoutBot * (1 - botCoveragePercent / 100);
@@ -83,7 +83,7 @@ export default function ExampleTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Työtunnit kuukaudessa</Label>
+              <Label>Työtunnit viikossa</Label>
               <Input
                 type="number"
                 value={expertHours}
@@ -103,7 +103,7 @@ export default function ExampleTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Työtunnit kuukaudessa</Label>
+              <Label>Työtunnit viikossa</Label>
               <Input
                 type="number"
                 value={managerHours}
@@ -184,13 +184,13 @@ export default function ExampleTab() {
           <TableBody>
             <TableRow>
               <TableCell>
-                Asiantuntija (€ {expertSalary.toLocaleString('fi-FI')}, {expertHours} h/kk, sivukuluineen +{overheadPercent} %)
+                Asiantuntija (€ {expertSalary.toLocaleString('fi-FI')}, {expertHours} h/viikko = {expertHours * 4} h/kk, sivukuluineen +{overheadPercent} %)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.expertCost)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
-                Päällikkö (€ {managerSalary.toLocaleString('fi-FI')}, {managerHours} h/kk, sivukuluineen +{overheadPercent} %)
+                Päällikkö (€ {managerSalary.toLocaleString('fi-FI')}, {managerHours} h/viikko = {managerHours * 4} h/kk, sivukuluineen +{overheadPercent} %)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.managerCost)}</TableCell>
             </TableRow>
