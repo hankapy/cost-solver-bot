@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateHybridMonth, getBotTieredPrice } from "@/lib/pricingCalculations";
+import { calculateHybridMonth, getBotTieredPrice, getHumanTieredBasePrice } from "@/lib/pricingCalculations";
 import { GitMerge, Calendar } from "lucide-react";
 
 export default function HybridTab() {
@@ -37,10 +37,9 @@ export default function HybridTab() {
     
     const humanMinutes = humanQueries * settings.minutesPerQuery;
     const humanHours = humanMinutes / 60;
-    const HOURLY_RATE = 20;
-    const BASE_MONTHLY_PRICE = 250;
-    const humanLaborCost = humanHours * HOURLY_RATE;
-    const humanTotalCost = humanLaborCost + BASE_MONTHLY_PRICE;
+    const humanLaborCost = humanHours * settings.humanHourlyRate;
+    const humanBasePrice = getHumanTieredBasePrice(humanQueries, settings);
+    const humanTotalCost = humanLaborCost + humanBasePrice;
     
     const combinedCost = botMonthlyCost + humanTotalCost;
     const monthlyCost = combinedCost * (1 - settings.centralizationDiscount / 100);

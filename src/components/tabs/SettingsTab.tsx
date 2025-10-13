@@ -39,7 +39,7 @@ export default function SettingsTab() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Kyselymäärät</CardTitle>
+            <CardTitle>Kyselymäärät ja alennus</CardTitle>
             <CardDescription>Määritä kuukausittaiset kyselyt ja käsittelyajat</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -79,54 +79,116 @@ export default function SettingsTab() {
 
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Botin kiinteät kulut</CardTitle>
-            <CardDescription>Määritä botin peruskulut</CardDescription>
+            <CardTitle>Ihmistyön kustannukset</CardTitle>
+            <CardDescription>Määritä ihmistyön peruskulut</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="botStartupFee">Aloitusmaksu (€)</Label>
+              <Label htmlFor="humanHourlyRate">Tuntiveloitus (€/h)</Label>
               <Input
-                id="botStartupFee"
+                id="humanHourlyRate"
                 type="number"
-                value={settings.botStartupFee}
-                onChange={(e) => updateSettings({ botStartupFee: Number(e.target.value) })}
+                value={settings.humanHourlyRate}
+                onChange={(e) => updateSettings({ humanHourlyRate: Number(e.target.value) })}
                 min="0"
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="botSystemCosts">Järjestelmäkulut (€/kk)</Label>
-              <Input
-                id="botSystemCosts"
-                type="number"
-                value={settings.botSystemCosts}
-                onChange={(e) => updateSettings({ botSystemCosts: Number(e.target.value) })}
-                min="0"
-              />
-            </div>
-
-            <div className="pt-4 border-t space-y-3">
-              <h4 className="font-semibold text-sm">Laskettu kuukausiveloitus</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
-                  <span className="text-muted-foreground">Portaistettu hinta ({settings.monthlyQueries} kyselyä)</span>
-                  <span className="font-semibold">{formatCurrency(tieredPrice)}</span>
-                </div>
-                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
-                  <span className="text-muted-foreground">+ Järjestelmäkulut</span>
-                  <span className="font-semibold">{formatCurrency(settings.botSystemCosts)}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
-                  <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
-                  <span className="text-lg font-bold text-primary">{formatCurrency(totalMonthlyFee)}</span>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground italic">
-                Kuukausiveloitus lasketaan automaattisesti portaistetun hinnan ja järjestelmäkulujen summana
-              </p>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle>Ihmistyön portaistettu peruskuukausihinta</CardTitle>
+          <CardDescription>Määritä kiinteät kuukausikustannukset eri kyselymäärille</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {settings.humanTiers.map((tier, index) => (
+              <div key={index} className="flex gap-3 items-end">
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor={`human-tier-limit-${index}`}>Kyselyraja</Label>
+                  <Input
+                    id={`human-tier-limit-${index}`}
+                    type="number"
+                    value={tier.queryLimit}
+                    onChange={(e) => {
+                      const newTiers = [...settings.humanTiers];
+                      newTiers[index].queryLimit = Number(e.target.value);
+                      updateSettings({ humanTiers: newTiers });
+                    }}
+                    min="0"
+                  />
+                </div>
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor={`human-tier-price-${index}`}>Peruskuukausihinta (€)</Label>
+                  <Input
+                    id={`human-tier-price-${index}`}
+                    type="number"
+                    value={tier.basePrice}
+                    onChange={(e) => {
+                      const newTiers = [...settings.humanTiers];
+                      newTiers[index].basePrice = Number(e.target.value);
+                      updateSettings({ humanTiers: newTiers });
+                    }}
+                    min="0"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle>Botin kiinteät kulut</CardTitle>
+          <CardDescription>Määritä botin peruskulut</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="botStartupFee">Aloitusmaksu (€)</Label>
+            <Input
+              id="botStartupFee"
+              type="number"
+              value={settings.botStartupFee}
+              onChange={(e) => updateSettings({ botStartupFee: Number(e.target.value) })}
+              min="0"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="botSystemCosts">Järjestelmäkulut (€/kk)</Label>
+            <Input
+              id="botSystemCosts"
+              type="number"
+              value={settings.botSystemCosts}
+              onChange={(e) => updateSettings({ botSystemCosts: Number(e.target.value) })}
+              min="0"
+            />
+          </div>
+
+          <div className="pt-4 border-t space-y-3">
+            <h4 className="font-semibold text-sm">Laskettu kuukausiveloitus</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                <span className="text-muted-foreground">Portaistettu hinta ({settings.monthlyQueries} kyselyä)</span>
+                <span className="font-semibold">{formatCurrency(tieredPrice)}</span>
+              </div>
+              <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                <span className="text-muted-foreground">+ Järjestelmäkulut</span>
+                <span className="font-semibold">{formatCurrency(settings.botSystemCosts)}</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
+                <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
+                <span className="text-lg font-bold text-primary">{formatCurrency(totalMonthlyFee)}</span>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground italic">
+              Kuukausiveloitus lasketaan automaattisesti portaistetun hinnan ja järjestelmäkulujen summana
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="shadow-card">
         <CardHeader>

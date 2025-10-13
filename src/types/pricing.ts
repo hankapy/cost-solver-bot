@@ -3,6 +3,10 @@ export interface PricingSettings {
   minutesPerQuery: number;
   centralizationDiscount: number;
   
+  // Human costs
+  humanHourlyRate: number;
+  humanTiers: HumanTier[];
+  
   // Bot costs
   botStartupFee: number;
   botMonthlyFee: number;
@@ -21,6 +25,11 @@ export interface PricingSettings {
 export interface BotGrowthYear {
   year: number;
   percentage: number;
+}
+
+export interface HumanTier {
+  queryLimit: number;
+  basePrice: number;
 }
 
 export interface BotTier {

@@ -10,20 +10,35 @@ import type {
 const HOURLY_RATE = 20; // €/h
 const BASE_MONTHLY_PRICE = 250; // €/month
 
+export function getHumanTieredBasePrice(queries: number, settings: PricingSettings): number {
+  // Find the appropriate tier
+  const sortedTiers = [...settings.humanTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+  
+  for (let i = sortedTiers.length - 1; i >= 0; i--) {
+    if (queries >= sortedTiers[i].queryLimit) {
+      return sortedTiers[i].basePrice;
+    }
+  }
+  
+  // If no tier matches, return the first tier price
+  return sortedTiers[0]?.basePrice || 0;
+}
+
 export function calculateHumanCost(settings: PricingSettings): HumanCostCalculation {
   const totalMinutes = settings.monthlyQueries * settings.minutesPerQuery;
   const totalHours = totalMinutes / 60;
-  const hourlyLabor = totalHours * HOURLY_RATE;
-  const totalCost = hourlyLabor + BASE_MONTHLY_PRICE;
+  const hourlyLabor = totalHours * settings.humanHourlyRate;
+  const basePrice = getHumanTieredBasePrice(settings.monthlyQueries, settings);
+  const totalCost = hourlyLabor + basePrice;
 
   return {
     monthlyQueries: settings.monthlyQueries,
     minutesPerQuery: settings.minutesPerQuery,
     totalMinutes,
     totalHours,
-    hourlyRate: HOURLY_RATE,
+    hourlyRate: settings.humanHourlyRate,
     hourlyLabor,
-    basePrice: BASE_MONTHLY_PRICE,
+    basePrice,
     totalCost
   };
 }
@@ -92,8 +107,9 @@ export function calculateHybridMonth(
   
   const humanMinutes = humanQueries * settings.minutesPerQuery;
   const humanHours = humanMinutes / 60;
-  const humanLaborCost = humanHours * HOURLY_RATE;
-  const humanTotalCost = humanLaborCost + BASE_MONTHLY_PRICE;
+  const humanLaborCost = humanHours * settings.humanHourlyRate;
+  const humanBasePrice = getHumanTieredBasePrice(humanQueries, settings);
+  const humanTotalCost = humanLaborCost + humanBasePrice;
   
   const combinedCost = botCost + humanTotalCost;
   const discountedCost = combinedCost * (1 - settings.centralizationDiscount / 100);
@@ -105,9 +121,9 @@ export function calculateHybridMonth(
     botCost,
     humanQueries,
     humanHours,
-    hourlyRate: HOURLY_RATE,
+    hourlyRate: settings.humanHourlyRate,
     humanLaborCost,
-    humanBaseCost: BASE_MONTHLY_PRICE,
+    humanBaseCost: humanBasePrice,
     humanTotalCost,
     combinedCost,
     discountedCost
@@ -145,8 +161,9 @@ export function calculateScenario(
   const humanQueries = monthlyQueries - botQueries;
   const humanMinutes = humanQueries * settings.minutesPerQuery;
   const humanHours = humanMinutes / 60;
-  const humanLaborCost = humanHours * HOURLY_RATE;
-  const humanPartCost = humanLaborCost + BASE_MONTHLY_PRICE;
+  const humanLaborCost = humanHours * settings.humanHourlyRate;
+  const humanBasePrice = getHumanTieredBasePrice(humanQueries, settings);
+  const humanPartCost = humanLaborCost + humanBasePrice;
   
   const hybridCost = (botMonthlyCost + humanPartCost) * (1 - settings.centralizationDiscount / 100);
   
