@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Settings, Users, Bot, GitMerge, PiggyBank, TrendingUp } from "lucide-react";
+import { BookOpen, Settings, Users, Bot, GitMerge, PiggyBank, TrendingUp, Calculator } from "lucide-react";
 import ReadmeTab from "./tabs/ReadmeTab";
 import SettingsTab from "./tabs/SettingsTab";
 import HumanTab from "./tabs/HumanTab";
@@ -7,6 +7,7 @@ import BotTab from "./tabs/BotTab";
 import HybridTab from "./tabs/HybridTab";
 import SavingsTab from "./tabs/SavingsTab";
 import ScenariosTab from "./tabs/ScenariosTab";
+import ExampleTab from "./tabs/ExampleTab";
 
 export default function PricingLayout() {
   return (
@@ -24,7 +25,7 @@ export default function PricingLayout() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="readme" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 mb-8 h-auto">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-8 mb-8 h-auto">
             <TabsTrigger value="readme" className="flex items-center gap-2 py-3">
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Ohjeet</span>
@@ -52,6 +53,10 @@ export default function PricingLayout() {
             <TabsTrigger value="scenarios" className="flex items-center gap-2 py-3">
               <TrendingUp className="h-4 w-4" />
               <span className="hidden sm:inline">Skenaariot</span>
+            </TabsTrigger>
+            <TabsTrigger value="example" className="flex items-center gap-2 py-3">
+              <Calculator className="h-4 w-4" />
+              <span className="hidden sm:inline">Esimerkki</span>
             </TabsTrigger>
           </TabsList>
 
@@ -81,6 +86,10 @@ export default function PricingLayout() {
           
           <TabsContent value="scenarios">
             <ScenariosTab />
+          </TabsContent>
+          
+          <TabsContent value="example">
+            <ExampleTab />
           </TabsContent>
         </Tabs>
       </main>
