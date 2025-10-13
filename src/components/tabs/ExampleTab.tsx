@@ -184,13 +184,13 @@ export default function ExampleTab() {
           <TableBody>
             <TableRow>
               <TableCell>
-                Asiantuntija (€ {expertSalary.toLocaleString('fi-FI')}, {expertHours} h/viikko = {expertHours * 4} h/kk, sivukuluineen +{overheadPercent} %)
+                Asiantuntija (€ {expertSalary.toLocaleString('fi-FI')}, {expertHours} h/viikko = {expertHours * 4} h/kk)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.expertCost)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
-                Päällikkö (€ {managerSalary.toLocaleString('fi-FI')}, {managerHours} h/viikko = {managerHours * 4} h/kk, sivukuluineen +{overheadPercent} %)
+                Päällikkö (€ {managerSalary.toLocaleString('fi-FI')}, {managerHours} h/viikko = {managerHours * 4} h/kk)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.managerCost)}</TableCell>
             </TableRow>
@@ -208,7 +208,7 @@ export default function ExampleTab() {
             </TableRow>
             <TableRow>
               <TableCell>
-                Ihmisen työksi jää ({100 - botCoveragePercent} %, sivukuluineen +{overheadPercent} %)
+                Ihmisen työksi jää ({100 - botCoveragePercent} %)
               </TableCell>
               <TableCell className="text-right">{formatCurrency(costs.humanWorkRemaining)}</TableCell>
             </TableRow>
@@ -226,10 +226,11 @@ export default function ExampleTab() {
 
       <div className="bg-muted/50 p-6 rounded-lg border">
         <p className="text-sm text-muted-foreground">
-          <strong>Tulkinta:</strong> Break-even saavutettiin jo ennen {botCoveragePercent}% kattavuutta. 
-          Sivukulut huomioidaan ihmistyön kustannuksessa ({costs.totalWithoutBot.toLocaleString('fi-FI', { maximumFractionDigits: 0 })} €/kk) 
-          on suurempi kuin botin ja järjestelmän kokonaiskulut ({costs.totalWithBot.toLocaleString('fi-FI', { maximumFractionDigits: 0 })} €/kk). 
-          Tällä määrällä säästöä {formatCurrency(costs.monthlySavings)}/kk. 
+          <strong>Huomio:</strong> Kaikki ihmistyön kustannukset sisältävät sivukulut ({overheadPercent}%). 
+          Break-even saavutettiin jo ennen {botCoveragePercent}% kattavuutta. 
+          Ihmistyön kokonaiskustannus ({formatCurrency(costs.totalWithoutBot)}/kk) 
+          on suurempi kuin botin ja jäljelle jäävän ihmistyön yhteiskulut ({formatCurrency(costs.totalWithBot)}/kk). 
+          Säästö kuukaudessa: {formatCurrency(costs.monthlySavings)}. 
           Lisäksi on huomioitava kasvatettavissa työtiimeissä käytettävä työtyytyväisyys.
         </p>
       </div>
