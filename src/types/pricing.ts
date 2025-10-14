@@ -21,6 +21,7 @@ export interface PricingSettings {
   providerBaseCosts: number; // Peruskulut (molemmat mallit)
   skipProviderBaseCosts: boolean; // Jos true, peruskuluja ei oteta huomioon laskelmissa
   skipProviderHumanTiers: boolean; // Jos true, porrastettua hinnoittelua ei oteta huomioon
+  providerMarginPercentage: number; // Kateprosentin (%) jolla lasketaan asiakashinnat
   providerHumanWorkCost: number; // Ihmisvetoisen mallin työaikakustannus (vain palveluntarjoaja)
   providerBotMaintenanceCost: number; // Bottivetioisen mallin ylläpitokustannus (vain palveluntarjoaja)
   

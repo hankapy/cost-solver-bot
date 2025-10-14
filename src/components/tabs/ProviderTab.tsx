@@ -334,6 +334,89 @@ export default function ProviderTab() {
         </Card>
       </div>
 
+      <Card className="shadow-card border-2 border-primary/20 bg-primary/5">
+        <CardHeader>
+          <CardTitle>Kateprosentin määritys ja asiakashinnat</CardTitle>
+          <CardDescription>
+            Määritä kateprosentin, jolla lasketaan asiakashinnat palveluntarjoajan kustannuksista
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="providerMarginPercentage">Kateprosentin (%)</Label>
+            <Input
+              id="providerMarginPercentage"
+              type="number"
+              value={settings.providerMarginPercentage}
+              onChange={(e) => updateSettings({ providerMarginPercentage: Number(e.target.value) })}
+              min="0"
+              max="100"
+            />
+            <p className="text-xs text-muted-foreground">
+              Asiakashinta lasketaan: Kustannus / (1 - Kate%)
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3 p-4 rounded-lg border bg-card">
+              <h4 className="font-semibold text-primary">Täysin ihmisvetoinen malli - Asiakashinta</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Palveluntarjoajan kustannus:</span>
+                  <span className="font-medium">{formatCurrency(humanCost.totalProviderCost)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Kateprosentin:</span>
+                  <span className="font-medium">{settings.providerMarginPercentage}%</span>
+                </div>
+                <div className="flex justify-between text-lg border-t pt-2 mt-2">
+                  <span className="font-bold">Asiakashinta / kk:</span>
+                  <span className="font-bold text-primary">
+                    {formatCurrency(humanCost.totalProviderCost / (1 - settings.providerMarginPercentage / 100))}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Kate €:</span>
+                  <span>
+                    {formatCurrency(
+                      (humanCost.totalProviderCost / (1 - settings.providerMarginPercentage / 100)) - humanCost.totalProviderCost
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 p-4 rounded-lg border bg-card">
+              <h4 className="font-semibold text-primary">Täysin bottivetonen malli - Asiakashinta</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Palveluntarjoajan kustannus:</span>
+                  <span className="font-medium">{formatCurrency(botCost.totalProviderCost)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Kateprosentin:</span>
+                  <span className="font-medium">{settings.providerMarginPercentage}%</span>
+                </div>
+                <div className="flex justify-between text-lg border-t pt-2 mt-2">
+                  <span className="font-bold">Asiakashinta / kk:</span>
+                  <span className="font-bold text-primary">
+                    {formatCurrency(botCost.totalProviderCost / (1 - settings.providerMarginPercentage / 100))}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Kate €:</span>
+                  <span>
+                    {formatCurrency(
+                      (botCost.totalProviderCost / (1 - settings.providerMarginPercentage / 100)) - botCost.totalProviderCost
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle>Hybridimallin kuukausittaiset kustannukset</CardTitle>
