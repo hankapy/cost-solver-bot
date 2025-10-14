@@ -15,6 +15,7 @@ const DEFAULT_SETTINGS: PricingSettings = {
   ],
   humanBaseAmount: 250,
   useHumanFlatRate: false,
+  useHumanFlatBasePrice: false,
   providerHumanHourlyRate: 18,
   providerHumanTiers: [
     { queryLimit: 50, basePrice: 150 },

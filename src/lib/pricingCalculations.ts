@@ -11,6 +11,12 @@ const HOURLY_RATE = 20; // €/h
 const BASE_MONTHLY_PRICE = 250; // €/month
 
 export function getHumanTieredBasePrice(queries: number, settings: PricingSettings): number {
+  // Jos käytetään kiinteää pohjasummaa, palauta se
+  if (settings.useHumanFlatBasePrice) {
+    return settings.humanBaseAmount;
+  }
+  
+  // Muuten käytä porrastettua hinnoittelua
   // Find the appropriate tier
   const sortedTiers = [...settings.humanTiers].sort((a, b) => a.queryLimit - b.queryLimit);
   

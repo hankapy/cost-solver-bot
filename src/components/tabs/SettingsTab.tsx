@@ -123,57 +123,77 @@ export default function SettingsTab() {
           <CardDescription>Määritä kiinteät kuukausikustannukset eri kyselymäärille</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="humanBaseAmount">Pohjasumma ihmisasiakaspalvelulle (€/kk)</Label>
-            <Input
-              id="humanBaseAmount"
-              type="number"
-              value={settings.humanBaseAmount}
-              onChange={(e) => updateSettings({ humanBaseAmount: Number(e.target.value) })}
-              min="0"
-            />
+          <div className="pt-2 pb-3 border-b space-y-3">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="useHumanFlatBasePrice"
+                checked={settings.useHumanFlatBasePrice}
+                onChange={(e) => updateSettings({ useHumanFlatBasePrice: e.target.checked })}
+                className="rounded"
+              />
+              <Label htmlFor="useHumanFlatBasePrice" className="cursor-pointer">
+                Käytä kiinteää pohjasummaa (ei porrastettua hinnoittelua)
+              </Label>
+            </div>
             <p className="text-xs text-muted-foreground">
-              Kiinteä perusmaksu riippumatta kyselymäärästä
+              Kun valittu, käytetään kiinteää pohjasummaa kaikilla kyselymäärillä portaistetun hinnoittelun sijaan
             </p>
           </div>
 
-          <div className="pt-4 border-t">
-            <h4 className="font-semibold mb-3 text-sm">Portaistetut hinnat</h4>
-            <div className="space-y-3">
-              {settings.humanTiers.map((tier, index) => (
-                <div key={index} className="flex gap-3 items-end">
-                  <div className="flex-1 space-y-2">
-                    <Label htmlFor={`human-tier-limit-${index}`}>Kyselyraja</Label>
-                    <Input
-                      id={`human-tier-limit-${index}`}
-                      type="number"
-                      value={tier.queryLimit}
-                      onChange={(e) => {
-                        const newTiers = [...settings.humanTiers];
-                        newTiers[index].queryLimit = Number(e.target.value);
-                        updateSettings({ humanTiers: newTiers });
-                      }}
-                      min="0"
-                    />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <Label htmlFor={`human-tier-price-${index}`}>Peruskuukausihinta (€/kk)</Label>
-                    <Input
-                      id={`human-tier-price-${index}`}
-                      type="number"
-                      value={tier.basePrice}
-                      onChange={(e) => {
-                        const newTiers = [...settings.humanTiers];
-                        newTiers[index].basePrice = Number(e.target.value);
-                        updateSettings({ humanTiers: newTiers });
-                      }}
-                      min="0"
-                    />
-                  </div>
-                </div>
-              ))}
+          {settings.useHumanFlatBasePrice ? (
+            <div className="space-y-2">
+              <Label htmlFor="humanBaseAmount">Pohjasumma ihmisasiakaspalvelulle (€/kk)</Label>
+              <Input
+                id="humanBaseAmount"
+                type="number"
+                value={settings.humanBaseAmount}
+                onChange={(e) => updateSettings({ humanBaseAmount: Number(e.target.value) })}
+                min="0"
+              />
+              <p className="text-xs text-muted-foreground">
+                Kiinteä perusmaksu riippumatta kyselymäärästä
+              </p>
             </div>
-          </div>
+          ) : (
+            <div className="pt-4 border-t">
+              <h4 className="font-semibold mb-3 text-sm">Portaistetut hinnat</h4>
+              <div className="space-y-3">
+                {settings.humanTiers.map((tier, index) => (
+                  <div key={index} className="flex gap-3 items-end">
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor={`human-tier-limit-${index}`}>Kyselyraja</Label>
+                      <Input
+                        id={`human-tier-limit-${index}`}
+                        type="number"
+                        value={tier.queryLimit}
+                        onChange={(e) => {
+                          const newTiers = [...settings.humanTiers];
+                          newTiers[index].queryLimit = Number(e.target.value);
+                          updateSettings({ humanTiers: newTiers });
+                        }}
+                        min="0"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor={`human-tier-price-${index}`}>Peruskuukausihinta (€/kk)</Label>
+                      <Input
+                        id={`human-tier-price-${index}`}
+                        type="number"
+                        value={tier.basePrice}
+                        onChange={(e) => {
+                          const newTiers = [...settings.humanTiers];
+                          newTiers[index].basePrice = Number(e.target.value);
+                          updateSettings({ humanTiers: newTiers });
+                        }}
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
