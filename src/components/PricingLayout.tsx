@@ -36,6 +36,13 @@ export default function PricingLayout() {
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Asetukset</span>
             </TabsTrigger>
+            <TabsTrigger 
+              value="provider" 
+              className="flex items-center gap-2 py-3 bg-primary/10 border-2 border-primary/30 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Building2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Akvamariini</span>
+            </TabsTrigger>
             <TabsTrigger value="human" className="flex items-center gap-2 py-3">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Ihminen</span>
@@ -61,13 +68,6 @@ export default function PricingLayout() {
               <span className="hidden sm:inline">Esimerkki</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="provider" 
-              className="flex items-center gap-2 py-3 bg-primary/10 border-2 border-primary/30 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              <Building2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Palveluntarjoaja</span>
-            </TabsTrigger>
-            <TabsTrigger 
               value="comparison" 
               className="flex items-center gap-2 py-3 bg-primary/10 border-2 border-primary/30 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
@@ -84,6 +84,10 @@ export default function PricingLayout() {
             <SettingsTab />
           </TabsContent>
           
+          <TabsContent value="provider">
+            <ProviderTab />
+          </TabsContent>
+          
           <TabsContent value="human">
             <HumanTab />
           </TabsContent>
@@ -95,7 +99,7 @@ export default function PricingLayout() {
           <TabsContent value="hybrid">
             <HybridTab />
           </TabsContent>
-          
+
           <TabsContent value="savings">
             <SavingsTab />
           </TabsContent>
@@ -106,10 +110,6 @@ export default function PricingLayout() {
           
           <TabsContent value="example">
             <ExampleTab />
-          </TabsContent>
-          
-          <TabsContent value="provider">
-            <ProviderTab />
           </TabsContent>
           
           <TabsContent value="comparison">

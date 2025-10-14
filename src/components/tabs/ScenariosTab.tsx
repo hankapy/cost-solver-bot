@@ -4,7 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateScenario } from "@/lib/pricingCalculations";
+import { 
+  calculateProviderHumanCustomerPrice,
+  calculateProviderHybridCustomerPrice 
+} from "@/lib/providerCalculations";
 import { BarChart3, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line, LineChart } from "recharts";
 
@@ -12,22 +15,39 @@ export default function ScenariosTab() {
   const { settings } = usePricing();
   
   // Vertailutyökaluun kyselymäärä
-  const [comparisonQueries, setComparisonQueries] = useState(200);
+  const [comparisonQueries, setComparisonQueries] = useState(settings.monthlyQueries);
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
   const formatPercentage = (value: number) => `${value.toFixed(1)} %`;
 
+  // Lasketaan ihmisvetoisen mallin asiakashinta (sama kaikille)
+  const humanCustomerPrice = calculateProviderHumanCustomerPrice(settings);
+
   // Vertailutyökalun data: sama kyselymäärä, eri botin osuudet
+  // Käytämme botGrowth-kuukausia jotka vastaavat tiettyjä bottiprosentteja
   const botPercentages = [0, 25, 50, 75, 100];
   const comparisonData = botPercentages.map(botPct => {
-    const scenario = calculateScenario(comparisonQueries, botPct, settings);
+    // Etsitään lähin botGrowth-kuukausi joka vastaa tätä prosenttia
+    const closestMonth = settings.botGrowth.reduce((prev, curr) => 
+      Math.abs(curr.percentage - botPct) < Math.abs(prev.percentage - botPct) 
+        ? curr 
+        : prev
+    );
+    
+    const hybridPrice = botPct === 0 
+      ? humanCustomerPrice 
+      : calculateProviderHybridCustomerPrice(closestMonth.month, settings);
+    
+    const savings = humanCustomerPrice - hybridPrice;
+    const savingsPercentage = (savings / humanCustomerPrice) * 100;
+    
     return {
       botPercentage: botPct,
       name: `${botPct}%`,
-      humanCost: Number(scenario.humanCost.toFixed(2)),
-      hybridCost: Number(scenario.hybridCost.toFixed(2)),
-      savings: Number(scenario.savings.toFixed(2)),
-      savingsPercentage: scenario.savingsPercentage,
+      humanCost: Number(humanCustomerPrice.toFixed(2)),
+      hybridCost: Number(hybridPrice.toFixed(2)),
+      savings: Number(savings.toFixed(2)),
+      savingsPercentage,
     };
   });
 
@@ -84,7 +104,7 @@ export default function ScenariosTab() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="comparisonQueries">Kyselymäärä / kk</Label>
+            <Label htmlFor="comparisonQueries">Kyselymäärä / kk (ei käytössä tässä versiossa)</Label>
             <Input
               id="comparisonQueries"
               type="number"
@@ -92,7 +112,11 @@ export default function ScenariosTab() {
               onChange={(e) => setComparisonQueries(Number(e.target.value))}
               min="0"
               className="max-w-xs"
+              disabled
             />
+            <p className="text-xs text-muted-foreground">
+              Hinnat lasketaan Akvamariinin asetusten mukaan
+            </p>
           </div>
 
           <ResponsiveContainer width="100%" height={400}>
@@ -167,8 +191,8 @@ export default function ScenariosTab() {
               </TableHeader>
               <TableBody>
                 {comparisonData.map((data) => {
-                  const botQueries = Math.round((comparisonQueries * data.botPercentage) / 100);
-                  const humanQueries = comparisonQueries - botQueries;
+                  const botQueries = Math.round((settings.monthlyQueries * data.botPercentage) / 100);
+                  const humanQueries = settings.monthlyQueries - botQueries;
                   
                   return (
                     <TableRow key={data.botPercentage}>

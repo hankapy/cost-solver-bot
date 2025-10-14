@@ -155,3 +155,49 @@ export function compareCustomerVsProvider(settings: PricingSettings): CustomerVs
     marginPercentage
   };
 }
+
+/**
+ * Laskee asiakkaan maksamat hinnat Akvamariinin kustannuksista kateprosentin kanssa
+ */
+export function calculateCustomerPriceFromProviderCost(
+  providerCost: number,
+  marginPercentage: number
+): number {
+  return providerCost / (1 - marginPercentage / 100);
+}
+
+/**
+ * Laskee ihmisvetoisen mallin asiakashinnan (Akvamariinin kustannus + kate)
+ */
+export function calculateProviderHumanCustomerPrice(settings: PricingSettings): number {
+  const providerCost = calculateProviderHumanCost(settings);
+  return calculateCustomerPriceFromProviderCost(
+    providerCost.totalProviderCost,
+    settings.providerMarginPercentage
+  );
+}
+
+/**
+ * Laskee bottivetosen mallin asiakashinnan (Akvamariinin kustannus + kate)
+ */
+export function calculateProviderBotCustomerPrice(settings: PricingSettings): number {
+  const providerCost = calculateProviderBotCost(settings);
+  return calculateCustomerPriceFromProviderCost(
+    providerCost.totalProviderCost,
+    settings.providerMarginPercentage
+  );
+}
+
+/**
+ * Laskee hybridimallin asiakashinnan tietylle kuukaudelle (Akvamariinin kustannus + kate)
+ */
+export function calculateProviderHybridCustomerPrice(
+  month: number,
+  settings: PricingSettings
+): number {
+  const providerCost = calculateProviderHybridMonth(month, settings);
+  return calculateCustomerPriceFromProviderCost(
+    providerCost.totalMonthlyCost,
+    settings.providerMarginPercentage
+  );
+}

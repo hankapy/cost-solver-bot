@@ -3,30 +3,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateSavings, calculateScenario } from "@/lib/pricingCalculations";
+import { calculateScenario } from "@/lib/pricingCalculations";
+import { 
+  calculateProviderHumanCustomerPrice,
+  calculateProviderHybridCustomerPrice 
+} from "@/lib/providerCalculations";
 import { PiggyBank, TrendingDown, Percent, BarChart3 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 export default function SavingsTab() {
   const { settings } = usePricing();
-  const calculation = calculateSavings(settings);
   
   // Interaktiivinen laskuri
-  const [calculatorQueries, setCalculatorQueries] = useState(200);
+  const [calculatorQueries, setCalculatorQueries] = useState(settings.monthlyQueries);
   const [calculatorBotPercentage, setCalculatorBotPercentage] = useState(50);
   
-  // Laske interaktiivisen laskurin arvot
-  const calculatorScenario = calculateScenario(calculatorQueries, calculatorBotPercentage, settings);
+  // Lasketaan Akvamariinin asiakashinnat käyttäen katetta
+  const humanCustomerPrice = calculateProviderHumanCustomerPrice(settings);
+  
+  // Lasketaan hybridimallin hinta tietylle botin osuudelle
+  // Etsitään lähin botGrowth-kuukausi, joka vastaa valittua botin osuutta
+  const closestMonth = settings.botGrowth.reduce((prev, curr) => 
+    Math.abs(curr.percentage - calculatorBotPercentage) < Math.abs(prev.percentage - calculatorBotPercentage) 
+      ? curr 
+      : prev
+  );
+  const hybridCustomerPrice = calculateProviderHybridCustomerPrice(closestMonth.month, settings);
+  
+  const savings = humanCustomerPrice - hybridCustomerPrice;
+  const savingsPercentage = (savings / humanCustomerPrice) * 100;
   
   // Valmista data graafille
   const chartData = [
     {
       name: '100% Ihminen',
-      Hinta: Number(calculatorScenario.humanCost.toFixed(2)),
+      Hinta: Number(humanCustomerPrice.toFixed(2)),
     },
     {
       name: `${calculatorBotPercentage}% Botti`,
-      Hinta: Number(calculatorScenario.hybridCost.toFixed(2)),
+      Hinta: Number(hybridCustomerPrice.toFixed(2)),
     },
   ];
 
@@ -90,7 +105,7 @@ export default function SavingsTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">
-              {formatCurrency(calculation.humanCost)}
+              {formatCurrency(humanCustomerPrice)}
             </div>
             <p className="text-xs text-muted-foreground">asiakashinta / kk</p>
           </CardContent>
@@ -98,12 +113,12 @@ export default function SavingsTab() {
 
         <Card className="shadow-card bg-gradient-card border-primary/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Bottivetonen malli</CardTitle>
+            <CardTitle className="text-sm font-medium">Hybridimalli ({calculatorBotPercentage}% botti)</CardTitle>
             <TrendingDown className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
-              {formatCurrency(calculation.botCost)}
+              {formatCurrency(hybridCustomerPrice)}
             </div>
             <p className="text-xs text-muted-foreground">asiakashinta / kk</p>
           </CardContent>
@@ -118,10 +133,10 @@ export default function SavingsTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success-foreground">
-              {formatCurrency(calculation.savings)}
+              {formatCurrency(savings)}
             </div>
             <p className="text-xs text-success-foreground/90">
-              {formatPercentage(calculation.savingsPercentage)} säästö
+              {formatPercentage(savingsPercentage)} säästö
             </p>
           </CardContent>
         </Card>
@@ -149,7 +164,7 @@ export default function SavingsTab() {
               <div>
                 <p className="text-sm text-muted-foreground">Ihmisvetoinen malli</p>
                 <p className="text-2xl font-bold text-destructive">
-                  {formatCurrency(calculation.humanCost)}
+                  {formatCurrency(humanCustomerPrice)}
                 </p>
               </div>
             </div>
@@ -158,9 +173,9 @@ export default function SavingsTab() {
 
             <div className="flex justify-between items-center p-4 rounded-lg bg-primary/10">
               <div>
-                <p className="text-sm text-muted-foreground">Bottivetonen malli</p>
+                <p className="text-sm text-muted-foreground">Hybridimalli ({calculatorBotPercentage}% botti)</p>
                 <p className="text-2xl font-bold text-primary">
-                  {formatCurrency(calculation.botCost)}
+                  {formatCurrency(hybridCustomerPrice)}
                 </p>
               </div>
             </div>
@@ -171,13 +186,13 @@ export default function SavingsTab() {
               <div className="flex-1">
                 <p className="text-sm text-success-foreground/90">Kuukausisäästö</p>
                 <p className="text-3xl font-bold text-success-foreground">
-                  {formatCurrency(calculation.savings)}
+                  {formatCurrency(savings)}
                 </p>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-success-foreground/20">
                 <Percent className="h-5 w-5 text-success-foreground" />
                 <span className="text-xl font-bold text-success-foreground">
-                  {formatPercentage(calculation.savingsPercentage)}
+                  {formatPercentage(savingsPercentage)}
                 </span>
               </div>
             </div>
@@ -189,19 +204,19 @@ export default function SavingsTab() {
               <div className="p-4 rounded-lg bg-muted">
                 <p className="text-sm text-muted-foreground">3 kuukautta</p>
                 <p className="text-xl font-bold text-success">
-                  {formatCurrency(calculation.savings * 3)}
+                  {formatCurrency(savings * 3)}
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-muted">
                 <p className="text-sm text-muted-foreground">6 kuukautta</p>
                 <p className="text-xl font-bold text-success">
-                  {formatCurrency(calculation.savings * 6)}
+                  {formatCurrency(savings * 6)}
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-muted">
                 <p className="text-sm text-muted-foreground">12 kuukautta</p>
                 <p className="text-xl font-bold text-success">
-                  {formatCurrency(calculation.savings * 12)}
+                  {formatCurrency(savings * 12)}
                 </p>
               </div>
             </div>
@@ -280,9 +295,9 @@ export default function SavingsTab() {
 
           <div className="grid gap-4 md:grid-cols-3">
             <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
-              <p className="text-sm text-muted-foreground mb-1">Pelkkä ihmistyö</p>
+              <p className="text-sm text-muted-foreground mb-1">Ihmisvetoinen malli</p>
               <p className="text-2xl font-bold text-destructive">
-                {formatCurrency(calculatorScenario.humanCost)}
+                {formatCurrency(humanCustomerPrice)}
               </p>
             </div>
 
@@ -291,28 +306,28 @@ export default function SavingsTab() {
                 Hybridi ({calculatorBotPercentage}% botti)
               </p>
               <p className="text-2xl font-bold text-primary">
-                {formatCurrency(calculatorScenario.hybridCost)}
+                {formatCurrency(hybridCustomerPrice)}
               </p>
             </div>
 
             <div className="p-4 rounded-lg bg-success/10 border border-success/20">
               <p className="text-sm text-muted-foreground mb-1">Kuukausisäästö</p>
               <p className="text-2xl font-bold text-success">
-                {formatCurrency(calculatorScenario.savings)}
+                {formatCurrency(savings)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {formatPercentage(calculatorScenario.savingsPercentage)} säästö
+                {formatPercentage(savingsPercentage)} säästö
               </p>
             </div>
           </div>
 
           <div className="p-4 rounded-lg bg-muted border border-border">
-            <h4 className="font-semibold mb-3">Laskelma ({calculatorQueries} kyselyä/kk):</h4>
+            <h4 className="font-semibold mb-3">Laskelma ({settings.monthlyQueries} kyselyä/kk):</h4>
             <div className="space-y-2 text-sm text-muted-foreground">
-              <p>• Botti hoitaa: <strong>{Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({calculatorBotPercentage}%)</p>
-              <p>• Ihminen hoitaa: <strong>{calculatorQueries - Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({100 - calculatorBotPercentage}%)</p>
+              <p>• Botti hoitaa: <strong>{Math.round(settings.monthlyQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({calculatorBotPercentage}%)</p>
+              <p>• Ihminen hoitaa: <strong>{settings.monthlyQueries - Math.round(settings.monthlyQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({100 - calculatorBotPercentage}%)</p>
               <p className="pt-2 border-t mt-2">
-                💰 Kun botti hoitaa {calculatorBotPercentage}% kyselyistä, <strong className="text-success">säästät {formatCurrency(calculatorScenario.savings)} kuukaudessa</strong> verrattuna ihmisvetoiseen malliin.
+                💰 Kun botti hoitaa {calculatorBotPercentage}% kyselyistä, <strong className="text-success">säästät {formatCurrency(savings)} kuukaudessa</strong> verrattuna ihmisvetoiseen malliin.
               </p>
             </div>
           </div>

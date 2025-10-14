@@ -40,7 +40,7 @@ export default function ProviderTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Palveluntarjoajan kustannukset (Akvamariini)</h2>
+        <h2 className="text-2xl font-bold">Akvamariinin kustannukset</h2>
         <p className="text-muted-foreground">
           Meidän todelliset kustannukset palvelun tuottamisesta
         </p>
@@ -97,7 +97,7 @@ export default function ProviderTab() {
 
 
       <div className="space-y-3">
-        <h4 className="font-semibold text-sm">Palveluntarjoajan porrastettu hinnoittelu (meidän kulut)</h4>
+        <h4 className="font-semibold text-sm">Akvamariinin porrastettu hinnoittelu (meidän kulut)</h4>
         <p className="text-xs text-muted-foreground">Koskee vain ihmisvetoista mallia</p>
         <div className="flex items-center space-x-2 mb-3">
           <input
@@ -213,7 +213,7 @@ export default function ProviderTab() {
                   <span className="text-sm font-semibold">{humanTieredPrice.toFixed(2)} €</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Arvo tulee ylhäältä Palveluntarjoajan porrastuksesta
+                  Arvo tulee ylhäältä Akvamariinin porrastuksesta
                 </p>
               </div>
 
@@ -340,7 +340,7 @@ export default function ProviderTab() {
         <CardHeader>
           <CardTitle>Kateprosentti (%) ja asiakashinnat</CardTitle>
           <CardDescription>
-            Määritä kateprosentti, jolla lasketaan asiakashinnat palveluntarjoajan kustannuksista
+            Määritä kateprosentti, jolla lasketaan asiakashinnat Akvamariinin kustannuksista
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -364,7 +364,7 @@ export default function ProviderTab() {
               <h4 className="font-semibold text-primary">Täysin ihmisvetoinen malli - Asiakashinta</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Palveluntarjoajan kustannus:</span>
+                  <span className="text-muted-foreground">Akvamariinin kustannus:</span>
                   <span className="font-medium">{formatCurrency(humanCost.totalProviderCost)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -392,7 +392,7 @@ export default function ProviderTab() {
               <h4 className="font-semibold text-primary">Täysin bottivetonen malli - Asiakashinta</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Palveluntarjoajan kustannus:</span>
+                  <span className="text-muted-foreground">Akvamariinin kustannus:</span>
                   <span className="font-medium">{formatCurrency(botCost.totalProviderCost)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -427,7 +427,7 @@ export default function ProviderTab() {
           </CardDescription>
           <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
             <p className="text-sm text-blue-900 dark:text-blue-100">
-              <span className="font-semibold">Huomio:</span> Tämä taulukko havainnollistaa palveluntarjoajan kustannusten ja katteen kehitystä eri bottitasoilla. 
+              <span className="font-semibold">Huomio:</span> Tämä taulukko havainnollistaa Akvamariinin kustannusten ja katteen kehitystä eri bottitasoilla. 
               Asiakkaan kuukausihinta pysyy vakiona, mutta kustannusrakenteemme muuttuu kun botin osuus kasvaa.
             </p>
           </div>
