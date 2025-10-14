@@ -19,6 +19,12 @@ export default function ProviderTab() {
     .sort((a, b) => a.queryLimit - b.queryLimit)
     .find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
     settings.humanTiers[settings.humanTiers.length - 1]?.basePrice || 0;
+    
+  // Lasketaan järjestelmäkulut botille portaistetusta hinnoittelusta
+  const botSystemCosts = settings.botTiers
+    .sort((a, b) => a.queryLimit - b.queryLimit)
+    .find(tier => settings.monthlyQueries <= tier.queryLimit)?.systemCosts || 
+    settings.botTiers[settings.botTiers.length - 1]?.systemCosts || 0;
   
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined || isNaN(value)) return '0.00 €';
@@ -160,14 +166,13 @@ export default function ProviderTab() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="providerBotMaintenanceCost">Ylläpitokustannus (€/kk)</Label>
-                <Input
-                  id="providerBotMaintenanceCost"
-                  type="number"
-                  value={settings.providerBotMaintenanceCost}
-                  onChange={(e) => updateSettings({ providerBotMaintenanceCost: Number(e.target.value) })}
-                  min="0"
-                />
+                <Label>Järjestelmäkustannus (Azure) (€/kk)</Label>
+                <div className="h-10 px-3 py-2 rounded-md border border-input bg-muted flex items-center">
+                  <span className="text-sm font-semibold">{botSystemCosts.toFixed(2)} €</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Arvo tulee Asetukset-välilehden botin portaistuksesta
+                </p>
               </div>
             </div>
 
@@ -189,8 +194,8 @@ export default function ProviderTab() {
                 <span className="font-semibold text-primary">{formatCurrency(botCost.botMaintenanceCost)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Ylläpitokustannus (kiinteä):</span>
-                <span className="font-medium">{formatCurrency(botCost.botMaintenanceFixedCost)}</span>
+                <span className="text-muted-foreground">Järjestelmäkustannus (Azure):</span>
+                <span className="font-medium">{formatCurrency(botSystemCosts)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Peruskulut:</span>

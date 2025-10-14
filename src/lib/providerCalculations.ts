@@ -46,10 +46,15 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
  */
 export function calculateProviderBotCost(settings: PricingSettings): ProviderCostCalculation {
   const botMaintenanceCost = (settings.providerBotMaintenanceHoursPerMonth || 0) * (settings.providerBotMaintenanceHourlyRate || 0);
-  const botMaintenanceFixedCost = settings.providerBotMaintenanceCost || 0;
+  
+  // Järjestelmäkulut tulevat botin portaistuksesta
+  const sortedTiers = [...settings.botTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+  const systemCosts = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.systemCosts || 
+                     sortedTiers[sortedTiers.length - 1]?.systemCosts || 0;
+  
   const baseCosts = settings.providerBaseCosts || 0;
   
-  const totalProviderCost = botMaintenanceCost + botMaintenanceFixedCost + baseCosts;
+  const totalProviderCost = botMaintenanceCost + systemCosts + baseCosts;
   
   return {
     monthlyQueries: settings.monthlyQueries || 0,
@@ -61,7 +66,7 @@ export function calculateProviderBotCost(settings: PricingSettings): ProviderCos
     botMaintenanceHours: settings.providerBotMaintenanceHoursPerMonth || 0,
     botMaintenanceHourlyRate: settings.providerBotMaintenanceHourlyRate || 0,
     botMaintenanceCost,
-    botMaintenanceFixedCost,
+    botMaintenanceFixedCost: systemCosts, // Järjestelmäkulut tähän
     baseCosts,
     technicalCosts: 0,
     totalProviderCost

@@ -40,16 +40,28 @@ export default function ComparisonTab() {
     selectedProviderCost = comparison.providerCost;
   } else if (selectedModel === 'bot') {
     selectedCustomerCost = customerBotCost.totalCost;
+    const botSystemCosts = settings.botTiers
+      .sort((a, b) => a.queryLimit - b.queryLimit)
+      .find(tier => monthlyQueries <= tier.queryLimit)?.systemCosts || 
+      settings.botTiers[settings.botTiers.length - 1]?.systemCosts || 0;
     selectedProviderCost = settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
-                          settings.providerBotMaintenanceCost + 
+                          botSystemCosts + 
                           settings.providerBaseCosts;
   } else {
     selectedCustomerCost = customerHybridCost.discountedCost;
+    const humanSystemCosts = settings.humanTiers
+      .sort((a, b) => a.queryLimit - b.queryLimit)
+      .find(tier => customerHybridCost.humanQueries <= tier.queryLimit)?.basePrice || 
+      settings.humanTiers[settings.humanTiers.length - 1]?.basePrice || 0;
+    const botSystemCosts = settings.botTiers
+      .sort((a, b) => a.queryLimit - b.queryLimit)
+      .find(tier => customerHybridCost.botQueries <= tier.queryLimit)?.systemCosts || 
+      settings.botTiers[settings.botTiers.length - 1]?.systemCosts || 0;
     selectedProviderCost = settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
-                          settings.providerBotMaintenanceCost + 
+                          botSystemCosts + 
                           settings.providerBaseCosts +
                           (customerHybridCost.humanHours * settings.providerHumanHourlyRate) +
-                          settings.providerHumanWorkCost;
+                          humanSystemCosts;
   }
   
   const margin = selectedCustomerCost - selectedProviderCost;
@@ -266,8 +278,8 @@ export default function ComparisonTab() {
                         <span>{formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Ylläpitokustannus:</span>
-                        <span>{formatCurrency(settings.providerBotMaintenanceCost)}</span>
+                        <span className="text-muted-foreground">Järjestelmäkustannus (Azure):</span>
+                        <span>{formatCurrency(settings.botTiers.find(t => monthlyQueries <= t.queryLimit)?.systemCosts || 0)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Peruskulut:</span>
@@ -279,7 +291,7 @@ export default function ComparisonTab() {
                     <>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Botin ylläpito:</span>
-                        <span>{formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + settings.providerBotMaintenanceCost)}</span>
+                        <span>{formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + (settings.botTiers.find(t => customerHybridCost.botQueries <= t.queryLimit)?.systemCosts || 0))}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Ihmisasiakaspalvelu:</span>
@@ -345,7 +357,7 @@ export default function ComparisonTab() {
             <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'bot' ? 'bg-destructive/10 border border-destructive' : 'bg-muted'}`}>
               <span className="font-medium">Bottivetonen:</span>
               <span className="text-lg font-bold text-destructive">
-                {formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + settings.providerBotMaintenanceCost + settings.providerBaseCosts)}
+                {formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + (settings.botTiers.find(t => monthlyQueries <= t.queryLimit)?.systemCosts || 0) + settings.providerBaseCosts)}
               </span>
             </div>
             <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'hybrid' ? 'bg-destructive/10 border border-destructive' : 'bg-muted'}`}>
@@ -353,10 +365,10 @@ export default function ComparisonTab() {
               <span className="text-lg font-bold text-destructive">
                 {formatCurrency(
                   settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
-                  settings.providerBotMaintenanceCost + 
+                  (settings.botTiers.find(t => customerHybridCost.botQueries <= t.queryLimit)?.systemCosts || 0) + 
                   settings.providerBaseCosts +
                   (customerHybridCost.humanHours * settings.providerHumanHourlyRate) +
-                  settings.providerHumanWorkCost
+                  (settings.humanTiers.find(t => customerHybridCost.humanQueries <= t.queryLimit)?.basePrice || 0)
                 )}
               </span>
             </div>
