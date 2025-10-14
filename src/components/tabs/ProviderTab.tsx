@@ -59,21 +59,22 @@ export default function ProviderTab() {
               Porrastetut hinnat päivittyvät automaattisesti tämän perusteella
             </p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="providerBaseCosts">Peruskulut (€/kk)</Label>
-            <Input
-              id="providerBaseCosts"
-              type="number"
-              value={settings.providerBaseCosts}
-              onChange={(e) => updateSettings({ providerBaseCosts: Number(e.target.value) })}
-              min="0"
-            />
-            <p className="text-xs text-muted-foreground">
-              Peruskulut molemmille malleille
-            </p>
-          </div>
         </CardContent>
       </Card>
+
+      <div className="space-y-2">
+        <Label htmlFor="providerBaseCosts">Peruskulut (€/kk)</Label>
+        <Input
+          id="providerBaseCosts"
+          type="number"
+          value={settings.providerBaseCosts}
+          onChange={(e) => updateSettings({ providerBaseCosts: Number(e.target.value) })}
+          min="0"
+        />
+        <p className="text-xs text-muted-foreground">
+          Peruskulut molemmille malleille
+        </p>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="shadow-card">
