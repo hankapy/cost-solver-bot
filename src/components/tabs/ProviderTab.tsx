@@ -109,7 +109,46 @@ export default function ProviderTab() {
                   }}
                   min="0"
                 />
+      </div>
+
+      <div className="space-y-3">
+        <h4 className="font-semibold text-sm">Botin ylläpitotunnit kyselymäärän mukaan</h4>
+        <p className="text-xs text-muted-foreground">Koskee vain bottivetoa mallia</p>
+        <div className="space-y-3">
+          {settings.providerBotMaintenanceTiers.map((tier, index) => (
+            <div key={index} className="flex gap-3 items-end">
+              <div className="flex-1 space-y-2">
+                <Label htmlFor={`bot-maintenance-tier-limit-${index}`}>Kyselyraja</Label>
+                <Input
+                  id={`bot-maintenance-tier-limit-${index}`}
+                  type="number"
+                  value={tier.queryLimit}
+                  onChange={(e) => {
+                    const newTiers = [...settings.providerBotMaintenanceTiers];
+                    newTiers[index].queryLimit = Number(e.target.value);
+                    updateSettings({ providerBotMaintenanceTiers: newTiers });
+                  }}
+                  min="0"
+                />
               </div>
+              <div className="flex-1 space-y-2">
+                <Label htmlFor={`bot-maintenance-tier-hours-${index}`}>Ylläpitotunnit (h/kk)</Label>
+                <Input
+                  id={`bot-maintenance-tier-hours-${index}`}
+                  type="number"
+                  value={tier.maintenanceHours}
+                  onChange={(e) => {
+                    const newTiers = [...settings.providerBotMaintenanceTiers];
+                    newTiers[index].maintenanceHours = Number(e.target.value);
+                    updateSettings({ providerBotMaintenanceTiers: newTiers });
+                  }}
+                  min="0"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
               <div className="flex-1 space-y-2">
                 <Label htmlFor={`provider-human-tier-price-${index}`}>Hinta (€/kk)</Label>
                 <Input
@@ -232,43 +271,6 @@ export default function ProviderTab() {
               </div>
             </div>
 
-            <div className="border-t pt-4">
-              <h4 className="font-semibold mb-3 text-sm">Porrastetut ylläpitotunnit kyselymäärän mukaan</h4>
-              <div className="space-y-3">
-                {settings.providerBotMaintenanceTiers.map((tier, index) => (
-                  <div key={index} className="flex gap-3 items-end">
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor={`bot-maintenance-tier-limit-${index}`}>Kyselyraja</Label>
-                      <Input
-                        id={`bot-maintenance-tier-limit-${index}`}
-                        type="number"
-                        value={tier.queryLimit}
-                        onChange={(e) => {
-                          const newTiers = [...settings.providerBotMaintenanceTiers];
-                          newTiers[index].queryLimit = Number(e.target.value);
-                          updateSettings({ providerBotMaintenanceTiers: newTiers });
-                        }}
-                        min="0"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor={`bot-maintenance-tier-hours-${index}`}>Ylläpitotunnit (h/kk)</Label>
-                      <Input
-                        id={`bot-maintenance-tier-hours-${index}`}
-                        type="number"
-                        value={tier.maintenanceHours}
-                        onChange={(e) => {
-                          const newTiers = [...settings.providerBotMaintenanceTiers];
-                          newTiers[index].maintenanceHours = Number(e.target.value);
-                          updateSettings({ providerBotMaintenanceTiers: newTiers });
-                        }}
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between text-sm">
