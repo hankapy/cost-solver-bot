@@ -427,7 +427,7 @@ export default function ProviderTab() {
           </CardDescription>
           <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
             <p className="text-sm text-blue-900 dark:text-blue-100">
-              <span className="font-semibold">Huomio:</span> Tämä taulukko havainnollistaa palveluntarjoajan kustannusten ja katteen kehitystä eri automaatiotasoilla. 
+              <span className="font-semibold">Huomio:</span> Tämä taulukko havainnollistaa palveluntarjoajan kustannusten ja katteen kehitystä eri bottitasoilla. 
               Asiakkaan kuukausihinta pysyy vakiona, mutta kustannusrakenteemme muuttuu kun botin osuus kasvaa.
             </p>
           </div>
