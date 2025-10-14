@@ -47,6 +47,19 @@ export default function ProviderTab() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="monthlyQueries">Kyselymäärä / kuukausi</Label>
+            <Input
+              id="monthlyQueries"
+              type="number"
+              value={settings.monthlyQueries}
+              onChange={(e) => updateSettings({ monthlyQueries: Number(e.target.value) })}
+              min="0"
+            />
+            <p className="text-xs text-muted-foreground">
+              Porrastetut hinnat päivittyvät automaattisesti tämän perusteella
+            </p>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="providerBaseCosts">Peruskulut (€/kk)</Label>
             <Input
               id="providerBaseCosts"
