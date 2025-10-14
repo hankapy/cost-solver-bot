@@ -156,7 +156,7 @@ export default function SettingsTab() {
             </div>
 
             <div className="pt-4 border-t space-y-3">
-              <h4 className="font-semibold text-sm">Kuukausihinta malli</h4>
+              <h4 className="font-semibold text-sm">Kuukausihintamalli</h4>
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
