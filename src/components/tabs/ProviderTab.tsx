@@ -16,10 +16,12 @@ export default function ProviderTab() {
   const botCost = calculateProviderBotCost(settings);
   
   // Lasketaan porrastettu hinta ihmistyölle PALVELUNTARJOAJAN porrastuksesta
-  const humanTieredPrice = settings.providerHumanTiers
-    .sort((a, b) => a.queryLimit - b.queryLimit)
-    .find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
-    settings.providerHumanTiers[settings.providerHumanTiers.length - 1]?.basePrice || 0;
+  const humanTieredPrice = settings.skipProviderHumanTiers ? 0 : (
+    settings.providerHumanTiers
+      .sort((a, b) => a.queryLimit - b.queryLimit)
+      .find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
+      settings.providerHumanTiers[settings.providerHumanTiers.length - 1]?.basePrice || 0
+  );
     
   // Lasketaan järjestelmäkulut botille PALVELUNTARJOAJAN porrastuksesta
   const botSystemCosts = settings.providerBotTiers
