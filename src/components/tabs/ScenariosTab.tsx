@@ -161,8 +161,8 @@ export default function ScenariosTab() {
                   <TableHead>Bottikyselyt</TableHead>
                   <TableHead>Ihminen kyselyt</TableHead>
                   <TableHead className="text-right">Kustannus</TableHead>
-                  <TableHead className="text-right text-success">Säästö</TableHead>
-                  <TableHead className="text-right text-success">Säästö %</TableHead>
+                  <TableHead className="text-right">Säästö</TableHead>
+                  <TableHead className="text-right">Säästö %</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -178,10 +178,10 @@ export default function ScenariosTab() {
                       <TableCell className="text-right font-semibold">
                         {formatCurrency(data.hybridCost)}
                       </TableCell>
-                      <TableCell className="text-right font-bold text-success">
+                      <TableCell className={`text-right font-bold ${data.savings >= 0 ? 'text-success' : 'text-destructive'}`}>
                         {formatCurrency(data.savings)}
                       </TableCell>
-                      <TableCell className="text-right font-bold text-success">
+                      <TableCell className={`text-right font-bold ${data.savingsPercentage >= 0 ? 'text-success' : 'text-destructive'}`}>
                         {formatPercentage(data.savingsPercentage)}
                       </TableCell>
                     </TableRow>
@@ -191,12 +191,12 @@ export default function ScenariosTab() {
             </Table>
           </div>
 
-          <div className="p-4 rounded-lg bg-success/5 border border-success/20 mt-4">
-            <h4 className="font-semibold mb-2 text-success">Tulkinta:</h4>
+          <div className="p-4 rounded-lg bg-muted border border-border mt-4">
+            <h4 className="font-semibold mb-2">Tulkinta:</h4>
             <p className="text-sm text-muted-foreground">
-              Kun botin osuus kasvaa, <strong>kokonaiskustannukset laskevat ja säästö kasvaa</strong>. 
-              Esimerkiksi {comparisonQueries} kyselyllä kuukaudessa näet tarkalleen, kuinka paljon säästät 
-              eri automatisointiasteilla verrattuna pelkkään ihmistyöhön.
+              Kun botin osuus kasvaa, <strong>kustannukset voivat joko laskea tai nousta</strong> riippuen 
+              kyselymäärästä ja hinnoittelusta. Positiivinen säästö (vihreä) tarkoittaa, että hybridi on halvempi 
+              kuin pelkkä ihminen. Negatiivinen säästö (punainen) tarkoittaa, että hybridi on kalliimpi.
             </p>
           </div>
         </CardContent>
