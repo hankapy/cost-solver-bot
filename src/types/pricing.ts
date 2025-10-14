@@ -3,9 +3,16 @@ export interface PricingSettings {
   minutesPerQuery: number;
   centralizationDiscount: number;
   
-  // Human costs
+  // Human costs (Customer side)
   humanHourlyRate: number;
   humanTiers: HumanTier[];
+  humanBaseAmount: number; // Pohjasumma ihmisasiakaspalvelulle
+  
+  // Provider costs (Our costs - Akvamariini)
+  providerHumanHourlyRate: number; // Oma ihmisasiakaspalvelijan palkka
+  providerBotMaintenanceHourlyRate: number; // Botin ylläpitäjän palkka
+  providerBotMaintenanceHoursPerMonth: number; // Botin ylläpitotunnit per kk
+  providerTechnicalCosts: number; // Tekniset kulut (eri rivi)
   
   // Bot costs
   botStartupFee: number;

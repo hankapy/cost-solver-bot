@@ -100,40 +100,112 @@ export default function SettingsTab() {
           <CardTitle>Ihmistyön portaistettu peruskuukausihinta (/kk) (Ihminen, Hybridi)</CardTitle>
           <CardDescription>Määritä kiinteät kuukausikustannukset eri kyselymäärille</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {settings.humanTiers.map((tier, index) => (
-              <div key={index} className="flex gap-3 items-end">
-                <div className="flex-1 space-y-2">
-                  <Label htmlFor={`human-tier-limit-${index}`}>Kyselyraja</Label>
-                  <Input
-                    id={`human-tier-limit-${index}`}
-                    type="number"
-                    value={tier.queryLimit}
-                    onChange={(e) => {
-                      const newTiers = [...settings.humanTiers];
-                      newTiers[index].queryLimit = Number(e.target.value);
-                      updateSettings({ humanTiers: newTiers });
-                    }}
-                    min="0"
-                  />
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="humanBaseAmount">Pohjasumma ihmisasiakaspalvelulle (€/kk)</Label>
+            <Input
+              id="humanBaseAmount"
+              type="number"
+              value={settings.humanBaseAmount}
+              onChange={(e) => updateSettings({ humanBaseAmount: Number(e.target.value) })}
+              min="0"
+            />
+            <p className="text-xs text-muted-foreground">
+              Kiinteä perusmaksu riippumatta kyselymäärästä
+            </p>
+          </div>
+
+          <div className="pt-4 border-t">
+            <h4 className="font-semibold mb-3 text-sm">Portaistetut hinnat</h4>
+            <div className="space-y-3">
+              {settings.humanTiers.map((tier, index) => (
+                <div key={index} className="flex gap-3 items-end">
+                  <div className="flex-1 space-y-2">
+                    <Label htmlFor={`human-tier-limit-${index}`}>Kyselyraja</Label>
+                    <Input
+                      id={`human-tier-limit-${index}`}
+                      type="number"
+                      value={tier.queryLimit}
+                      onChange={(e) => {
+                        const newTiers = [...settings.humanTiers];
+                        newTiers[index].queryLimit = Number(e.target.value);
+                        updateSettings({ humanTiers: newTiers });
+                      }}
+                      min="0"
+                    />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <Label htmlFor={`human-tier-price-${index}`}>Peruskuukausihinta (€/kk)</Label>
+                    <Input
+                      id={`human-tier-price-${index}`}
+                      type="number"
+                      value={tier.basePrice}
+                      onChange={(e) => {
+                        const newTiers = [...settings.humanTiers];
+                        newTiers[index].basePrice = Number(e.target.value);
+                        updateSettings({ humanTiers: newTiers });
+                      }}
+                      min="0"
+                    />
+                  </div>
                 </div>
-                <div className="flex-1 space-y-2">
-                  <Label htmlFor={`human-tier-price-${index}`}>Peruskuukausihinta (€/kk)</Label>
-                  <Input
-                    id={`human-tier-price-${index}`}
-                    type="number"
-                    value={tier.basePrice}
-                    onChange={(e) => {
-                      const newTiers = [...settings.humanTiers];
-                      newTiers[index].basePrice = Number(e.target.value);
-                      updateSettings({ humanTiers: newTiers });
-                    }}
-                    min="0"
-                  />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle>Palveluntarjoajan kustannukset (Akvamariini)</CardTitle>
+          <CardDescription>Määritä meidän sisäiset kustannukset</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="providerHumanHourlyRate">Ihmisasiakaspalvelijan palkka (€/h)</Label>
+            <Input
+              id="providerHumanHourlyRate"
+              type="number"
+              value={settings.providerHumanHourlyRate}
+              onChange={(e) => updateSettings({ providerHumanHourlyRate: Number(e.target.value) })}
+              min="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="providerBotMaintenanceHourlyRate">Botin ylläpitäjän palkka (€/h)</Label>
+            <Input
+              id="providerBotMaintenanceHourlyRate"
+              type="number"
+              value={settings.providerBotMaintenanceHourlyRate}
+              onChange={(e) => updateSettings({ providerBotMaintenanceHourlyRate: Number(e.target.value) })}
+              min="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="providerBotMaintenanceHoursPerMonth">Botin ylläpitotunnit / kk</Label>
+            <Input
+              id="providerBotMaintenanceHoursPerMonth"
+              type="number"
+              value={settings.providerBotMaintenanceHoursPerMonth}
+              onChange={(e) => updateSettings({ providerBotMaintenanceHoursPerMonth: Number(e.target.value) })}
+              min="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="providerTechnicalCosts">Tekniset kulut (€/kk)</Label>
+            <Input
+              id="providerTechnicalCosts"
+              type="number"
+              value={settings.providerTechnicalCosts}
+              onChange={(e) => updateSettings({ providerTechnicalCosts: Number(e.target.value) })}
+              min="0"
+            />
+            <p className="text-xs text-muted-foreground">
+              Palvelimet, lisenssit, ym. tekniset kustannukset
+            </p>
           </div>
         </CardContent>
       </Card>
