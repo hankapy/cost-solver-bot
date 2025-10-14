@@ -276,28 +276,28 @@ export default function ProviderTab() {
                 <tr className="border-b">
                   <th className="text-left py-2">Kk</th>
                   <th className="text-right py-2">Botti %</th>
-                  <th className="text-right py-2">Bot kyselyt</th>
-                  <th className="text-right py-2">Ylläpito €</th>
-                  <th className="text-right py-2">Ihmis kyselyt</th>
-                  <th className="text-right py-2">Työtunnit</th>
-                  <th className="text-right py-2">Palkat €</th>
-                  <th className="text-right py-2">Tekniset €</th>
+                  <th className="text-right py-2">Bottikyselyt</th>
+                  <th className="text-right py-2">Täysin bottivetonen malli yhteensä /kk - peruskulut</th>
+                  <th className="text-right py-2">Ihmiskyselyt</th>
+                  <th className="text-right py-2">Täysin ihmisvetoinen malli yhteensä - peruskulut</th>
+                  <th className="text-right py-2">Peruskulut €</th>
                   <th className="text-right py-2 font-bold">Yhteensä €</th>
                 </tr>
               </thead>
               <tbody>
                 {settings.botGrowth.map(growth => {
                   const calc = calculateProviderHybridMonth(growth.month, settings);
+                  const botCostMinusBase = calc.botMaintenanceCost + botSystemCosts - settings.providerBaseCosts;
+                  const humanCostMinusBase = calc.humanServiceCost + humanTieredPrice - settings.providerBaseCosts;
                   return (
                     <tr key={growth.month} className="border-b">
                       <td className="py-2">{growth.month}</td>
                       <td className="text-right">{calc.botPercentage}%</td>
                       <td className="text-right">{calc.botQueries}</td>
-                      <td className="text-right">{formatCurrency(calc.botMaintenanceCost)}</td>
+                      <td className="text-right">{formatCurrency(botCostMinusBase)}</td>
                       <td className="text-right">{calc.humanQueries}</td>
-                      <td className="text-right">{calc.humanServiceHours.toFixed(1)}</td>
-                      <td className="text-right">{formatCurrency(calc.humanServiceCost)}</td>
-                      <td className="text-right">{formatCurrency(calc.technicalCosts)}</td>
+                      <td className="text-right">{formatCurrency(humanCostMinusBase)}</td>
+                      <td className="text-right">{formatCurrency(settings.providerBaseCosts)}</td>
                       <td className="text-right font-bold text-primary">
                         {formatCurrency(calc.totalMonthlyCost)}
                       </td>
