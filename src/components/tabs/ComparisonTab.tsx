@@ -10,8 +10,14 @@ export default function ComparisonTab() {
   const customerHumanCost = calculateHumanCost(settings);
   const customerBotCost = calculateBotCost(settings, false);
   
-  const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
-  const formatPercent = (value: number) => `${value.toFixed(1)}%`;
+  const formatCurrency = (value: number | undefined) => {
+    if (value === undefined || isNaN(value)) return '0.00 €';
+    return `${value.toFixed(2)} €`;
+  };
+  const formatPercent = (value: number | undefined) => {
+    if (value === undefined || isNaN(value)) return '0.0%';
+    return `${value.toFixed(1)}%`;
+  };
 
   return (
     <div className="space-y-6">

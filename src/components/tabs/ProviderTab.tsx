@@ -12,7 +12,10 @@ export default function ProviderTab() {
   const humanCost = calculateProviderHumanCost(settings);
   const botCost = calculateProviderBotCost(settings);
   
-  const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
+  const formatCurrency = (value: number | undefined) => {
+    if (value === undefined || isNaN(value)) return '0.00 €';
+    return `${value.toFixed(2)} €`;
+  };
 
   return (
     <div className="space-y-6">
