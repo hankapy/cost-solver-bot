@@ -1,0 +1,80 @@
+AKVAMARIINI BOT-MALLIN EXCEL-KAAVAT
+=====================================
+
+SARAKKEET JA KAAVAT (kopioi Exceliin):
+--------------------------------------
+
+A | B | C | D | E | F | G
+Kyselymäärä/kk | Ylläpitotunnit | Ylläpitokulut | Järjestelmäkulut | Pohjakulut | Palveluntarjoajan kustannus | Asiakashinta (25% kate)
+
+VAKIOT (laita erilliselle välilehdelle tai yläreunaan):
+Ylläpidon tuntihinta: 25 €/h
+Pohjakulut: 150 €
+Kate-%: 25%
+
+KAAVAT RIVILTÄ 2 ALKAEN:
+------------------------
+
+Solu A2: 100 (tai mikä tahansa kyselymäärä jonka haluat laskea)
+
+Solu B2 (Ylläpitotunnit - portaistettu):
+=IF(A2<=25,4,IF(A2<=50,8,IF(A2<=100,10,IF(A2<=150,12,IF(A2<=300,16,16)))))
+
+Solu C2 (Ylläpitokulut):
+=B2*25
+
+Solu D2 (Järjestelmäkulut - portaistettu):
+=IF(A2<=25,125,IF(A2<=50,150,IF(A2<=100,150,IF(A2<=150,200,IF(A2<=300,200,200)))))
+
+Solu E2 (Pohjakulut):
+=150
+
+Solu F2 (Palveluntarjoajan kokonaiskustannus):
+=C2+D2+E2
+
+Solu G2 (Asiakashinta 25% katteella):
+=F2/(1-0.25)
+
+PORTAISTUKSET:
+--------------
+Kyselymäärä | Ylläpitotunnit | Järjestelmäkulut
+0-25        | 4 h            | 125 €
+26-50       | 8 h            | 150 €
+51-100      | 10 h           | 150 €
+101-150     | 12 h           | 200 €
+151-300     | 16 h           | 200 €
+
+ESIMERKKILASKELMIA:
+-------------------
+25 kyselyä/kk: 
+- Ylläpito: 4h × 25€ = 100€
+- Järjestelmä: 125€
+- Pohja: 150€
+- YHTEENSÄ: 375€
+- Asiakashinta: 500€
+
+100 kyselyä/kk:
+- Ylläpito: 10h × 25€ = 250€
+- Järjestelmä: 150€
+- Pohja: 150€
+- YHTEENSÄ: 550€
+- Asiakashinta: 733,33€
+
+150 kyselyä/kk:
+- Ylläpito: 12h × 25€ = 300€
+- Järjestelmä: 200€
+- Pohja: 150€
+- YHTEENSÄ: 650€
+- Asiakashinta: 866,67€
+
+OHJE:
+-----
+1. Avaa Excel
+2. Kopioi sarakkeiden nimet riville 1 (A1-G1)
+3. Kopioi kaavat riville 2 (B2-G2)
+4. Muuta A2:ssa kyselymäärää - kaikki muut päivittyvät automaattisesti
+5. Halutessasi voit kopioida kaavat alaspäin ja laittaa A-sarakkeeseen eri kyselymääriä
+
+HUOM: 
+- Kate 25% tarkoittaa että asiakashinta = kustannus / 0,75
+- Jos haluat muuttaa katetta, vaihda kaavassa G2: =F2/(1-0.25) luvun 0.25 haluamaksesi katteeksi (esim. 0.30 = 30%)
