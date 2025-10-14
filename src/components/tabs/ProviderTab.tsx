@@ -439,6 +439,8 @@ export default function ProviderTab() {
                   <th className="text-right py-2">Ihmisvetoinen malli yhteensä €/kk</th>
                   <th className="text-right py-2">Peruskulut €</th>
                   <th className="text-right py-2 font-bold">Yhteensä €</th>
+                  <th className="text-right py-2 bg-primary/10 font-bold">Asiakashinta €/kk</th>
+                  <th className="text-right py-2 bg-primary/10 font-bold">Kate €</th>
                 </tr>
               </thead>
               <tbody>
@@ -457,6 +459,11 @@ export default function ProviderTab() {
                   
                   const botCostMinusBase = botMonthMaintenanceCost + botMonthSystemCosts;
                   const humanCostMinusBase = calc.humanServiceCost + (settings.skipProviderHumanTiers ? 0 : humanTieredPrice);
+                  
+                  // Lasketaan asiakashinta ja kate
+                  const customerPrice = calc.totalMonthlyCost / (1 - settings.providerMarginPercentage / 100);
+                  const margin = customerPrice - calc.totalMonthlyCost;
+                  
                   return (
                     <tr key={growth.month} className="border-b">
                       <td className="py-2">{growth.month}</td>
@@ -468,6 +475,12 @@ export default function ProviderTab() {
                       <td className="text-right">{formatCurrency(baseCosts)}</td>
                       <td className="text-right font-bold text-primary">
                         {formatCurrency(calc.totalMonthlyCost)}
+                      </td>
+                      <td className="text-right font-bold bg-primary/5">
+                        {formatCurrency(customerPrice)}
+                      </td>
+                      <td className="text-right font-bold bg-primary/5 text-green-600">
+                        {formatCurrency(margin)}
                       </td>
                     </tr>
                   );
