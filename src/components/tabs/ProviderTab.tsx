@@ -76,6 +76,44 @@ export default function ProviderTab() {
         </p>
       </div>
 
+      <div className="space-y-3">
+        <h4 className="font-semibold text-sm">Palveluntarjoajan porrastettu hinnoittelu (meidän kulut)</h4>
+        <div className="space-y-3">
+          {settings.providerHumanTiers.map((tier, index) => (
+            <div key={index} className="flex gap-3 items-end">
+              <div className="flex-1 space-y-2">
+                <Label htmlFor={`provider-human-tier-limit-${index}`}>Kyselyraja</Label>
+                <Input
+                  id={`provider-human-tier-limit-${index}`}
+                  type="number"
+                  value={tier.queryLimit}
+                  onChange={(e) => {
+                    const newTiers = [...settings.providerHumanTiers];
+                    newTiers[index].queryLimit = Number(e.target.value);
+                    updateSettings({ providerHumanTiers: newTiers });
+                  }}
+                  min="0"
+                />
+              </div>
+              <div className="flex-1 space-y-2">
+                <Label htmlFor={`provider-human-tier-price-${index}`}>Hinta (€/kk)</Label>
+                <Input
+                  id={`provider-human-tier-price-${index}`}
+                  type="number"
+                  value={tier.basePrice}
+                  onChange={(e) => {
+                    const newTiers = [...settings.providerHumanTiers];
+                    newTiers[index].basePrice = Number(e.target.value);
+                    updateSettings({ providerHumanTiers: newTiers });
+                  }}
+                  min="0"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="shadow-card">
           <CardHeader>
@@ -101,47 +139,9 @@ export default function ProviderTab() {
                   <span className="text-sm font-semibold">{humanTieredPrice.toFixed(2)} €</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Arvo tulee alta Palveluntarjoajan porrastuksesta
+                  Arvo tulee ylhäältä Palveluntarjoajan porrastuksesta
                 </p>
-            </div>
-
-            <div className="border-t pt-4">
-              <h4 className="font-semibold mb-3 text-sm">Palveluntarjoajan porrastettu hinnoittelu (meidän kulut)</h4>
-              <div className="space-y-3">
-                {settings.providerHumanTiers.map((tier, index) => (
-                  <div key={index} className="flex gap-3 items-end">
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor={`provider-human-tier-limit-${index}`}>Kyselyraja</Label>
-                      <Input
-                        id={`provider-human-tier-limit-${index}`}
-                        type="number"
-                        value={tier.queryLimit}
-                        onChange={(e) => {
-                          const newTiers = [...settings.providerHumanTiers];
-                          newTiers[index].queryLimit = Number(e.target.value);
-                          updateSettings({ providerHumanTiers: newTiers });
-                        }}
-                        min="0"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor={`provider-human-tier-price-${index}`}>Hinta (€/kk)</Label>
-                      <Input
-                        id={`provider-human-tier-price-${index}`}
-                        type="number"
-                        value={tier.basePrice}
-                        onChange={(e) => {
-                          const newTiers = [...settings.providerHumanTiers];
-                          newTiers[index].basePrice = Number(e.target.value);
-                          updateSettings({ providerHumanTiers: newTiers });
-                        }}
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                ))}
               </div>
-            </div>
 
               <div className="space-y-2">
                 <Label htmlFor="minutesPerQuery">Minuuttia per kysely</Label>
