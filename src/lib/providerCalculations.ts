@@ -13,6 +13,11 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
   const totalMinutes = (settings.monthlyQueries || 0) * (settings.minutesPerQuery || 0);
   const humanServiceHours = totalMinutes / 60;
   const humanServiceCost = humanServiceHours * (settings.providerHumanHourlyRate || 0);
+  const humanWorkCost = settings.providerHumanWorkCost || 0;
+  const baseCosts = settings.providerBaseCosts || 0;
+  
+  // Ihmisvetoiseen ei teknisiä kuluja
+  const totalProviderCost = humanServiceCost + humanWorkCost + baseCosts;
   
   return {
     monthlyQueries: settings.monthlyQueries || 0,
@@ -20,11 +25,14 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
     humanServiceHours,
     humanServiceHourlyRate: settings.providerHumanHourlyRate || 0,
     humanServiceCost,
+    humanWorkCost,
     botMaintenanceHours: 0,
     botMaintenanceHourlyRate: 0,
     botMaintenanceCost: 0,
-    technicalCosts: settings.providerTechnicalCosts || 0,
-    totalProviderCost: humanServiceCost + (settings.providerTechnicalCosts || 0)
+    botMaintenanceFixedCost: 0,
+    baseCosts,
+    technicalCosts: 0, // Ei teknisiä kuluja ihmisvetoiseen
+    totalProviderCost
   };
 }
 
@@ -33,6 +41,10 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
  */
 export function calculateProviderBotCost(settings: PricingSettings): ProviderCostCalculation {
   const botMaintenanceCost = (settings.providerBotMaintenanceHoursPerMonth || 0) * (settings.providerBotMaintenanceHourlyRate || 0);
+  const botMaintenanceFixedCost = settings.providerBotMaintenanceCost || 0;
+  const baseCosts = settings.providerBaseCosts || 0;
+  
+  const totalProviderCost = botMaintenanceCost + botMaintenanceFixedCost + baseCosts;
   
   return {
     monthlyQueries: settings.monthlyQueries || 0,
@@ -40,11 +52,14 @@ export function calculateProviderBotCost(settings: PricingSettings): ProviderCos
     humanServiceHours: 0,
     humanServiceHourlyRate: 0,
     humanServiceCost: 0,
+    humanWorkCost: 0,
     botMaintenanceHours: settings.providerBotMaintenanceHoursPerMonth || 0,
     botMaintenanceHourlyRate: settings.providerBotMaintenanceHourlyRate || 0,
     botMaintenanceCost,
-    technicalCosts: settings.providerTechnicalCosts || 0,
-    totalProviderCost: botMaintenanceCost + (settings.providerTechnicalCosts || 0)
+    botMaintenanceFixedCost,
+    baseCosts,
+    technicalCosts: 0,
+    totalProviderCost
   };
 }
 

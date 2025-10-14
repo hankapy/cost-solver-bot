@@ -14,6 +14,9 @@ export interface PricingSettings {
   providerBotMaintenanceHourlyRate: number; // Botin ylläpitäjän palkka
   providerBotMaintenanceHoursPerMonth: number; // Botin ylläpitotunnit per kk
   providerTechnicalCosts: number; // Tekniset kulut (eri rivi)
+  providerBaseCosts: number; // Peruskulut (molemmat mallit)
+  providerHumanWorkCost: number; // Ihmisvetoisen mallin työaikakustannus (vain palveluntarjoaja)
+  providerBotMaintenanceCost: number; // Bottivetioisen mallin ylläpitokustannus (vain palveluntarjoaja)
   
   // Bot costs
   botStartupFee: number;

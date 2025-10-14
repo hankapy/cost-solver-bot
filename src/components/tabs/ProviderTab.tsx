@@ -51,8 +51,12 @@ export default function ProviderTab() {
                 <span className="font-semibold text-primary">{formatCurrency(humanCost.humanServiceCost)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tekniset kulut:</span>
-                <span className="font-medium">{formatCurrency(humanCost.technicalCosts)}</span>
+                <span className="text-muted-foreground">Työaikakustannus:</span>
+                <span className="font-medium">{formatCurrency(humanCost.humanWorkCost)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Peruskulut:</span>
+                <span className="font-medium">{formatCurrency(humanCost.baseCosts)}</span>
               </div>
               <div className="flex justify-between text-lg border-t pt-3 mt-3">
                 <span className="font-bold">Yhteensä / kk:</span>
@@ -82,12 +86,16 @@ export default function ProviderTab() {
                 <span className="font-medium">{formatCurrency(botCost.botMaintenanceHourlyRate)}</span>
               </div>
               <div className="flex justify-between text-sm border-t pt-2">
-                <span className="text-muted-foreground font-semibold">Ylläpitokulut:</span>
+                <span className="text-muted-foreground font-semibold">Ylläpitokulut (tunnit):</span>
                 <span className="font-semibold text-primary">{formatCurrency(botCost.botMaintenanceCost)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tekniset kulut:</span>
-                <span className="font-medium">{formatCurrency(botCost.technicalCosts)}</span>
+                <span className="text-muted-foreground">Ylläpitokustannus (kiinteä):</span>
+                <span className="font-medium">{formatCurrency(botCost.botMaintenanceFixedCost)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Peruskulut:</span>
+                <span className="font-medium">{formatCurrency(botCost.baseCosts)}</span>
               </div>
               <div className="flex justify-between text-lg border-t pt-3 mt-3">
                 <span className="font-bold">Yhteensä / kk:</span>

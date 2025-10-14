@@ -182,39 +182,91 @@ export default function SettingsTab() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="providerHumanHourlyRate">Ihmisasiakaspalvelijan palkka (€/h)</Label>
+            <Label htmlFor="providerBaseCosts">Peruskulut (€/kk)</Label>
             <Input
-              id="providerHumanHourlyRate"
+              id="providerBaseCosts"
               type="number"
-              value={settings.providerHumanHourlyRate}
-              onChange={(e) => updateSettings({ providerHumanHourlyRate: Number(e.target.value) })}
+              value={settings.providerBaseCosts}
+              onChange={(e) => updateSettings({ providerBaseCosts: Number(e.target.value) })}
               min="0"
             />
+            <p className="text-xs text-muted-foreground">
+              Peruskulut molemmille malleille (ihminen ja botti)
+            </p>
+          </div>
+
+          <div className="pt-4 border-t">
+            <h4 className="font-semibold mb-3 text-sm">Ihmisvetoisen mallin kulut</h4>
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="providerHumanHourlyRate">Ihmisasiakaspalvelijan palkka (€/h)</Label>
+                <Input
+                  id="providerHumanHourlyRate"
+                  type="number"
+                  value={settings.providerHumanHourlyRate}
+                  onChange={(e) => updateSettings({ providerHumanHourlyRate: Number(e.target.value) })}
+                  min="0"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="providerHumanWorkCost">Työaikakustannus (€/kk)</Label>
+                <Input
+                  id="providerHumanWorkCost"
+                  type="number"
+                  value={settings.providerHumanWorkCost}
+                  onChange={(e) => updateSettings({ providerHumanWorkCost: Number(e.target.value) })}
+                  min="0"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Kiinteä työaikakustannus (vain palveluntarjoajan puolella)
+                </p>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="providerBotMaintenanceHourlyRate">Botin ylläpitäjän palkka (€/h)</Label>
-            <Input
-              id="providerBotMaintenanceHourlyRate"
-              type="number"
-              value={settings.providerBotMaintenanceHourlyRate}
-              onChange={(e) => updateSettings({ providerBotMaintenanceHourlyRate: Number(e.target.value) })}
-              min="0"
-            />
+          <div className="pt-4 border-t">
+            <h4 className="font-semibold mb-3 text-sm">Bottivetioisen mallin kulut</h4>
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="providerBotMaintenanceHourlyRate">Botin ylläpitäjän palkka (€/h)</Label>
+                <Input
+                  id="providerBotMaintenanceHourlyRate"
+                  type="number"
+                  value={settings.providerBotMaintenanceHourlyRate}
+                  onChange={(e) => updateSettings({ providerBotMaintenanceHourlyRate: Number(e.target.value) })}
+                  min="0"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="providerBotMaintenanceHoursPerMonth">Botin ylläpitotunnit / kk</Label>
+                <Input
+                  id="providerBotMaintenanceHoursPerMonth"
+                  type="number"
+                  value={settings.providerBotMaintenanceHoursPerMonth}
+                  onChange={(e) => updateSettings({ providerBotMaintenanceHoursPerMonth: Number(e.target.value) })}
+                  min="0"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="providerBotMaintenanceCost">Ylläpitokustannus (€/kk)</Label>
+                <Input
+                  id="providerBotMaintenanceCost"
+                  type="number"
+                  value={settings.providerBotMaintenanceCost}
+                  onChange={(e) => updateSettings({ providerBotMaintenanceCost: Number(e.target.value) })}
+                  min="0"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Kiinteä ylläpitokustannus (vain palveluntarjoajan puolella)
+                </p>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="providerBotMaintenanceHoursPerMonth">Botin ylläpitotunnit / kk</Label>
-            <Input
-              id="providerBotMaintenanceHoursPerMonth"
-              type="number"
-              value={settings.providerBotMaintenanceHoursPerMonth}
-              onChange={(e) => updateSettings({ providerBotMaintenanceHoursPerMonth: Number(e.target.value) })}
-              min="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
+          <div className="pt-4 border-t space-y-2">
             <Label htmlFor="providerTechnicalCosts">Tekniset kulut (€/kk)</Label>
             <Input
               id="providerTechnicalCosts"
@@ -224,7 +276,7 @@ export default function SettingsTab() {
               min="0"
             />
             <p className="text-xs text-muted-foreground">
-              Palvelimet, lisenssit, ym. tekniset kustannukset
+              Palvelimet, lisenssit, ym. tekniset kustannukset (käytetään vain hybridimallissa)
             </p>
           </div>
         </CardContent>

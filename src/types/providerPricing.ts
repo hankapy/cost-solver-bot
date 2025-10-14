@@ -8,13 +8,16 @@ export interface ProviderCostCalculation {
   humanServiceHours: number;
   humanServiceHourlyRate: number;
   humanServiceCost: number;
+  humanWorkCost: number; // Työaikakustannus (vain palveluntarjoaja)
   
   // Botin ylläpitokulut
   botMaintenanceHours: number;
   botMaintenanceHourlyRate: number;
   botMaintenanceCost: number;
+  botMaintenanceFixedCost: number; // Ylläpitokustannus (vain palveluntarjoaja)
   
-  // Tekniset kulut
+  // Muut kulut
+  baseCosts: number; // Peruskulut
   technicalCosts: number;
   
   // Yhteensä
