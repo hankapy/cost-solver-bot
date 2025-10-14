@@ -18,17 +18,20 @@ export default function SavingsTab() {
   const [calculatorQueries, setCalculatorQueries] = useState(settings.monthlyQueries);
   const [calculatorBotPercentage, setCalculatorBotPercentage] = useState(50);
   
+  // Käytetään käyttäjän valitsemaa kyselymäärää
+  const customSettings = { ...settings, monthlyQueries: calculatorQueries };
+  
   // Lasketaan Akvamariinin asiakashinnat käyttäen katetta
-  const humanCustomerPrice = calculateProviderHumanCustomerPrice(settings);
+  const humanCustomerPrice = calculateProviderHumanCustomerPrice(customSettings);
   
   // Lasketaan hybridimallin hinta tietylle botin osuudelle
   // Etsitään lähin botGrowth-kuukausi, joka vastaa valittua botin osuutta
-  const closestMonth = settings.botGrowth.reduce((prev, curr) => 
+  const closestMonth = customSettings.botGrowth.reduce((prev, curr) => 
     Math.abs(curr.percentage - calculatorBotPercentage) < Math.abs(prev.percentage - calculatorBotPercentage) 
       ? curr 
       : prev
   );
-  const hybridCustomerPrice = calculateProviderHybridCustomerPrice(closestMonth.month, settings);
+  const hybridCustomerPrice = calculateProviderHybridCustomerPrice(closestMonth.month, customSettings);
   
   const savings = humanCustomerPrice - hybridCustomerPrice;
   const savingsPercentage = (savings / humanCustomerPrice) * 100;
@@ -322,10 +325,10 @@ export default function SavingsTab() {
           </div>
 
           <div className="p-4 rounded-lg bg-muted border border-border">
-            <h4 className="font-semibold mb-3">Laskelma ({settings.monthlyQueries} kyselyä/kk):</h4>
+            <h4 className="font-semibold mb-3">Laskelma ({calculatorQueries} kyselyä/kk):</h4>
             <div className="space-y-2 text-sm text-muted-foreground">
-              <p>• Botti hoitaa: <strong>{Math.round(settings.monthlyQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({calculatorBotPercentage}%)</p>
-              <p>• Ihminen hoitaa: <strong>{settings.monthlyQueries - Math.round(settings.monthlyQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({100 - calculatorBotPercentage}%)</p>
+              <p>• Botti hoitaa: <strong>{Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({calculatorBotPercentage}%)</p>
+              <p>• Ihminen hoitaa: <strong>{calculatorQueries - Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({100 - calculatorBotPercentage}%)</p>
               <p className="pt-2 border-t mt-2">
                 💰 Kun botti hoitaa {calculatorBotPercentage}% kyselyistä, <strong className="text-success">säästät {formatCurrency(savings)} kuukaudessa</strong> verrattuna ihmisvetoiseen malliin.
               </p>
