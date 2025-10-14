@@ -1,14 +1,26 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
 import { compareCustomerVsProvider } from "@/lib/providerCalculations";
-import { calculateHumanCost, calculateBotCost } from "@/lib/pricingCalculations";
+import { calculateHumanCost, calculateBotCost, calculateHybridMonth } from "@/lib/pricingCalculations";
+
+type ModelType = 'human' | 'bot' | 'hybrid';
 
 export default function ComparisonTab() {
   const { settings } = usePricing();
+  const [selectedModel, setSelectedModel] = useState<ModelType>('human');
+  const [monthlyQueries, setMonthlyQueries] = useState(settings.monthlyQueries);
+  const [selectedMonth, setSelectedMonth] = useState(6); // Kuukausi hybridimallille
   
-  const comparison = compareCustomerVsProvider(settings);
-  const customerHumanCost = calculateHumanCost(settings);
-  const customerBotCost = calculateBotCost(settings, false);
+  // Käytetään valittua kyselymäärää
+  const customSettings = { ...settings, monthlyQueries };
+  
+  const comparison = compareCustomerVsProvider(customSettings);
+  const customerHumanCost = calculateHumanCost(customSettings);
+  const customerBotCost = calculateBotCost(customSettings, false);
+  const customerHybridCost = calculateHybridMonth(selectedMonth, customSettings);
   
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined || isNaN(value)) return '0.00 €';
@@ -19,6 +31,30 @@ export default function ComparisonTab() {
     return `${value.toFixed(1)}%`;
   };
 
+  // Valitse oikea asiakkaan kustannus mallin mukaan
+  let selectedCustomerCost = 0;
+  let selectedProviderCost = 0;
+  
+  if (selectedModel === 'human') {
+    selectedCustomerCost = customerHumanCost.totalCost;
+    selectedProviderCost = comparison.providerCost;
+  } else if (selectedModel === 'bot') {
+    selectedCustomerCost = customerBotCost.totalCost;
+    selectedProviderCost = settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
+                          settings.providerBotMaintenanceCost + 
+                          settings.providerBaseCosts;
+  } else {
+    selectedCustomerCost = customerHybridCost.discountedCost;
+    selectedProviderCost = settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
+                          settings.providerBotMaintenanceCost + 
+                          settings.providerBaseCosts +
+                          (customerHybridCost.humanHours * settings.providerHumanHourlyRate) +
+                          settings.providerHumanWorkCost;
+  }
+  
+  const margin = selectedCustomerCost - selectedProviderCost;
+  const marginPercentage = selectedCustomerCost > 0 ? (margin / selectedCustomerCost) * 100 : 0;
+
   return (
     <div className="space-y-6">
       <div>
@@ -28,9 +64,86 @@ export default function ComparisonTab() {
         </p>
       </div>
 
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle>Vertailuasetukset</CardTitle>
+          <CardDescription>Valitse malli ja kyselymäärä</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="monthlyQueries">Kyselymäärä / kk</Label>
+            <Input
+              id="monthlyQueries"
+              type="number"
+              value={monthlyQueries}
+              onChange={(e) => setMonthlyQueries(Number(e.target.value))}
+              min="0"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label>Valitse malli</Label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <button
+                onClick={() => setSelectedModel('human')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  selectedModel === 'human' 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-border hover:border-primary/50'
+                }`}
+              >
+                <div className="font-semibold">Ihmisvetoinen</div>
+                <div className="text-sm text-muted-foreground">Kaikki hoidetaan ihmistyöllä</div>
+              </button>
+              
+              <button
+                onClick={() => setSelectedModel('bot')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  selectedModel === 'bot' 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-border hover:border-primary/50'
+                }`}
+              >
+                <div className="font-semibold">Bottimalli</div>
+                <div className="text-sm text-muted-foreground">Kaikki hoidetaan botilla</div>
+              </button>
+              
+              <button
+                onClick={() => setSelectedModel('hybrid')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  selectedModel === 'hybrid' 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-border hover:border-primary/50'
+                }`}
+              >
+                <div className="font-semibold">Hybridi</div>
+                <div className="text-sm text-muted-foreground">Botti + ihminen</div>
+              </button>
+            </div>
+          </div>
+
+          {selectedModel === 'hybrid' && (
+            <div className="space-y-2">
+              <Label htmlFor="selectedMonth">Kuukausi (hybridi)</Label>
+              <Input
+                id="selectedMonth"
+                type="number"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                min="1"
+                max="12"
+              />
+              <p className="text-xs text-muted-foreground">
+                Botin osuus kuukaudella {selectedMonth}: {customerHybridCost.botPercentage}%
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="shadow-card border-primary">
         <CardHeader>
-          <CardTitle>Kate-analyysi (Ihmisvetoinen malli)</CardTitle>
+          <CardTitle>Kate-analyysi ({selectedModel === 'human' ? 'Ihmisvetoinen' : selectedModel === 'bot' ? 'Bottimalli' : 'Hybridi'})</CardTitle>
           <CardDescription>
             Mitä asiakas maksaa vs. mitä meille jää käteen
           </CardDescription>
@@ -40,7 +153,7 @@ export default function ComparisonTab() {
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Asiakkaan maksu meille</p>
               <p className="text-2xl font-bold text-primary">
-                {formatCurrency(comparison.customerPayment)}
+                {formatCurrency(selectedCustomerCost)}
               </p>
               <p className="text-xs text-muted-foreground">
                 Tämä on mitä asiakas maksaa palvelusta
@@ -50,59 +163,137 @@ export default function ComparisonTab() {
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Meidän kustannukset</p>
               <p className="text-2xl font-bold text-destructive">
-                {formatCurrency(comparison.providerCost)}
+                {formatCurrency(selectedProviderCost)}
               </p>
               <p className="text-xs text-muted-foreground">
-                Palkat + tekniset kulut
+                Palkat + muut kulut
               </p>
             </div>
             
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Kate</p>
               <p className="text-2xl font-bold text-green-600">
-                {formatCurrency(comparison.margin)}
+                {formatCurrency(margin)}
               </p>
               <p className="text-xs text-muted-foreground">
-                Katteemme: {formatPercent(comparison.marginPercentage)}
+                Katteemme: {formatPercent(marginPercentage)}
               </p>
             </div>
           </div>
 
           <div className="border-t pt-4 mt-4">
-            <h4 className="font-semibold mb-3">Erittelyt</h4>
+            <h4 className="font-semibold mb-3">Erittelyt ({monthlyQueries} kyselyä/kk)</h4>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2 p-3 bg-muted rounded-lg">
                 <p className="font-medium text-sm">Asiakkaan kustannuserittely:</p>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tuntiveloitus:</span>
-                    <span>{formatCurrency(customerHumanCost.hourlyLabor)}</span>
+                {selectedModel === 'human' && (
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tuntiveloitus:</span>
+                      <span>{formatCurrency(customerHumanCost.hourlyLabor)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Peruskuukausihinta:</span>
+                      <span>{formatCurrency(customerHumanCost.basePrice)}</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-1 font-medium">
+                      <span>Yhteensä:</span>
+                      <span>{formatCurrency(customerHumanCost.totalCost)}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Peruskuukausihinta:</span>
-                    <span>{formatCurrency(customerHumanCost.basePrice)}</span>
+                )}
+                {selectedModel === 'bot' && (
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Portaistettu hinta:</span>
+                      <span>{formatCurrency(customerBotCost.tieredPrice)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Järjestelmäkulut:</span>
+                      <span>{formatCurrency(customerBotCost.systemCosts)}</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-1 font-medium">
+                      <span>Yhteensä:</span>
+                      <span>{formatCurrency(customerBotCost.totalCost)}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between border-t pt-1 font-medium">
-                    <span>Yhteensä:</span>
-                    <span>{formatCurrency(customerHumanCost.totalCost)}</span>
+                )}
+                {selectedModel === 'hybrid' && (
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Botti ({customerHybridCost.botPercentage}%):</span>
+                      <span>{formatCurrency(customerHybridCost.botCost)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Ihminen ({100 - customerHybridCost.botPercentage}%):</span>
+                      <span>{formatCurrency(customerHybridCost.humanTotalCost)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Alennus ({settings.centralizationDiscount}%):</span>
+                      <span>-{formatCurrency(customerHybridCost.combinedCost - customerHybridCost.discountedCost)}</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-1 font-medium">
+                      <span>Yhteensä:</span>
+                      <span>{formatCurrency(customerHybridCost.discountedCost)}</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="space-y-2 p-3 bg-muted rounded-lg">
                 <p className="font-medium text-sm">Meidän kustannuserittely:</p>
                 <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Palkkakustannukset:</span>
-                    <span>{formatCurrency(comparison.providerCost - settings.providerTechnicalCosts)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tekniset kulut:</span>
-                    <span>{formatCurrency(settings.providerTechnicalCosts)}</span>
-                  </div>
+                  {selectedModel === 'human' && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Palkkakustannukset:</span>
+                        <span>{formatCurrency(selectedProviderCost - settings.providerBaseCosts - settings.providerHumanWorkCost)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Työaikakustannus:</span>
+                        <span>{formatCurrency(settings.providerHumanWorkCost)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Peruskulut:</span>
+                        <span>{formatCurrency(settings.providerBaseCosts)}</span>
+                      </div>
+                    </>
+                  )}
+                  {selectedModel === 'bot' && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Ylläpitokulut (tunnit):</span>
+                        <span>{formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Ylläpitokustannus:</span>
+                        <span>{formatCurrency(settings.providerBotMaintenanceCost)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Peruskulut:</span>
+                        <span>{formatCurrency(settings.providerBaseCosts)}</span>
+                      </div>
+                    </>
+                  )}
+                  {selectedModel === 'hybrid' && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Botin ylläpito:</span>
+                        <span>{formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + settings.providerBotMaintenanceCost)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Ihmisasiakaspalvelu:</span>
+                        <span>{formatCurrency(customerHybridCost.humanHours * settings.providerHumanHourlyRate + settings.providerHumanWorkCost)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Peruskulut:</span>
+                        <span>{formatCurrency(settings.providerBaseCosts)}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex justify-between border-t pt-1 font-medium">
                     <span>Yhteensä:</span>
-                    <span>{formatCurrency(comparison.providerCost)}</span>
+                    <span>{formatCurrency(selectedProviderCost)}</span>
                   </div>
                 </div>
               </div>
@@ -114,26 +305,26 @@ export default function ComparisonTab() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Asiakkaan näkökulma</CardTitle>
-            <CardDescription>Mitä asiakas maksaa eri malleissa</CardDescription>
+            <CardTitle>Kaikki mallit - Asiakkaan näkökulma</CardTitle>
+            <CardDescription>Mitä asiakas maksaa eri malleissa ({monthlyQueries} kyselyä/kk)</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-muted rounded">
+            <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'human' ? 'bg-primary/10 border border-primary' : 'bg-muted'}`}>
               <span className="font-medium">Ihmisvetoinen:</span>
               <span className="text-lg font-bold text-primary">
                 {formatCurrency(customerHumanCost.totalCost)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-muted rounded">
+            <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'bot' ? 'bg-primary/10 border border-primary' : 'bg-muted'}`}>
               <span className="font-medium">Bottivetonen:</span>
               <span className="text-lg font-bold text-primary">
                 {formatCurrency(customerBotCost.totalCost)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-950 rounded border border-green-200">
-              <span className="font-medium">Asiakkaan säästö:</span>
-              <span className="text-lg font-bold text-green-600">
-                {formatCurrency(customerHumanCost.totalCost - customerBotCost.totalCost)}
+            <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'hybrid' ? 'bg-primary/10 border border-primary' : 'bg-muted'}`}>
+              <span className="font-medium">Hybridi (kk {selectedMonth}):</span>
+              <span className="text-lg font-bold text-primary">
+                {formatCurrency(customerHybridCost.discountedCost)}
               </span>
             </div>
           </CardContent>
@@ -141,28 +332,31 @@ export default function ComparisonTab() {
 
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle>Meidän näkökulma</CardTitle>
-            <CardDescription>Meidän kustannukset eri malleissa</CardDescription>
+            <CardTitle>Kaikki mallit - Meidän näkökulma</CardTitle>
+            <CardDescription>Meidän kustannukset eri malleissa ({monthlyQueries} kyselyä/kk)</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-muted rounded">
+            <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'human' ? 'bg-destructive/10 border border-destructive' : 'bg-muted'}`}>
               <span className="font-medium">Ihmisvetoinen:</span>
               <span className="text-lg font-bold text-destructive">
                 {formatCurrency(comparison.providerCost)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-muted rounded">
+            <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'bot' ? 'bg-destructive/10 border border-destructive' : 'bg-muted'}`}>
               <span className="font-medium">Bottivetonen:</span>
               <span className="text-lg font-bold text-destructive">
-                {formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + settings.providerTechnicalCosts)}
+                {formatCurrency(settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + settings.providerBotMaintenanceCost + settings.providerBaseCosts)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-950 rounded border border-green-200">
-              <span className="font-medium">Meidän säästö:</span>
-              <span className="text-lg font-bold text-green-600">
+            <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'hybrid' ? 'bg-destructive/10 border border-destructive' : 'bg-muted'}`}>
+              <span className="font-medium">Hybridi (kk {selectedMonth}):</span>
+              <span className="text-lg font-bold text-destructive">
                 {formatCurrency(
-                  comparison.providerCost - 
-                  (settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + settings.providerTechnicalCosts)
+                  settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
+                  settings.providerBotMaintenanceCost + 
+                  settings.providerBaseCosts +
+                  (customerHybridCost.humanHours * settings.providerHumanHourlyRate) +
+                  settings.providerHumanWorkCost
                 )}
               </span>
             </div>
