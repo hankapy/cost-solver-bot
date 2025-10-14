@@ -30,9 +30,13 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
   const humanServiceCost = humanServiceHours * (settings.providerHumanHourlyRate || 0);
   
   // Porrastettu hinta tulee PALVELUNTARJOAJAN portaistuksesta (ei asiakkaan)
-  const sortedTiers = [...settings.providerHumanTiers].sort((a, b) => a.queryLimit - b.queryLimit);
-  const tieredPrice = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
-                     sortedTiers[sortedTiers.length - 1]?.basePrice || 0;
+  // JOS skipProviderHumanTiers on true, asetetaan tieredPrice nollaksi
+  let tieredPrice = 0;
+  if (!settings.skipProviderHumanTiers) {
+    const sortedTiers = [...settings.providerHumanTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+    tieredPrice = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
+                   sortedTiers[sortedTiers.length - 1]?.basePrice || 0;
+  }
   
   const baseCosts = settings.skipProviderBaseCosts ? 0 : (settings.providerBaseCosts || 0);
   
