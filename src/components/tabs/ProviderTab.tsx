@@ -445,8 +445,18 @@ export default function ProviderTab() {
                 {settings.botGrowth.map(growth => {
                   const calc = calculateProviderHybridMonth(growth.month, settings);
                   const baseCosts = settings.skipProviderBaseCosts ? 0 : settings.providerBaseCosts;
-                  const botCostMinusBase = calc.botMaintenanceCost + botSystemCosts - baseCosts;
-                  const humanCostMinusBase = calc.humanServiceCost + humanTieredPrice - baseCosts;
+                  
+                  // Lasketaan botille järjestelmäkulut ja ylläpitotunnit bottikyselyjen määrän mukaan
+                  const botMonthSystemCosts = settings.providerBotTiers
+                    .sort((a, b) => a.queryLimit - b.queryLimit)
+                    .find(tier => calc.botQueries <= tier.queryLimit)?.systemCosts || 
+                    settings.providerBotTiers[settings.providerBotTiers.length - 1]?.systemCosts || 0;
+                  
+                  const botMonthMaintenanceHours = getBotMaintenanceHours(calc.botQueries, settings);
+                  const botMonthMaintenanceCost = botMonthMaintenanceHours * settings.providerBotMaintenanceHourlyRate;
+                  
+                  const botCostMinusBase = botMonthMaintenanceCost + botMonthSystemCosts;
+                  const humanCostMinusBase = calc.humanServiceCost + (settings.skipProviderHumanTiers ? 0 : humanTieredPrice);
                   return (
                     <tr key={growth.month} className="border-b">
                       <td className="py-2">{growth.month}</td>
