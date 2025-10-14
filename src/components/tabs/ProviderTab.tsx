@@ -338,14 +338,14 @@ export default function ProviderTab() {
 
       <Card className="shadow-card border-2 border-primary/20 bg-primary/5">
         <CardHeader>
-          <CardTitle>Kateprosentin määritys ja asiakashinnat</CardTitle>
+          <CardTitle>Kateprosentti (%) ja asiakashinnat</CardTitle>
           <CardDescription>
-            Määritä kateprosentin, jolla lasketaan asiakashinnat palveluntarjoajan kustannuksista
+            Määritä kateprosentti, jolla lasketaan asiakashinnat palveluntarjoajan kustannuksista
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="providerMarginPercentage">Kateprosentin (%)</Label>
+            <Label htmlFor="providerMarginPercentage">Kateprosentti (%)</Label>
             <Input
               id="providerMarginPercentage"
               type="number"
@@ -368,7 +368,7 @@ export default function ProviderTab() {
                   <span className="font-medium">{formatCurrency(humanCost.totalProviderCost)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Kateprosentin:</span>
+                  <span className="text-muted-foreground">Kateprosentti (%):</span>
                   <span className="font-medium">{settings.providerMarginPercentage}%</span>
                 </div>
                 <div className="flex justify-between text-lg border-t pt-2 mt-2">
@@ -396,7 +396,7 @@ export default function ProviderTab() {
                   <span className="font-medium">{formatCurrency(botCost.totalProviderCost)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Kateprosentin:</span>
+                  <span className="text-muted-foreground">Kateprosentti (%):</span>
                   <span className="font-medium">{settings.providerMarginPercentage}%</span>
                 </div>
                 <div className="flex justify-between text-lg border-t pt-2 mt-2">
