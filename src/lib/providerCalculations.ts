@@ -13,11 +13,16 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
   const totalMinutes = (settings.monthlyQueries || 0) * (settings.minutesPerQuery || 0);
   const humanServiceHours = totalMinutes / 60;
   const humanServiceCost = humanServiceHours * (settings.providerHumanHourlyRate || 0);
-  const humanWorkCost = settings.providerHumanWorkCost || 0;
+  
+  // Porrastettu hinta tulee ihmistyön portaistuksesta
+  const sortedTiers = [...settings.humanTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+  const tieredPrice = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
+                     sortedTiers[sortedTiers.length - 1]?.basePrice || 0;
+  
   const baseCosts = settings.providerBaseCosts || 0;
   
   // Ihmisvetoiseen ei teknisiä kuluja
-  const totalProviderCost = humanServiceCost + humanWorkCost + baseCosts;
+  const totalProviderCost = humanServiceCost + tieredPrice + baseCosts;
   
   return {
     monthlyQueries: settings.monthlyQueries || 0,
@@ -25,7 +30,7 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
     humanServiceHours,
     humanServiceHourlyRate: settings.providerHumanHourlyRate || 0,
     humanServiceCost,
-    humanWorkCost,
+    humanWorkCost: tieredPrice, // Porrastettu hinta tähän
     botMaintenanceHours: 0,
     botMaintenanceHourlyRate: 0,
     botMaintenanceCost: 0,

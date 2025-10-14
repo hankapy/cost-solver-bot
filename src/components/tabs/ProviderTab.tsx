@@ -14,6 +14,12 @@ export default function ProviderTab() {
   const humanCost = calculateProviderHumanCost(settings);
   const botCost = calculateProviderBotCost(settings);
   
+  // Lasketaan porrastettu hinta ihmistyölle
+  const humanTieredPrice = settings.humanTiers
+    .sort((a, b) => a.queryLimit - b.queryLimit)
+    .find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
+    settings.humanTiers[settings.humanTiers.length - 1]?.basePrice || 0;
+  
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined || isNaN(value)) return '0.00 €';
     return `${value.toFixed(2)} €`;
@@ -70,14 +76,13 @@ export default function ProviderTab() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="providerHumanWorkCost">Työaikakustannus (€/kk)</Label>
-                <Input
-                  id="providerHumanWorkCost"
-                  type="number"
-                  value={settings.providerHumanWorkCost}
-                  onChange={(e) => updateSettings({ providerHumanWorkCost: Number(e.target.value) })}
-                  min="0"
-                />
+                <Label>Porrastettu hinnoittelu (€/kk)</Label>
+                <div className="h-10 px-3 py-2 rounded-md border border-input bg-muted flex items-center">
+                  <span className="text-sm font-semibold">{humanTieredPrice.toFixed(2)} €</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Arvo tulee Asetukset-välilehden porrastuksesta
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -109,8 +114,8 @@ export default function ProviderTab() {
                 <span className="font-semibold text-primary">{formatCurrency(humanCost.humanServiceCost)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Työaikakustannus:</span>
-                <span className="font-medium">{formatCurrency(humanCost.humanWorkCost)}</span>
+                <span className="text-muted-foreground">Porrastettu hinnoittelu:</span>
+                <span className="font-medium">{formatCurrency(humanTieredPrice)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Peruskulut:</span>

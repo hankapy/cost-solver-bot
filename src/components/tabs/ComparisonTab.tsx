@@ -247,11 +247,11 @@ export default function ComparisonTab() {
                     <>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Palkkakustannukset:</span>
-                        <span>{formatCurrency(selectedProviderCost - settings.providerBaseCosts - settings.providerHumanWorkCost)}</span>
+                        <span>{formatCurrency(selectedProviderCost - settings.providerBaseCosts - (settings.humanTiers.find(t => monthlyQueries <= t.queryLimit)?.basePrice || 0))}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Työaikakustannus:</span>
-                        <span>{formatCurrency(settings.providerHumanWorkCost)}</span>
+                        <span className="text-muted-foreground">Porrastettu hinnoittelu:</span>
+                        <span>{formatCurrency(settings.humanTiers.find(t => monthlyQueries <= t.queryLimit)?.basePrice || 0)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Peruskulut:</span>
@@ -283,7 +283,7 @@ export default function ComparisonTab() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Ihmisasiakaspalvelu:</span>
-                        <span>{formatCurrency(customerHybridCost.humanHours * settings.providerHumanHourlyRate + settings.providerHumanWorkCost)}</span>
+                        <span>{formatCurrency(customerHybridCost.humanHours * settings.providerHumanHourlyRate + (settings.humanTiers.find(t => customerHybridCost.humanQueries <= t.queryLimit)?.basePrice || 0))}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Peruskulut:</span>
