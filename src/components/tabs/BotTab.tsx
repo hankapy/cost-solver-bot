@@ -2,25 +2,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateBotCost } from "@/lib/pricingCalculations";
+import { 
+  calculateProviderBotCost,
+  calculateProviderBotCustomerPrice 
+} from "@/lib/providerCalculations";
 import { Bot, Euro, TrendingUp } from "lucide-react";
 
 export default function BotTab() {
   const { settings, updateSettings } = usePricing();
-  const monthlyCalculation = calculateBotCost(settings, false);
-  const firstMonthCalculation = calculateBotCost(settings, true);
+  const providerCost = calculateProviderBotCost(settings);
+  const customerPrice = calculateProviderBotCustomerPrice(settings);
+  const margin = customerPrice - providerCost.totalProviderCost;
 
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Botin kustannukset</h2>
+        <h2 className="text-2xl font-bold">Bottivetonen malli - Asiakashinta</h2>
         <p className="text-muted-foreground">
-          Täysautomaation kustannuslaskenta - botti hoitaa kaikki kyselyt
-        </p>
-        <p className="text-sm text-muted-foreground mt-1">
-          Aloitusmaksu veloitetaan vain ensimmäisellä kuukaudella
+          Akvamariinin hinnoittelu bottivetoiselle mallille (kustannukset + kateprosentti)
         </p>
       </div>
 
@@ -43,153 +44,132 @@ export default function BotTab() {
         </CardContent>
       </Card>
 
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>Laskentaperuste</CardTitle>
-          <CardDescription>
-            Miten botin kustannukset lasketaan
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 rounded-lg bg-muted border border-border">
-            <h4 className="font-semibold mb-3">Hinnoittelurakenne:</h4>
-            <div className="space-y-3 text-sm">
-              <div>
-                <p className="font-semibold">1. Ensimmäinen kuukausi:</p>
-                <p className="font-mono bg-background p-2 rounded mt-1">
-                  Kustannus = Aloitusmaksu (kertaluonteinen)
-                </p>
-                <p className="text-muted-foreground text-xs mt-1">
-                  Ensimmäisenä kuukautena maksetaan vain kertaluonteinen aloitusmaksu botin käyttöönotosta
-                </p>
-              </div>
-              
-              <div>
-                <p className="font-semibold">2. Toisesta kuukaudesta eteenpäin:</p>
-                <p className="font-mono bg-background p-2 rounded mt-1">
-                  Kuukausikustannus = Portaistettu hinta + Järjestelmäkulut
-                </p>
-                <p className="text-muted-foreground text-xs mt-1">
-                  Portaistettu hinta määräytyy kyselymäärän mukaan (katso asetuksista tiered pricing -taulukko)
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-            <h4 className="font-semibold mb-3">Nykyiset arvot ({monthlyCalculation.monthlyQueries} kyselyä/kk):</h4>
-            <div className="space-y-1 text-sm text-muted-foreground">
-              <p>Portaistettu kuukausihinta = {formatCurrency(monthlyCalculation.tieredPrice)}</p>
-              <p>Järjestelmäkulut = {formatCurrency(monthlyCalculation.systemCosts)}</p>
-              <p className="font-semibold text-foreground pt-2">Kuukausikustannus (kk 2+) = {formatCurrency(monthlyCalculation.totalCost)}</p>
-              <p className="text-xs pt-2 italic">Ensimmäisen kuukauden kustannus = {formatCurrency(firstMonthCalculation.totalCost)} (vain aloitusmaksu)</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-3">
         <Card className="shadow-card bg-gradient-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Kyselymäärä</CardTitle>
             <Bot className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{monthlyCalculation.monthlyQueries}</div>
+            <div className="text-2xl font-bold">{providerCost.monthlyQueries}</div>
             <p className="text-xs text-muted-foreground">kyselyä / kk</p>
           </CardContent>
         </Card>
 
         <Card className="shadow-card bg-gradient-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Portaistettu hinta</CardTitle>
+            <CardTitle className="text-sm font-medium">Ylläpitotunnit</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(monthlyCalculation.tieredPrice)}</div>
-            <p className="text-xs text-muted-foreground">kuukausiveloitus</p>
+            <div className="text-2xl font-bold">{providerCost.botMaintenanceHours} h</div>
+            <p className="text-xs text-muted-foreground">kuukaudessa</p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-card bg-gradient-primary">
+        <Card className="shadow-card bg-gradient-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-primary-foreground">Kuukausihinta</CardTitle>
-            <Euro className="h-4 w-4 text-primary-foreground" />
+            <CardTitle className="text-sm font-medium">Järjestelmäkulut</CardTitle>
+            <Euro className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary-foreground">
-              {formatCurrency(monthlyCalculation.totalCost)}
-            </div>
-            <p className="text-xs text-primary-foreground/90">2. kk alkaen</p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-card bg-gradient-card border-warning/30">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">1. kuukausi</CardTitle>
-            <Euro className="h-4 w-4 text-warning" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-warning">
-              {formatCurrency(firstMonthCalculation.totalCost)}
-            </div>
-            <p className="text-xs text-muted-foreground">sis. aloitusmaksu</p>
+            <div className="text-2xl font-bold">{formatCurrency(providerCost.botMaintenanceFixedCost)}</div>
+            <p className="text-xs text-muted-foreground">Azure / kk</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="shadow-elegant">
-          <CardHeader>
-            <CardTitle>Peruskuukausihinta</CardTitle>
-            <CardDescription>Toistuvat kuukausittaiset kulut (2. kk alkaen)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <Card className="shadow-elegant">
+        <CardHeader>
+          <CardTitle>Hinnoitteluerittely</CardTitle>
+          <CardDescription>Yksityiskohtainen hintarakenne</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3 mb-4 p-4 bg-muted rounded-lg">
+            <h4 className="font-semibold text-sm">Akvamariinin kustannukset:</h4>
             <div className="flex justify-between items-center pb-2 border-b">
-              <span className="text-muted-foreground">Portaistettu hinta (kuukausiveloitus)</span>
-              <span className="font-semibold">{formatCurrency(monthlyCalculation.tieredPrice)}</span>
+              <span className="text-muted-foreground text-sm">Ylläpitäjän työvoimakustannus (€/h)</span>
+              <span className="font-semibold">{formatCurrency(providerCost.botMaintenanceHourlyRate)}</span>
             </div>
             <div className="flex justify-between items-center pb-2 border-b">
-              <span className="text-muted-foreground">Järjestelmäkulut</span>
-              <span className="font-semibold">{formatCurrency(monthlyCalculation.systemCosts)}</span>
+              <span className="text-muted-foreground text-sm">Ylläpitotunnit / kk</span>
+              <span className="font-semibold">{providerCost.botMaintenanceHours} h</span>
             </div>
-            <div className="flex justify-between items-center pt-4 border-t-2">
+            <div className="flex justify-between items-center pb-2 border-b">
+              <span className="text-muted-foreground text-sm">Ylläpitokulut yhteensä</span>
+              <span className="font-semibold">{formatCurrency(providerCost.botMaintenanceCost)}</span>
+            </div>
+            <div className="flex justify-between items-center pb-2 border-b">
+              <span className="text-muted-foreground text-sm">Järjestelmäkustannus (Azure)</span>
+              <span className="font-semibold">{formatCurrency(providerCost.botMaintenanceFixedCost)}</span>
+            </div>
+            <div className="flex justify-between items-center pb-2 border-b">
+              <span className="text-muted-foreground text-sm">Peruskulut</span>
+              <span className="font-semibold">{formatCurrency(providerCost.baseCosts)}</span>
+            </div>
+            <div className="flex justify-between items-center pt-2 border-t-2">
+              <span className="font-bold">Kustannus yhteensä</span>
+              <span className="font-bold text-primary">{formatCurrency(providerCost.totalProviderCost)}</span>
+            </div>
+          </div>
+
+          <div className="space-y-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
+            <h4 className="font-semibold text-sm">Asiakashinnoittelu:</h4>
+            <div className="flex justify-between items-center pb-2 border-b">
+              <span className="text-muted-foreground text-sm">Kateprosentti (%)</span>
+              <span className="font-semibold">{settings.providerMarginPercentage}%</span>
+            </div>
+            <div className="flex justify-between items-center pb-2 border-b">
+              <span className="text-muted-foreground text-sm">Kate (€)</span>
+              <span className="font-semibold text-success">{formatCurrency(margin)}</span>
+            </div>
+            <div className="flex justify-between items-center pt-3 border-t-2">
               <span className="text-lg font-bold flex items-center gap-2">
                 <Euro className="h-5 w-5 text-primary" />
-                Yhteensä
+                Asiakashinta / kk
               </span>
               <span className="text-2xl font-bold text-primary">
-                {formatCurrency(monthlyCalculation.totalCost)}
+                {formatCurrency(customerPrice)}
               </span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Card className="shadow-elegant border-warning/30">
-          <CardHeader>
-            <CardTitle>Ensimmäinen kuukausi</CardTitle>
-            <CardDescription>Vain kertaluonteinen aloitusmaksu</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center pb-2 border-b">
-              <span className="text-muted-foreground">Aloitusmaksu (kertaluonteinen)</span>
-              <span className="font-semibold text-warning">{formatCurrency(firstMonthCalculation.startupFee)}</span>
+      <Card className="shadow-elegant">
+        <CardHeader>
+          <CardTitle>Hinnoittelulogiikka</CardTitle>
+          <CardDescription>
+            Miten Akvamariinin asiakashinta muodostuu
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Laskentakaava:</h4>
+            <div className="space-y-2 text-sm">
+              <p className="font-mono bg-background p-2 rounded">
+                Asiakashinta = Akvamariinin kustannus ÷ (1 - Kateprosentti)
+              </p>
+              <p className="font-mono bg-background p-2 rounded">
+                Akvamariinin kustannus = Ylläpitokulut + Järjestelmäkustannus + Peruskulut
+              </p>
+              <p className="font-mono bg-background p-2 rounded">
+                Ylläpitokulut = Ylläpitotunnit × Ylläpitäjän tuntihinta
+              </p>
             </div>
-            <div className="flex justify-between items-center pt-4 border-t-2">
-              <span className="text-lg font-bold flex items-center gap-2">
-                <Euro className="h-5 w-5 text-warning" />
-                Yhteensä 1. kk
-              </span>
-              <span className="text-2xl font-bold text-warning">
-                {formatCurrency(firstMonthCalculation.totalCost)}
-              </span>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <h4 className="font-semibold mb-3">Esimerkkikaava nykyisillä arvoilla:</h4>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>Ylläpitotunnit = {providerCost.botMaintenanceHours} h (porrastettu kyselymäärän mukaan)</p>
+              <p>Ylläpitokulut = {providerCost.botMaintenanceHours} h × {formatCurrency(providerCost.botMaintenanceHourlyRate)}/h = {formatCurrency(providerCost.botMaintenanceCost)}</p>
+              <p>Akvamariinin kustannus = {formatCurrency(providerCost.botMaintenanceCost)} + {formatCurrency(providerCost.botMaintenanceFixedCost)} + {formatCurrency(providerCost.baseCosts)} = {formatCurrency(providerCost.totalProviderCost)}</p>
+              <p className="font-semibold text-foreground pt-2">Asiakashinta = {formatCurrency(providerCost.totalProviderCost)} ÷ (1 - {settings.providerMarginPercentage}%) = {formatCurrency(customerPrice)}</p>
             </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              Kuukausiveloitus alkaa toisesta kuukaudesta
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

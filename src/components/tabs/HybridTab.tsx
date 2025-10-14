@@ -3,7 +3,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
-import { calculateHybridMonth, getBotTieredPrice, getHumanTieredBasePrice, calculateHumanCost } from "@/lib/pricingCalculations";
+import { 
+  calculateProviderHybridMonth,
+  calculateProviderHumanCustomerPrice,
+  calculateProviderHybridCustomerPrice 
+} from "@/lib/providerCalculations";
 import { GitMerge, Calendar, PiggyBank } from "lucide-react";
 
 export default function HybridTab() {
@@ -13,47 +17,31 @@ export default function HybridTab() {
   const formatPercentage = (value: number) => `${value.toFixed(0)} %`;
 
   const months = settings.botGrowth.map(g => g.month);
-  const calculations = months.map(month => calculateHybridMonth(month, settings));
+  const calculations = months.map(month => calculateProviderHybridMonth(month, settings));
   
-  // Laske pelkän ihmistyön vuosikustannus vertailua varten
-  const humanYearlyCost = calculateHumanCost(settings).totalCost * 12;
-  // Laske hybridimallin todellinen vuosikustannus (summaa kaikki 12 kuukautta)
-  const hybridYearlyCost = calculations.reduce((sum, calc) => sum + calc.discountedCost, 0);
-  // Säästö = pelkkä ihmistyö - hybridi
+  // Laske pelkän ihmisvetoisen mallin asiakashinta (sama joka kuukausi)
+  const humanCustomerPrice = calculateProviderHumanCustomerPrice(settings);
+  const humanYearlyCost = humanCustomerPrice * 12;
+  
+  // Laske hybridimallin asiakashinnat jokaiselle kuukaudelle
+  const hybridMonthlyPrices = months.map(month => 
+    calculateProviderHybridCustomerPrice(month, settings)
+  );
+  const hybridYearlyCost = hybridMonthlyPrices.reduce((sum, price) => sum + price, 0);
+  
+  // Säästö = pelkkä ihmisvetoinen - hybridi
   const yearlySavings = humanYearlyCost - hybridYearlyCost;
 
   // Vuosilaskuri: laske kustannukset vuosille 0-3
   const calculateYearlyCost = (year: number) => {
     // Vuosi 0: käytetään kuukausitason arvoja (kk 1-12)
     if (year === 0) {
-      let totalCost = 0;
-      for (let month = 1; month <= 12; month++) {
-        const calc = calculateHybridMonth(month, settings);
-        totalCost += calc.discountedCost;
-      }
-      return totalCost;
+      return hybridYearlyCost;
     }
     
-    // Vuodet 1-3: käytetään vuositason botin osuutta
-    const yearlyGrowth = settings.botYearlyGrowth.find(g => g.year === year);
-    const botPercentage = yearlyGrowth?.percentage || settings.botGrowth[11].percentage;
-    
-    const botQueries = Math.round((settings.monthlyQueries * botPercentage) / 100);
-    const humanQueries = settings.monthlyQueries - botQueries;
-    
-    const botTieredData = getBotTieredPrice(botQueries, settings);
-    const botMonthlyCost = botTieredData.price + botTieredData.systemCosts;
-    
-    const humanMinutes = humanQueries * settings.minutesPerQuery;
-    const humanHours = humanMinutes / 60;
-    const humanLaborCost = humanHours * settings.humanHourlyRate;
-    const humanBasePrice = getHumanTieredBasePrice(humanQueries, settings);
-    const humanTotalCost = humanLaborCost + humanBasePrice;
-    
-    const combinedCost = botMonthlyCost + humanTotalCost;
-    const monthlyCost = combinedCost * (1 - settings.centralizationDiscount / 100);
-    
-    return monthlyCost * 12; // Koko vuoden kustannus
+    // Vuodet 1-3: käytetään 12. kuukauden tasoa (koska botti on saavuttanut vakiotason)
+    const month12Price = calculateProviderHybridCustomerPrice(12, settings);
+    return month12Price * 12;
   };
 
   const yearlyData = [
@@ -68,10 +56,10 @@ export default function HybridTab() {
       <div>
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <GitMerge className="h-6 w-6 text-primary" />
-          Hybridimalli
+          Hybridimalli - Asiakashinta
         </h2>
         <p className="text-muted-foreground">
-          Yhdistelmä ihmistyöstä ja botista - botin osuus kasvaa kuukausittain
+          Akvamariinin hinnoittelu hybridimallille - botin osuus kasvaa kuukausittain
         </p>
       </div>
 
@@ -94,94 +82,11 @@ export default function HybridTab() {
         </CardContent>
       </Card>
 
-      <Card className="shadow-card border-primary/20">
-        <CardHeader>
-          <CardTitle>Keskittämisalennus</CardTitle>
-          <CardDescription>
-            Alennus, joka huomioi synergiahyödyt kun molemmat kanavat hoidetaan samassa järjestelmässä
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2 max-w-xs">
-            <Label htmlFor="centralizationDiscount">Alennus (%)</Label>
-            <Input
-              id="centralizationDiscount"
-              type="number"
-              value={settings.centralizationDiscount}
-              onChange={(e) => updateSettings({ centralizationDiscount: Number(e.target.value) })}
-              min="0"
-              max="100"
-            />
-            <p className="text-xs text-muted-foreground">
-              Tämä alennus vähennetään hybridimallin kokonaiskustannuksista
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>Laskentaperuste</CardTitle>
-          <CardDescription>
-            Miten hybridimallin kustannukset lasketaan
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 rounded-lg bg-muted border border-border">
-            <h4 className="font-semibold mb-3">Kuukausittainen laskentakaava:</h4>
-            <div className="space-y-3 text-sm">
-              <div>
-                <p className="font-semibold">1. Kyselyiden jako:</p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Botin kyselyt = Kokonaiskyselyt × (Botin osuus % ÷ 100)
-                </p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Ihmisen kyselyt = Kokonaiskyselyt - Botin kyselyt
-                </p>
-              </div>
-              
-              <div>
-                <p className="font-semibold">2. Botin kustannus:</p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Kk 1: Vain aloitusmaksu
-                </p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Kk 2+: Portaistettu hinta (botin kyselyiden mukaan) + Järjestelmäkulut
-                </p>
-              </div>
-
-              <div>
-                <p className="font-semibold">3. Ihmistyön kustannus:</p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Työtunnit = (Ihmisen kyselyt × Käsittelyaika) ÷ 60
-                </p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Ihmiskustannus = (Työtunnit × Tuntihinta) + Peruskuukausihinta
-                </p>
-              </div>
-
-              <div>
-                <p className="font-semibold">4. Kokonaiskustannus:</p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Yhdistetty = Botin kustannus + Ihmiskustannus
-                </p>
-                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
-                  Alennettu = Yhdistetty × (1 - Keskittämisalennus % ÷ 100)
-                </p>
-                <p className="text-muted-foreground text-xs mt-2">
-                  Keskittämisalennus huomioi synergiahyödyt, kun molemmat kanavat hoidetaan samassa järjestelmässä
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <Card className="shadow-elegant">
         <CardHeader>
           <CardTitle>Kuukausittainen kehitys</CardTitle>
           <CardDescription>
-            Kustannukset hybridimallissa kun botin osuus kasvaa asteittain
+            Asiakashinnat hybridimallissa kun botin osuus kasvaa asteittain
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -192,30 +97,33 @@ export default function HybridTab() {
                   <TableHead>Kk</TableHead>
                   <TableHead>Botti %</TableHead>
                   <TableHead>Bottikyselyt</TableHead>
-                  <TableHead>Botin hinta</TableHead>
-                  <TableHead>Ihminen kyselyt</TableHead>
+                  <TableHead>Ihmiskyselyt</TableHead>
                   <TableHead>Ihmisen työtunnit</TableHead>
-                  <TableHead>Ihmisen kustannus</TableHead>
-                  <TableHead>Yhteensä</TableHead>
-                  <TableHead className="text-success font-semibold">Alennettu</TableHead>
+                  <TableHead>Akvamariinin kustannus</TableHead>
+                  <TableHead>Kate €</TableHead>
+                  <TableHead className="text-primary font-semibold">Asiakashinta €/kk</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {calculations.map((calc) => (
-                  <TableRow key={calc.month}>
-                    <TableCell className="font-medium">{calc.month}</TableCell>
-                    <TableCell>{formatPercentage(calc.botPercentage)}</TableCell>
-                    <TableCell>{calc.botQueries}</TableCell>
-                    <TableCell>{formatCurrency(calc.botCost)}</TableCell>
-                    <TableCell>{calc.humanQueries}</TableCell>
-                    <TableCell>{calc.humanHours.toFixed(2)} h</TableCell>
-                    <TableCell>{formatCurrency(calc.humanTotalCost)}</TableCell>
-                    <TableCell>{formatCurrency(calc.combinedCost)}</TableCell>
-                    <TableCell className="font-bold text-success">
-                      {formatCurrency(calc.discountedCost)}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {calculations.map((calc, index) => {
+                  const customerPrice = hybridMonthlyPrices[index];
+                  const margin = customerPrice - calc.totalMonthlyCost;
+                  
+                  return (
+                    <TableRow key={calc.month}>
+                      <TableCell className="font-medium">{calc.month}</TableCell>
+                      <TableCell>{formatPercentage(calc.botPercentage)}</TableCell>
+                      <TableCell>{calc.botQueries}</TableCell>
+                      <TableCell>{calc.humanQueries}</TableCell>
+                      <TableCell>{calc.humanServiceHours.toFixed(2)} h</TableCell>
+                      <TableCell>{formatCurrency(calc.totalMonthlyCost)}</TableCell>
+                      <TableCell className="text-success">{formatCurrency(margin)}</TableCell>
+                      <TableCell className="font-bold text-primary">
+                        {formatCurrency(customerPrice)}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
@@ -230,13 +138,16 @@ export default function HybridTab() {
               Säästö vuodessa
             </CardTitle>
             <CardDescription className="text-success-foreground/80">
-              Verrattuna pelkkään ihmistyöhön (12 kuukautta)
+              Verrattuna ihmisvetoiseen malliin (12 kuukautta)
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-success-foreground">
               {formatCurrency(yearlySavings)}
             </div>
+            <p className="text-sm text-success-foreground/80 mt-2">
+              Ihmisvetoinen: {formatCurrency(humanYearlyCost)} - Hybridi: {formatCurrency(hybridYearlyCost)}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -248,7 +159,7 @@ export default function HybridTab() {
             Vuosilaskuri
           </CardTitle>
           <CardDescription>
-            Kustannukset useamman vuoden aikana (kk 12 taso jatkuu)
+            Asiakashinnat useamman vuoden aikana (kk 12 taso jatkuu)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -258,7 +169,7 @@ export default function HybridTab() {
                 <TableRow>
                   <TableHead>Vuosi</TableHead>
                   <TableHead>Ajanjakso</TableHead>
-                  <TableHead className="text-right">Vuosikustannus</TableHead>
+                  <TableHead className="text-right">Vuoden asiakashinta</TableHead>
                   <TableHead className="text-right">Kumulatiivinen</TableHead>
                 </TableRow>
               </TableHeader>
@@ -289,9 +200,82 @@ export default function HybridTab() {
           
           <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
             <p className="text-sm text-muted-foreground">
-              <strong>Huom:</strong> Vuosi 0 näyttää ensimmäisen 12 kuukauden kokonaiskustannukset kuukausitason kehityksen mukaan. 
-              Vuodet 1-3 käyttävät asetuksissa määritettyjä vuositason botin osuuksia ja laskevat koko vuoden kustannukset.
+              <strong>Huom:</strong> Vuosi 0 näyttää ensimmäisen 12 kuukauden asiakashinnan kuukausitason kehityksen mukaan. 
+              Vuodet 1-3 käyttävät 12. kuukauden tasoa, jolloin botti hoitaa {settings.botGrowth[11]?.percentage || 50}% kyselyistä.
             </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-elegant">
+        <CardHeader>
+          <CardTitle>Hinnoittelulogiikka</CardTitle>
+          <CardDescription>
+            Miten Akvamariinin hybridimallin asiakashinta muodostuu
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 rounded-lg bg-muted border border-border">
+            <h4 className="font-semibold mb-3">Kuukausittainen laskentakaava:</h4>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="font-semibold">1. Kyselyiden jako:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Botin kyselyt = Kokonaiskyselyt × (Botin osuus % ÷ 100)
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Ihmisen kyselyt = Kokonaiskyselyt - Botin kyselyt
+                </p>
+              </div>
+              
+              <div>
+                <p className="font-semibold">2. Akvamariinin kustannukset:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Botin ylläpitokulut = Ylläpitotunnit (porrastettu) × Ylläpitäjän tuntihinta
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Ihmistyökulut = (Ihmisen työtunnit × Tuntihinta) + Porrastettu hinnoittelu
+                </p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Järjestelmäkulut + Peruskulut
+                </p>
+              </div>
+
+              <div>
+                <p className="font-semibold">3. Asiakashinta:</p>
+                <p className="font-mono bg-background p-2 rounded mt-1 text-xs">
+                  Asiakashinta = Akvamariinin kokonaiskustannus ÷ (1 - Kateprosentti)
+                </p>
+                <p className="text-muted-foreground text-xs mt-2">
+                  Kateprosentti: {settings.providerMarginPercentage}%
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <h4 className="font-semibold mb-3">Esimerkkikaava kuukaudelle 12:</h4>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              {(() => {
+                const calc = calculations[11]; // Kuukausi 12
+                const customerPrice = hybridMonthlyPrices[11];
+                const margin = customerPrice - calc.totalMonthlyCost;
+                
+                return (
+                  <>
+                    <p>Botti hoitaa: {calc.botQueries} kyselyä ({calc.botPercentage}%)</p>
+                    <p>Ihminen hoitaa: {calc.humanQueries} kyselyä ({100 - calc.botPercentage}%)</p>
+                    <p>Botin ylläpitokulut: {formatCurrency(calc.botMaintenanceCost)}</p>
+                    <p>Ihmistyökulut: {formatCurrency(calc.humanServiceCost)}</p>
+                    <p>Akvamariinin kustannus yhteensä: {formatCurrency(calc.totalMonthlyCost)}</p>
+                    <p className="font-semibold text-foreground pt-2">
+                      Asiakashinta = {formatCurrency(calc.totalMonthlyCost)} ÷ (1 - {settings.providerMarginPercentage}%) = {formatCurrency(customerPrice)}
+                    </p>
+                    <p className="text-success">Kate: {formatCurrency(margin)}</p>
+                  </>
+                );
+              })()}
+            </div>
           </div>
         </CardContent>
       </Card>
