@@ -5,7 +5,8 @@ import { usePricing } from "@/contexts/PricingContext";
 import { 
   calculateProviderHumanCost, 
   calculateProviderBotCost,
-  calculateProviderHybridMonth 
+  calculateProviderHybridMonth,
+  getBotMaintenanceHours
 } from "@/lib/providerCalculations";
 
 export default function ProviderTab() {
@@ -25,6 +26,9 @@ export default function ProviderTab() {
     .sort((a, b) => a.queryLimit - b.queryLimit)
     .find(tier => settings.monthlyQueries <= tier.queryLimit)?.systemCosts || 
     settings.providerBotTiers[settings.providerBotTiers.length - 1]?.systemCosts || 0;
+  
+  // Lasketaan porrastetut ylläpitotunnit kyselymäärän mukaan
+  const botMaintenanceHours = getBotMaintenanceHours(settings.monthlyQueries, settings);
   
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined || isNaN(value)) return '0.00 €';
@@ -261,6 +265,16 @@ export default function ProviderTab() {
               </div>
               
               <div className="space-y-2">
+                <Label>Ylläpitotunnit / kk</Label>
+                <div className="h-10 px-3 py-2 rounded-md border border-input bg-muted flex items-center">
+                  <span className="text-sm font-semibold">{botMaintenanceHours} h</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Arvo tulee alta Porrastetut ylläpitotunnit kyselymäärän mukaan
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Järjestelmäkustannus (Azure) (€/kk)</Label>
                 <div className="h-10 px-3 py-2 rounded-md border border-input bg-muted flex items-center">
                   <span className="text-sm font-semibold">{botSystemCosts.toFixed(2)} €</span>
@@ -279,7 +293,7 @@ export default function ProviderTab() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Ylläpitotunnit / kk:</span>
-                <span className="font-medium">{botCost.botMaintenanceHours} h</span>
+                <span className="font-medium">{botMaintenanceHours} h</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Ylläpitäjän työvoimakustannus (€/h):</span>
