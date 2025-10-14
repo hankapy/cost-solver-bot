@@ -44,6 +44,11 @@ export function calculateHumanCost(settings: PricingSettings): HumanCostCalculat
 }
 
 export function getBotTieredPrice(queries: number, settings: PricingSettings): { price: number; systemCosts: number } {
+  // Jos käytetään kiinteää hintaa, palauta se
+  if (settings.useFlatRate) {
+    return { price: settings.flatMonthlyRate, systemCosts: 0 };
+  }
+  
   // Jos kyselyjä ei ole, palauta nollakulut
   if (queries === 0) {
     return { price: 0, systemCosts: 0 };

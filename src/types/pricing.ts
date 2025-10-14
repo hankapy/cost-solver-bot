@@ -12,6 +12,10 @@ export interface PricingSettings {
   botMonthlyFee: number;
   botSystemCosts: number;
   
+  // Bot pricing mode
+  useFlatRate: boolean;
+  flatMonthlyRate: number;
+  
   // Bot tiered pricing
   botTiers: BotTier[];
   

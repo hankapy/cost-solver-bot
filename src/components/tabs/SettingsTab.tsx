@@ -141,7 +141,7 @@ export default function SettingsTab() {
         <Card className="shadow-card">
           <CardHeader>
             <CardTitle>Botin kiinteät kulut (Botti, Hybridi)</CardTitle>
-            <CardDescription>Määritä botin peruskulut</CardDescription>
+            <CardDescription>Määritä botin peruskulut ja hinnoittelumalli</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -153,6 +153,38 @@ export default function SettingsTab() {
                 onChange={(e) => updateSettings({ botStartupFee: Number(e.target.value) })}
                 min="0"
               />
+            </div>
+
+            <div className="pt-4 border-t space-y-3">
+              <h4 className="font-semibold text-sm">Kuukausihinta malli</h4>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="useFlatRate"
+                  checked={settings.useFlatRate}
+                  onChange={(e) => updateSettings({ useFlatRate: e.target.checked })}
+                  className="rounded"
+                />
+                <Label htmlFor="useFlatRate" className="cursor-pointer">
+                  Käytä kiinteää kuukausihintaa (ei portaistettua hinnoittelua)
+                </Label>
+              </div>
+              
+              {settings.useFlatRate && (
+                <div className="space-y-2">
+                  <Label htmlFor="flatMonthlyRate">Kiinteä kuukausihinta (€/kk)</Label>
+                  <Input
+                    id="flatMonthlyRate"
+                    type="number"
+                    value={settings.flatMonthlyRate}
+                    onChange={(e) => updateSettings({ flatMonthlyRate: Number(e.target.value) })}
+                    min="0"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Tämä hinta käytetään kaikilla kyselymäärillä portaistetun hinnoittelun sijaan
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="pt-4 border-t space-y-3">
@@ -170,21 +202,33 @@ export default function SettingsTab() {
               </div>
               
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
-                  <span className="text-muted-foreground">Portaistettu hinta ({estimatedQueries} kyselyä)</span>
-                  <span className="font-semibold">{formatCurrency(estimatedTieredData.price)}</span>
-                </div>
-                <div className="flex justify-between items-center p-2 rounded bg-muted/50">
-                  <span className="text-muted-foreground">+ Järjestelmäkulut</span>
-                  <span className="font-semibold">{formatCurrency(estimatedTieredData.systemCosts)}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
-                  <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
-                  <span className="text-lg font-bold text-primary">{formatCurrency(estimatedTotalMonthlyFee)}</span>
-                </div>
+                {settings.useFlatRate ? (
+                  <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
+                    <span className="font-bold text-primary">Kiinteä kuukausihinta</span>
+                    <span className="text-lg font-bold text-primary">{formatCurrency(settings.flatMonthlyRate)}</span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                      <span className="text-muted-foreground">Portaistettu hinta ({estimatedQueries} kyselyä)</span>
+                      <span className="font-semibold">{formatCurrency(estimatedTieredData.price)}</span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                      <span className="text-muted-foreground">+ Järjestelmäkulut</span>
+                      <span className="font-semibold">{formatCurrency(estimatedTieredData.systemCosts)}</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded bg-primary/10 border border-primary/20">
+                      <span className="font-bold text-primary">= Kuukausiveloitus (kk 2+)</span>
+                      <span className="text-lg font-bold text-primary">{formatCurrency(estimatedTotalMonthlyFee)}</span>
+                    </div>
+                  </>
+                )}
               </div>
               <p className="text-xs text-muted-foreground italic">
-                Syötä arvioitu kyselymäärä nähdäksesi kuukausiveloituksen
+                {settings.useFlatRate 
+                  ? "Kiinteä hinta pysyy samana kaikilla kyselymäärillä"
+                  : "Syötä arvioitu kyselymäärä nähdäksesi kuukausiveloituksen"
+                }
               </p>
             </div>
           </CardContent>

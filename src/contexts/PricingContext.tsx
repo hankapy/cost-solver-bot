@@ -16,6 +16,8 @@ const DEFAULT_SETTINGS: PricingSettings = {
   botStartupFee: 3000,
   botMonthlyFee: 300,
   botSystemCosts: 150,
+  useFlatRate: false,
+  flatMonthlyRate: 500,
   botTiers: [
     { queryLimit: 50, price: 200, systemCosts: 100 },
     { queryLimit: 100, price: 200, systemCosts: 150 },
