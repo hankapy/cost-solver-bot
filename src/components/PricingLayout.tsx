@@ -60,11 +60,17 @@ export default function PricingLayout() {
               <Calculator className="h-4 w-4" />
               <span className="hidden sm:inline">Esimerkki</span>
             </TabsTrigger>
-            <TabsTrigger value="provider" className="flex items-center gap-2 py-3">
+            <TabsTrigger 
+              value="provider" 
+              className="flex items-center gap-2 py-3 bg-primary/10 border-2 border-primary/30 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <Building2 className="h-4 w-4" />
               <span className="hidden sm:inline">Palveluntarjoaja</span>
             </TabsTrigger>
-            <TabsTrigger value="comparison" className="flex items-center gap-2 py-3">
+            <TabsTrigger 
+              value="comparison" 
+              className="flex items-center gap-2 py-3 bg-primary/10 border-2 border-primary/30 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <ArrowLeftRight className="h-4 w-4" />
               <span className="hidden sm:inline">Vertailu</span>
             </TabsTrigger>
