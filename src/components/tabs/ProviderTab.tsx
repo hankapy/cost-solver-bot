@@ -86,13 +86,14 @@ export default function ProviderTab() {
               </div>
 
               <div className="space-y-2">
-                <Label>Minuuttia per kysely</Label>
-                <div className="h-10 px-3 py-2 rounded-md border border-input bg-muted flex items-center">
-                  <span className="text-sm">{settings.minutesPerQuery}</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Arvo tulee Asetukset-välilehdeltä
-                </p>
+                <Label htmlFor="minutesPerQuery">Minuuttia per kysely</Label>
+                <Input
+                  id="minutesPerQuery"
+                  type="number"
+                  value={settings.minutesPerQuery}
+                  onChange={(e) => updateSettings({ minutesPerQuery: Number(e.target.value) })}
+                  min="0"
+                />
               </div>
             </div>
 
