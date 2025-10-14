@@ -54,17 +54,6 @@ export default function HumanTab() {
 
         <Card className="shadow-card bg-gradient-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Työaika / vastaus</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{calculation.minutesPerQuery}</div>
-            <p className="text-xs text-muted-foreground">minuuttia</p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-card bg-gradient-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Kokonaistyöaika</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -118,6 +107,10 @@ export default function HumanTab() {
           <div className="flex justify-between items-center pb-2 border-b">
             <span className="text-muted-foreground">Tuntiveloitus</span>
             <span className="font-semibold">{formatCurrency(calculation.hourlyRate)}</span>
+          </div>
+          <div className="flex justify-between items-center pb-2 border-b">
+            <span className="text-muted-foreground">Työaika / vastaus</span>
+            <span className="font-semibold">{calculation.minutesPerQuery} min</span>
           </div>
           <div className="flex justify-between items-center pb-2 border-b">
             <span className="text-muted-foreground">Tuntityön kustannus</span>
