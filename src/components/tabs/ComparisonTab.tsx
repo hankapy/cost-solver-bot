@@ -3,7 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePricing } from "@/contexts/PricingContext";
-import { compareCustomerVsProvider } from "@/lib/providerCalculations";
+import { 
+  calculateProviderHumanCost,
+  calculateProviderBotCost,
+  calculateProviderHybridMonth
+} from "@/lib/providerCalculations";
 import { calculateHumanCost, calculateBotCost, calculateHybridMonth } from "@/lib/pricingCalculations";
 
 type ModelType = 'human' | 'bot' | 'hybrid';
@@ -17,7 +21,10 @@ export default function ComparisonTab() {
   // Käytetään valittua kyselymäärää
   const customSettings = { ...settings, monthlyQueries };
   
-  const comparison = compareCustomerVsProvider(customSettings);
+  // Lasketaan palveluntarjoajan kustannukset eri malleille
+  const providerHumanCost = calculateProviderHumanCost(customSettings);
+  const providerBotCost = calculateProviderBotCost(customSettings);
+  
   const customerHumanCost = calculateHumanCost(customSettings);
   const customerBotCost = calculateBotCost(customSettings, false);
   const customerHybridCost = calculateHybridMonth(selectedMonth, customSettings);
@@ -31,37 +38,21 @@ export default function ComparisonTab() {
     return `${value.toFixed(1)}%`;
   };
 
-  // Valitse oikea asiakkaan kustannus mallin mukaan
+  // Valitse oikea asiakkaan kustannus ja palveluntarjoajan kustannus mallin mukaan
   let selectedCustomerCost = 0;
   let selectedProviderCost = 0;
   
   if (selectedModel === 'human') {
     selectedCustomerCost = customerHumanCost.totalCost;
-    selectedProviderCost = comparison.providerCost;
+    selectedProviderCost = providerHumanCost.totalProviderCost;
   } else if (selectedModel === 'bot') {
     selectedCustomerCost = customerBotCost.totalCost;
-    const botSystemCosts = settings.providerBotTiers
-      .sort((a, b) => a.queryLimit - b.queryLimit)
-      .find(tier => monthlyQueries <= tier.queryLimit)?.systemCosts || 
-      settings.providerBotTiers[settings.providerBotTiers.length - 1]?.systemCosts || 0;
-    selectedProviderCost = settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
-                          botSystemCosts + 
-                          settings.providerBaseCosts;
+    selectedProviderCost = providerBotCost.totalProviderCost;
   } else {
+    // Hybridi - lasketaan palveluntarjoajan kustannukset
+    const providerHybrid = calculateProviderHybridMonth(selectedMonth, customSettings);
     selectedCustomerCost = customerHybridCost.discountedCost;
-    const humanSystemCosts = settings.providerHumanTiers
-      .sort((a, b) => a.queryLimit - b.queryLimit)
-      .find(tier => customerHybridCost.humanQueries <= tier.queryLimit)?.basePrice || 
-      settings.providerHumanTiers[settings.providerHumanTiers.length - 1]?.basePrice || 0;
-    const botSystemCosts = settings.providerBotTiers
-      .sort((a, b) => a.queryLimit - b.queryLimit)
-      .find(tier => customerHybridCost.botQueries <= tier.queryLimit)?.systemCosts || 
-      settings.providerBotTiers[settings.providerBotTiers.length - 1]?.systemCosts || 0;
-    selectedProviderCost = settings.providerBotMaintenanceHoursPerMonth * settings.providerBotMaintenanceHourlyRate + 
-                          botSystemCosts + 
-                          settings.providerBaseCosts +
-                          (customerHybridCost.humanHours * settings.providerHumanHourlyRate) +
-                          humanSystemCosts;
+    selectedProviderCost = providerHybrid.totalMonthlyCost;
   }
   
   const margin = selectedCustomerCost - selectedProviderCost;
@@ -348,7 +339,7 @@ export default function ComparisonTab() {
             <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'human' ? 'bg-destructive/10 border border-destructive' : 'bg-muted'}`}>
               <span className="font-medium">Ihmisvetoinen:</span>
               <span className="text-lg font-bold text-destructive">
-                {formatCurrency(comparison.providerCost)}
+                {formatCurrency(providerHumanCost.totalProviderCost)}
               </span>
             </div>
             <div className={`flex justify-between items-center p-3 rounded ${selectedModel === 'bot' ? 'bg-destructive/10 border border-destructive' : 'bg-muted'}`}>
