@@ -57,7 +57,7 @@ export default function ProviderTab() {
             <CardDescription>Kustannukset kun kaikki hoidetaan ihmistyöllä</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="providerHumanHourlyRate">Palkkakustannus (€/h)</Label>
                 <Input
@@ -76,6 +76,17 @@ export default function ProviderTab() {
                   type="number"
                   value={settings.providerHumanWorkCost}
                   onChange={(e) => updateSettings({ providerHumanWorkCost: Number(e.target.value) })}
+                  min="0"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="minutesPerQuery">Minuuttia per kysely</Label>
+                <Input
+                  id="minutesPerQuery"
+                  type="number"
+                  value={settings.minutesPerQuery}
+                  onChange={(e) => updateSettings({ minutesPerQuery: Number(e.target.value) })}
                   min="0"
                 />
               </div>
