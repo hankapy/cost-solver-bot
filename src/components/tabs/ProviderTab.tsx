@@ -109,11 +109,29 @@ export default function ProviderTab() {
                   }}
                   min="0"
                 />
+              </div>
+              <div className="flex-1 space-y-2">
+                <Label htmlFor={`provider-human-tier-price-${index}`}>Hinta (€/kk)</Label>
+                <Input
+                  id={`provider-human-tier-price-${index}`}
+                  type="number"
+                  value={tier.basePrice}
+                  onChange={(e) => {
+                    const newTiers = [...settings.providerHumanTiers];
+                    newTiers[index].basePrice = Number(e.target.value);
+                    updateSettings({ providerHumanTiers: newTiers });
+                  }}
+                  min="0"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="space-y-3">
-        <h4 className="font-semibold text-sm">Botin ylläpitotunnit kyselymäärän mukaan</h4>
-        <p className="text-xs text-muted-foreground">Koskee vain bottivetoa mallia</p>
+        <h4 className="font-semibold text-sm">Porrastetut ylläpitotunnit kyselymäärän mukaan</h4>
+        <p className="text-xs text-muted-foreground">Koskee vain bottivetoista mallia</p>
         <div className="space-y-3">
           {settings.providerBotMaintenanceTiers.map((tier, index) => (
             <div key={index} className="flex gap-3 items-end">
@@ -141,24 +159,6 @@ export default function ProviderTab() {
                     const newTiers = [...settings.providerBotMaintenanceTiers];
                     newTiers[index].maintenanceHours = Number(e.target.value);
                     updateSettings({ providerBotMaintenanceTiers: newTiers });
-                  }}
-                  min="0"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-              <div className="flex-1 space-y-2">
-                <Label htmlFor={`provider-human-tier-price-${index}`}>Hinta (€/kk)</Label>
-                <Input
-                  id={`provider-human-tier-price-${index}`}
-                  type="number"
-                  value={tier.basePrice}
-                  onChange={(e) => {
-                    const newTiers = [...settings.providerHumanTiers];
-                    newTiers[index].basePrice = Number(e.target.value);
-                    updateSettings({ providerHumanTiers: newTiers });
                   }}
                   min="0"
                 />
