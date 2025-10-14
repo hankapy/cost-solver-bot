@@ -97,6 +97,18 @@ export default function ProviderTab() {
       <div className="space-y-3">
         <h4 className="font-semibold text-sm">Palveluntarjoajan porrastettu hinnoittelu (meidän kulut)</h4>
         <p className="text-xs text-muted-foreground">Koskee vain ihmisvetoista mallia</p>
+        <div className="flex items-center space-x-2 mb-3">
+          <input
+            type="checkbox"
+            id="skipProviderHumanTiers"
+            checked={settings.skipProviderHumanTiers}
+            onChange={(e) => updateSettings({ skipProviderHumanTiers: e.target.checked })}
+            className="rounded"
+          />
+          <Label htmlFor="skipProviderHumanTiers" className="cursor-pointer text-sm">
+            Ohita porrastettu hinnoittelu
+          </Label>
+        </div>
         <div className="space-y-3">
           {settings.providerHumanTiers.map((tier, index) => (
             <div key={index} className="flex gap-3 items-end">
@@ -112,6 +124,7 @@ export default function ProviderTab() {
                     updateSettings({ providerHumanTiers: newTiers });
                   }}
                   min="0"
+                  disabled={settings.skipProviderHumanTiers}
                 />
               </div>
               <div className="flex-1 space-y-2">
@@ -126,6 +139,7 @@ export default function ProviderTab() {
                     updateSettings({ providerHumanTiers: newTiers });
                   }}
                   min="0"
+                  disabled={settings.skipProviderHumanTiers}
                 />
               </div>
             </div>

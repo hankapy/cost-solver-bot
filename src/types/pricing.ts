@@ -20,6 +20,7 @@ export interface PricingSettings {
   providerTechnicalCosts: number; // Tekniset kulut (eri rivi)
   providerBaseCosts: number; // Peruskulut (molemmat mallit)
   skipProviderBaseCosts: boolean; // Jos true, peruskuluja ei oteta huomioon laskelmissa
+  skipProviderHumanTiers: boolean; // Jos true, porrastettua hinnoittelua ei oteta huomioon
   providerHumanWorkCost: number; // Ihmisvetoisen mallin työaikakustannus (vain palveluntarjoaja)
   providerBotMaintenanceCost: number; // Bottivetioisen mallin ylläpitokustannus (vain palveluntarjoaja)
   
