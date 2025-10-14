@@ -125,7 +125,7 @@ export default function ProviderTab() {
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="providerHumanHourlyRate">Palkkakustannus (€/h)</Label>
+                <Label htmlFor="providerHumanHourlyRate">Työvoimakustannus (€/h)</Label>
                 <Input
                   id="providerHumanHourlyRate"
                   type="number"
@@ -167,11 +167,11 @@ export default function ProviderTab() {
                 <span className="font-medium">{humanCost.humanServiceHours.toFixed(1)} h</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Palkkakustannus (€/h):</span>
+                <span className="text-muted-foreground">Työvoimakustannus (€/h):</span>
                 <span className="font-medium">{formatCurrency(humanCost.humanServiceHourlyRate)}</span>
               </div>
               <div className="flex justify-between text-sm border-t pt-2">
-                <span className="text-muted-foreground font-semibold">Palkkakustannukset:</span>
+                <span className="text-muted-foreground font-semibold">Työvoimakustannukset:</span>
                 <span className="font-semibold text-primary">{formatCurrency(humanCost.humanServiceCost)}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -198,7 +198,7 @@ export default function ProviderTab() {
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="providerBotMaintenanceHourlyRate">Ylläpitäjän palkka (€/h)</Label>
+                <Label htmlFor="providerBotMaintenanceHourlyRate">Ylläpitäjän työvoimakustannus (€/h)</Label>
                 <Input
                   id="providerBotMaintenanceHourlyRate"
                   type="number"
@@ -240,7 +240,7 @@ export default function ProviderTab() {
                 <span className="font-medium">{botCost.botMaintenanceHours} h</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Ylläpitäjän palkka (€/h):</span>
+                <span className="text-muted-foreground">Ylläpitäjän työvoimakustannus (€/h):</span>
                 <span className="font-medium">{formatCurrency(botCost.botMaintenanceHourlyRate)}</span>
               </div>
               <div className="flex justify-between text-sm border-t pt-2">
