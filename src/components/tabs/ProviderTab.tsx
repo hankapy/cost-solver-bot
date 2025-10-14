@@ -193,7 +193,7 @@ export default function ProviderTab() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Peruskulut:</span>
-                <span className="font-medium">{formatCurrency(humanCost.baseCosts)}</span>
+                <span className="font-medium">{formatCurrency(settings.skipProviderBaseCosts ? 0 : humanCost.baseCosts)}</span>
               </div>
               <div className="flex justify-between text-lg border-t pt-3 mt-3">
                 <span className="font-bold">Yhteensä / kk:</span>
@@ -266,7 +266,7 @@ export default function ProviderTab() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Peruskulut:</span>
-                <span className="font-medium">{formatCurrency(botCost.baseCosts)}</span>
+                <span className="font-medium">{formatCurrency(settings.skipProviderBaseCosts ? 0 : botCost.baseCosts)}</span>
               </div>
               <div className="flex justify-between text-lg border-t pt-3 mt-3">
                 <span className="font-bold">Yhteensä / kk:</span>
