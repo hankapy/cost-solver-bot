@@ -27,7 +27,9 @@ export function getHumanTieredBasePrice(queries: number, settings: PricingSettin
 export function calculateHumanCost(settings: PricingSettings): HumanCostCalculation {
   const totalMinutes = settings.monthlyQueries * settings.minutesPerQuery;
   const totalHours = totalMinutes / 60;
-  const hourlyLabor = totalHours * settings.humanHourlyRate;
+  
+  // Jos käytetään kiinteää hintaa (ei tuntiveloitusta), tuntipalkkaa ei lasketa
+  const hourlyLabor = settings.useHumanFlatRate ? 0 : totalHours * settings.humanHourlyRate;
   const basePrice = getHumanTieredBasePrice(settings.monthlyQueries, settings);
   const totalCost = hourlyLabor + basePrice;
 
@@ -125,7 +127,9 @@ export function calculateHybridMonth(
   
   const humanMinutes = humanQueries * settings.minutesPerQuery;
   const humanHours = humanMinutes / 60;
-  const humanLaborCost = humanHours * settings.humanHourlyRate;
+  
+  // Jos käytetään kiinteää hintaa, ei tuntiveloitusta
+  const humanLaborCost = settings.useHumanFlatRate ? 0 : humanHours * settings.humanHourlyRate;
   const humanBasePrice = getHumanTieredBasePrice(humanQueries, settings);
   const humanTotalCost = humanLaborCost + humanBasePrice;
   
@@ -179,7 +183,9 @@ export function calculateScenario(
   const humanQueries = monthlyQueries - botQueries;
   const humanMinutes = humanQueries * settings.minutesPerQuery;
   const humanHours = humanMinutes / 60;
-  const humanLaborCost = humanHours * settings.humanHourlyRate;
+  
+  // Jos käytetään kiinteää hintaa, ei tuntiveloitusta
+  const humanLaborCost = settings.useHumanFlatRate ? 0 : humanHours * settings.humanHourlyRate;
   const humanBasePrice = getHumanTieredBasePrice(humanQueries, settings);
   const humanPartCost = humanLaborCost + humanBasePrice;
   

@@ -81,16 +81,36 @@ export default function SettingsTab() {
             <CardDescription>Määritä ihmistyön peruskulut</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="humanHourlyRate">Tuntiveloitus (€/h)</Label>
-              <Input
-                id="humanHourlyRate"
-                type="number"
-                value={settings.humanHourlyRate}
-                onChange={(e) => updateSettings({ humanHourlyRate: Number(e.target.value) })}
-                min="0"
-              />
+            <div className="pt-2 pb-3 border-b space-y-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="useHumanFlatRate"
+                  checked={settings.useHumanFlatRate}
+                  onChange={(e) => updateSettings({ useHumanFlatRate: e.target.checked })}
+                  className="rounded"
+                />
+                <Label htmlFor="useHumanFlatRate" className="cursor-pointer">
+                  Ohita tuntiveloitus (käytä vain peruskuukausihintaa)
+                </Label>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Kun valittu, ihmistyön kustannukset lasketaan vain portaistetusta peruskuukausihinnasta ilman tuntiveloitusta
+              </p>
             </div>
+
+            {!settings.useHumanFlatRate && (
+              <div className="space-y-2">
+                <Label htmlFor="humanHourlyRate">Tuntiveloitus (€/h)</Label>
+                <Input
+                  id="humanHourlyRate"
+                  type="number"
+                  value={settings.humanHourlyRate}
+                  onChange={(e) => updateSettings({ humanHourlyRate: Number(e.target.value) })}
+                  min="0"
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

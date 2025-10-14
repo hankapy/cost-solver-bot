@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS: PricingSettings = {
     { queryLimit: 500, basePrice: 300 },
   ],
   humanBaseAmount: 250,
+  useHumanFlatRate: false,
   providerHumanHourlyRate: 18,
   providerBotMaintenanceHourlyRate: 25,
   providerBotMaintenanceHoursPerMonth: 20,

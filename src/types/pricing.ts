@@ -7,6 +7,7 @@ export interface PricingSettings {
   humanHourlyRate: number;
   humanTiers: HumanTier[];
   humanBaseAmount: number; // Pohjasumma ihmisasiakaspalvelulle
+  useHumanFlatRate: boolean; // Jos true, käytetään vain peruskuukausihintaa ilman tuntiveloitusta
   
   // Provider costs (Our costs - Akvamariini)
   providerHumanHourlyRate: number; // Oma ihmisasiakaspalvelijan palkka
