@@ -62,16 +62,6 @@ export default function SettingsTab() {
                 min="0"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="minutesPerQuery">Työaika / vastaus (min)</Label>
-              <Input
-                id="minutesPerQuery"
-                type="number"
-                value={settings.minutesPerQuery}
-                onChange={(e) => updateSettings({ minutesPerQuery: Number(e.target.value) })}
-                min="0"
-              />
-            </div>
           </CardContent>
         </Card>
 
@@ -100,16 +90,28 @@ export default function SettingsTab() {
             </div>
 
             {!settings.useHumanFlatRate && (
-              <div className="space-y-2">
-                <Label htmlFor="humanHourlyRate">Tuntiveloitus (€/h)</Label>
-                <Input
-                  id="humanHourlyRate"
-                  type="number"
-                  value={settings.humanHourlyRate}
-                  onChange={(e) => updateSettings({ humanHourlyRate: Number(e.target.value) })}
-                  min="0"
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="humanHourlyRate">Tuntiveloitus (€/h)</Label>
+                  <Input
+                    id="humanHourlyRate"
+                    type="number"
+                    value={settings.humanHourlyRate}
+                    onChange={(e) => updateSettings({ humanHourlyRate: Number(e.target.value) })}
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="minutesPerQuery">Työaika / vastaus (min)</Label>
+                  <Input
+                    id="minutesPerQuery"
+                    type="number"
+                    value={settings.minutesPerQuery}
+                    onChange={(e) => updateSettings({ minutesPerQuery: Number(e.target.value) })}
+                    min="0"
+                  />
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
