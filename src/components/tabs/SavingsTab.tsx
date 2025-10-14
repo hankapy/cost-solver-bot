@@ -22,11 +22,11 @@ export default function SavingsTab() {
   const chartData = [
     {
       name: '100% Ihminen',
-      Kustannus: Number(calculatorScenario.humanCost.toFixed(2)),
+      Hinta: Number(calculatorScenario.humanCost.toFixed(2)),
     },
     {
       name: `${calculatorBotPercentage}% Botti`,
-      Kustannus: Number(calculatorScenario.hybridCost.toFixed(2)),
+      Hinta: Number(calculatorScenario.hybridCost.toFixed(2)),
     },
   ];
 
@@ -41,34 +41,34 @@ export default function SavingsTab() {
           Säästölaskuri
         </h2>
         <p className="text-muted-foreground">
-          Vertailu pelkän ihmistyön ja pelkän botin välillä
+          Vertailu eri palvelumallien hintojen välillä asiakkaan näkökulmasta
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="shadow-card bg-gradient-card border-destructive/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ihmistyön kustannus</CardTitle>
+            <CardTitle className="text-sm font-medium">Ihmisvetoinen malli</CardTitle>
             <TrendingDown className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">
               {formatCurrency(calculation.humanCost)}
             </div>
-            <p className="text-xs text-muted-foreground">per kuukausi</p>
+            <p className="text-xs text-muted-foreground">asiakashinta / kk</p>
           </CardContent>
         </Card>
 
         <Card className="shadow-card bg-gradient-card border-primary/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Botin kustannus</CardTitle>
+            <CardTitle className="text-sm font-medium">Bottivetonen malli</CardTitle>
             <TrendingDown className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
               {formatCurrency(calculation.botCost)}
             </div>
-            <p className="text-xs text-muted-foreground">per kuukausi</p>
+            <p className="text-xs text-muted-foreground">asiakashinta / kk</p>
           </CardContent>
         </Card>
 
@@ -94,23 +94,23 @@ export default function SavingsTab() {
         <CardHeader>
           <CardTitle>Säästöanalyysi</CardTitle>
           <CardDescription>
-            Yksityiskohtainen vertailu ihmistyön ja botin välillä
+            Yksityiskohtainen vertailu eri palvelumallien hintojen välillä
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-muted border border-border">
-              <h4 className="font-semibold mb-3">Laskentaperuste:</h4>
+              <h4 className="font-semibold mb-3">Hinnoittelu:</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p><strong>Ihmistyön kustannus</strong> = (Kyselymäärä × Käsittelyaika × Tuntihinta) + Peruskuukausihinta (250 €)</p>
-                <p><strong>Botin kustannus</strong> = Portaistettu kuukausihinta kyselymäärän mukaan + Järjestelmäkulut</p>
+                <p><strong>Ihmisvetoinen malli</strong> = Portaistettu kuukausihinta kyselymäärän mukaan + Tuntiveloitus</p>
+                <p><strong>Bottivetonen malli</strong> = Portaistettu kuukausihinta kyselymäärän mukaan + Järjestelmäkulut</p>
                 <p className="text-xs mt-2 italic">Huom: Botin aloitusmaksu ei sisälly vertailuun, koska se on kertaluonteinen kustannus</p>
               </div>
             </div>
 
             <div className="flex justify-between items-center p-4 rounded-lg bg-destructive/10">
               <div>
-                <p className="text-sm text-muted-foreground">Ihmistyön kustannus</p>
+                <p className="text-sm text-muted-foreground">Ihmisvetoinen malli</p>
                 <p className="text-2xl font-bold text-destructive">
                   {formatCurrency(calculation.humanCost)}
                 </p>
@@ -121,7 +121,7 @@ export default function SavingsTab() {
 
             <div className="flex justify-between items-center p-4 rounded-lg bg-primary/10">
               <div>
-                <p className="text-sm text-muted-foreground">Botin kustannus</p>
+                <p className="text-sm text-muted-foreground">Bottivetonen malli</p>
                 <p className="text-2xl font-bold text-primary">
                   {formatCurrency(calculation.botCost)}
                 </p>
@@ -219,7 +219,7 @@ export default function SavingsTab() {
                 className="text-xs"
                 tick={{ fill: 'hsl(var(--foreground))' }}
                 label={{ 
-                  value: 'Kustannus (€)', 
+                  value: 'Asiakashinta (€)', 
                   angle: -90, 
                   position: 'insideLeft',
                   style: { fill: 'hsl(var(--foreground))' }
@@ -234,7 +234,7 @@ export default function SavingsTab() {
                 formatter={(value: number) => `${value.toFixed(2)} €`}
               />
               <Bar 
-                dataKey="Kustannus" 
+                dataKey="Hinta" 
                 fill="hsl(var(--primary))" 
                 radius={[8, 8, 0, 0]}
               />
@@ -275,7 +275,7 @@ export default function SavingsTab() {
               <p>• Botti hoitaa: <strong>{Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({calculatorBotPercentage}%)</p>
               <p>• Ihminen hoitaa: <strong>{calculatorQueries - Math.round(calculatorQueries * calculatorBotPercentage / 100)} kyselyä</strong> ({100 - calculatorBotPercentage}%)</p>
               <p className="pt-2 border-t mt-2">
-                💰 Kun botti hoitaa {calculatorBotPercentage}% kyselyistä, <strong className="text-success">säästät {formatCurrency(calculatorScenario.savings)} kuukaudessa</strong> verrattuna pelkkään ihmistyöhön.
+                💰 Kun botti hoitaa {calculatorBotPercentage}% kyselyistä, <strong className="text-success">säästät {formatCurrency(calculatorScenario.savings)} kuukaudessa</strong> verrattuna ihmisvetoiseen malliin.
               </p>
             </div>
           </div>
