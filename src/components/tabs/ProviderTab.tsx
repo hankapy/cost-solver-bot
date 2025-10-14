@@ -79,6 +79,7 @@ export default function ProviderTab() {
 
       <div className="space-y-3">
         <h4 className="font-semibold text-sm">Palveluntarjoajan porrastettu hinnoittelu (meidän kulut)</h4>
+        <p className="text-xs text-muted-foreground">Koskee vain ihmisvetoista mallia</p>
         <div className="space-y-3">
           {settings.providerHumanTiers.map((tier, index) => (
             <div key={index} className="flex gap-3 items-end">
