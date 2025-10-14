@@ -14,17 +14,17 @@ export default function ProviderTab() {
   const humanCost = calculateProviderHumanCost(settings);
   const botCost = calculateProviderBotCost(settings);
   
-  // Lasketaan porrastettu hinta ihmistyölle
-  const humanTieredPrice = settings.humanTiers
+  // Lasketaan porrastettu hinta ihmistyölle PALVELUNTARJOAJAN porrastuksesta
+  const humanTieredPrice = settings.providerHumanTiers
     .sort((a, b) => a.queryLimit - b.queryLimit)
     .find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
-    settings.humanTiers[settings.humanTiers.length - 1]?.basePrice || 0;
+    settings.providerHumanTiers[settings.providerHumanTiers.length - 1]?.basePrice || 0;
     
-  // Lasketaan järjestelmäkulut botille portaistetusta hinnoittelusta
-  const botSystemCosts = settings.botTiers
+  // Lasketaan järjestelmäkulut botille PALVELUNTARJOAJAN porrastuksesta
+  const botSystemCosts = settings.providerBotTiers
     .sort((a, b) => a.queryLimit - b.queryLimit)
     .find(tier => settings.monthlyQueries <= tier.queryLimit)?.systemCosts || 
-    settings.botTiers[settings.botTiers.length - 1]?.systemCosts || 0;
+    settings.providerBotTiers[settings.providerBotTiers.length - 1]?.systemCosts || 0;
   
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined || isNaN(value)) return '0.00 €';
@@ -87,9 +87,47 @@ export default function ProviderTab() {
                   <span className="text-sm font-semibold">{humanTieredPrice.toFixed(2)} €</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Arvo tulee Asetukset-välilehden porrastuksesta
+                  Arvo tulee alta Palveluntarjoajan porrastuksesta
                 </p>
+            </div>
+
+            <div className="border-t pt-4">
+              <h4 className="font-semibold mb-3 text-sm">Palveluntarjoajan porrastettu hinnoittelu (meidän kulut)</h4>
+              <div className="space-y-3">
+                {settings.providerHumanTiers.map((tier, index) => (
+                  <div key={index} className="flex gap-3 items-end">
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor={`provider-human-tier-limit-${index}`}>Kyselyraja</Label>
+                      <Input
+                        id={`provider-human-tier-limit-${index}`}
+                        type="number"
+                        value={tier.queryLimit}
+                        onChange={(e) => {
+                          const newTiers = [...settings.providerHumanTiers];
+                          newTiers[index].queryLimit = Number(e.target.value);
+                          updateSettings({ providerHumanTiers: newTiers });
+                        }}
+                        min="0"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor={`provider-human-tier-price-${index}`}>Hinta (€/kk)</Label>
+                      <Input
+                        id={`provider-human-tier-price-${index}`}
+                        type="number"
+                        value={tier.basePrice}
+                        onChange={(e) => {
+                          const newTiers = [...settings.providerHumanTiers];
+                          newTiers[index].basePrice = Number(e.target.value);
+                          updateSettings({ providerHumanTiers: newTiers });
+                        }}
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
+            </div>
 
               <div className="space-y-2">
                 <Label htmlFor="minutesPerQuery">Minuuttia per kysely</Label>
@@ -171,7 +209,7 @@ export default function ProviderTab() {
                   <span className="text-sm font-semibold">{botSystemCosts.toFixed(2)} €</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Arvo tulee Asetukset-välilehden botin portaistuksesta
+                  Arvo tulee alta Palveluntarjoajan porrastuksesta
                 </p>
               </div>
             </div>

@@ -11,8 +11,10 @@ export interface PricingSettings {
   
   // Provider costs (Our costs - Akvamariini)
   providerHumanHourlyRate: number; // Oma ihmisasiakaspalvelijan palkka
+  providerHumanTiers: HumanTier[]; // Palveluntarjoajan oma porrastettu hinnoittelu (meidän kulut)
   providerBotMaintenanceHourlyRate: number; // Botin ylläpitäjän palkka
   providerBotMaintenanceHoursPerMonth: number; // Botin ylläpitotunnit per kk
+  providerBotTiers: BotTier[]; // Palveluntarjoajan oma järjestelmäkulujen porratus
   providerTechnicalCosts: number; // Tekniset kulut (eri rivi)
   providerBaseCosts: number; // Peruskulut (molemmat mallit)
   providerHumanWorkCost: number; // Ihmisvetoisen mallin työaikakustannus (vain palveluntarjoaja)

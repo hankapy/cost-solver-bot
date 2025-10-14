@@ -14,8 +14,8 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
   const humanServiceHours = totalMinutes / 60;
   const humanServiceCost = humanServiceHours * (settings.providerHumanHourlyRate || 0);
   
-  // Porrastettu hinta tulee ihmistyön portaistuksesta
-  const sortedTiers = [...settings.humanTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+  // Porrastettu hinta tulee PALVELUNTARJOAJAN portaistuksesta (ei asiakkaan)
+  const sortedTiers = [...settings.providerHumanTiers].sort((a, b) => a.queryLimit - b.queryLimit);
   const tieredPrice = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
                      sortedTiers[sortedTiers.length - 1]?.basePrice || 0;
   
@@ -47,8 +47,8 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
 export function calculateProviderBotCost(settings: PricingSettings): ProviderCostCalculation {
   const botMaintenanceCost = (settings.providerBotMaintenanceHoursPerMonth || 0) * (settings.providerBotMaintenanceHourlyRate || 0);
   
-  // Järjestelmäkulut tulevat botin portaistuksesta
-  const sortedTiers = [...settings.botTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+  // Järjestelmäkulut tulevat PALVELUNTARJOAJAN portaistuksesta (ei asiakkaan)
+  const sortedTiers = [...settings.providerBotTiers].sort((a, b) => a.queryLimit - b.queryLimit);
   const systemCosts = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.systemCosts || 
                      sortedTiers[sortedTiers.length - 1]?.systemCosts || 0;
   
