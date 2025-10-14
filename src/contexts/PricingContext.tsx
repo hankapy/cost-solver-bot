@@ -35,6 +35,7 @@ const DEFAULT_SETTINGS: PricingSettings = {
   ],
   providerTechnicalCosts: 100,
   providerBaseCosts: 150,
+  skipProviderBaseCosts: false,
   providerHumanWorkCost: 0,
   providerBotMaintenanceCost: 0,
   botStartupFee: 3000,

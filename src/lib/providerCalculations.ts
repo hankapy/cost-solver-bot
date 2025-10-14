@@ -19,7 +19,7 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
   const tieredPrice = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.basePrice || 
                      sortedTiers[sortedTiers.length - 1]?.basePrice || 0;
   
-  const baseCosts = settings.providerBaseCosts || 0;
+  const baseCosts = settings.skipProviderBaseCosts ? 0 : (settings.providerBaseCosts || 0);
   
   // Ihmisvetoiseen ei teknisiä kuluja
   const totalProviderCost = humanServiceCost + tieredPrice + baseCosts;
@@ -52,7 +52,7 @@ export function calculateProviderBotCost(settings: PricingSettings): ProviderCos
   const systemCosts = sortedTiers.find(tier => settings.monthlyQueries <= tier.queryLimit)?.systemCosts || 
                      sortedTiers[sortedTiers.length - 1]?.systemCosts || 0;
   
-  const baseCosts = settings.providerBaseCosts || 0;
+  const baseCosts = settings.skipProviderBaseCosts ? 0 : (settings.providerBaseCosts || 0);
   
   const totalProviderCost = botMaintenanceCost + systemCosts + baseCosts;
   
@@ -96,7 +96,8 @@ export function calculateProviderHybridMonth(
   const humanServiceCost = humanServiceHours * (settings.providerHumanHourlyRate || 0);
   
   const technicalCosts = settings.providerTechnicalCosts || 0;
-  const totalMonthlyCost = botMaintenanceCost + humanServiceCost + technicalCosts;
+  const baseCosts = settings.skipProviderBaseCosts ? 0 : (settings.providerBaseCosts || 0);
+  const totalMonthlyCost = botMaintenanceCost + humanServiceCost + technicalCosts + baseCosts;
 
   return {
     month,

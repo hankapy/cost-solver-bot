@@ -18,6 +18,7 @@ export interface PricingSettings {
   providerBotTiers: BotTier[]; // Palveluntarjoajan oma järjestelmäkulujen porratus
   providerTechnicalCosts: number; // Tekniset kulut (eri rivi)
   providerBaseCosts: number; // Peruskulut (molemmat mallit)
+  skipProviderBaseCosts: boolean; // Jos true, peruskuluja ei oteta huomioon laskelmissa
   providerHumanWorkCost: number; // Ihmisvetoisen mallin työaikakustannus (vain palveluntarjoaja)
   providerBotMaintenanceCost: number; // Bottivetioisen mallin ylläpitokustannus (vain palveluntarjoaja)
   

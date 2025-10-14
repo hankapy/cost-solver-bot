@@ -68,7 +68,20 @@ export default function ProviderTab() {
               value={settings.providerBaseCosts}
               onChange={(e) => updateSettings({ providerBaseCosts: Number(e.target.value) })}
               min="0"
+              disabled={settings.skipProviderBaseCosts}
             />
+            <div className="flex items-center space-x-2 mt-2">
+              <input
+                type="checkbox"
+                id="skipProviderBaseCosts"
+                checked={settings.skipProviderBaseCosts}
+                onChange={(e) => updateSettings({ skipProviderBaseCosts: e.target.checked })}
+                className="rounded"
+              />
+              <Label htmlFor="skipProviderBaseCosts" className="cursor-pointer text-sm">
+                Ohita peruskulut
+              </Label>
+            </div>
             <p className="text-xs text-muted-foreground">
               Arvioidut muut kulut/kk
             </p>
@@ -289,8 +302,9 @@ export default function ProviderTab() {
               <tbody>
                 {settings.botGrowth.map(growth => {
                   const calc = calculateProviderHybridMonth(growth.month, settings);
-                  const botCostMinusBase = calc.botMaintenanceCost + botSystemCosts - settings.providerBaseCosts;
-                  const humanCostMinusBase = calc.humanServiceCost + humanTieredPrice - settings.providerBaseCosts;
+                  const baseCosts = settings.skipProviderBaseCosts ? 0 : settings.providerBaseCosts;
+                  const botCostMinusBase = calc.botMaintenanceCost + botSystemCosts - baseCosts;
+                  const humanCostMinusBase = calc.humanServiceCost + humanTieredPrice - baseCosts;
                   return (
                     <tr key={growth.month} className="border-b">
                       <td className="py-2">{growth.month}</td>
@@ -299,7 +313,7 @@ export default function ProviderTab() {
                       <td className="text-right">{formatCurrency(botCostMinusBase)}</td>
                       <td className="text-right">{calc.humanQueries}</td>
                       <td className="text-right">{formatCurrency(humanCostMinusBase)}</td>
-                      <td className="text-right">{formatCurrency(settings.providerBaseCosts)}</td>
+                      <td className="text-right">{formatCurrency(baseCosts)}</td>
                       <td className="text-right font-bold text-primary">
                         {formatCurrency(calc.totalMonthlyCost)}
                       </td>
