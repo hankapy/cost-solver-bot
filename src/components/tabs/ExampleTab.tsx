@@ -5,39 +5,40 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { usePricing } from "@/contexts/PricingContext";
-import { getBotTieredPrice } from "@/lib/pricingCalculations";
+import { 
+  calculateProviderHumanCustomerPrice, 
+  calculateProviderBotCustomerPrice,
+  calculateProviderHybridCustomerPrice 
+} from "@/lib/providerCalculations";
 
 export default function ExampleTab() {
   const { settings } = usePricing();
-  const [expertSalary, setExpertSalary] = useState(3000);
-  const [expertHours, setExpertHours] = useState(48);
-  const [managerSalary, setManagerSalary] = useState(6500);
-  const [managerHours, setManagerHours] = useState(8);
-  const [overheadPercent, setOverheadPercent] = useState(30);
   const [estimatedQueries, setEstimatedQueries] = useState(100);
-  const [botCoveragePercent, setBotCoveragePercent] = useState(50);
+  const [selectedMonth, setSelectedMonth] = useState(6); // Kuukausi hybridimallille
 
   const calculateCosts = () => {
-    const expertCost = (expertSalary / 160) * expertHours * (1 + overheadPercent / 100);
-    const managerCost = (managerSalary / 160) * managerHours * (1 + overheadPercent / 100);
-    const totalWithoutBot = expertCost + managerCost;
-
-    // Laske botin hinta asetusten mukaan kyselymäärän perusteella
-    const botPricing = getBotTieredPrice(estimatedQueries, settings);
-    const botMonthlyFee = botPricing.price + botPricing.systemCosts;
-
-    const humanWorkRemaining = totalWithoutBot * (1 - botCoveragePercent / 100);
-    const totalWithBot = botMonthlyFee + humanWorkRemaining;
-    const monthlySavings = totalWithoutBot - totalWithBot;
+    // Käytämme Akvamariinin hinnoittelua
+    const customSettings = { ...settings, monthlyQueries: estimatedQueries };
+    
+    // Ihmisvetoinen malli - asiakashinta
+    const humanPrice = calculateProviderHumanCustomerPrice(customSettings);
+    
+    // Bottimalli - asiakashinta  
+    const botPrice = calculateProviderBotCustomerPrice(customSettings);
+    
+    // Hybridi - asiakashinta
+    const hybridPrice = calculateProviderHybridCustomerPrice(selectedMonth, customSettings);
+    
+    // Säästöt verrattuna ihmisvetoisen malliin
+    const savingsBot = humanPrice - botPrice;
+    const savingsHybrid = humanPrice - hybridPrice;
 
     return {
-      expertCost,
-      managerCost,
-      totalWithoutBot,
-      botMonthlyFee,
-      humanWorkRemaining,
-      totalWithBot,
-      monthlySavings,
+      humanPrice,
+      botPrice,
+      hybridPrice,
+      savingsBot,
+      savingsHybrid,
     };
   };
 
@@ -45,17 +46,16 @@ export default function ExampleTab() {
 
   const chartData = [
     {
-      name: "Ilman bottia",
-      "Kokonaiskustannus": Math.round(costs.totalWithoutBot),
+      name: "Ihminen",
+      "Asiakashinta": Math.round(costs.humanPrice),
     },
     {
-      name: "Botin kanssa",
-      "Botin kustannus": Math.round(costs.botMonthlyFee),
-      "Ihmistyö": Math.round(costs.humanWorkRemaining),
+      name: "Botti",
+      "Asiakashinta": Math.round(costs.botPrice),
     },
     {
-      name: "Säästö",
-      "Säästö kuukaudessa": Math.round(costs.monthlySavings),
+      name: "Hybridi",
+      "Asiakashinta": Math.round(costs.hybridPrice),
     },
   ];
 
@@ -71,14 +71,13 @@ export default function ExampleTab() {
   return (
     <div className="space-y-6">
       <div className="bg-muted/50 p-6 rounded-lg border">
-        <h2 className="text-2xl font-bold mb-4">Esimerkki kustannushyödyistä</h2>
+        <h2 className="text-2xl font-bold mb-4">Hintavertailu</h2>
         <p className="text-muted-foreground mb-4">
-          Tällä välilehdellä voit luoda oman esimerkin kustannuslaskelmasta. Kaikki arvot ovat muokattavia, jotta voit
-          testata erilaisia skenaarioita omilla luvuillasi.
+          Tällä välilehdellä voit vertailla eri mallien asiakashintoja Akvamariinin hinnoittelulla.
+          Kaikki hinnat lasketaan Asetukset-välilehden mukaisesti.
         </p>
         <p className="text-muted-foreground">
-          Muokkaa alla olevia kenttiä ja katso, miten kustannukset ja säästöt muuttuvat reaaliajassa graafissa ja
-          taulukossa.
+          Muokkaa kyselymäärää ja hybridimallin kuukautta nähdäksesi, miten hinnat muuttuvat.
         </p>
       </div>
 
@@ -87,31 +86,7 @@ export default function ExampleTab() {
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <div className="space-y-4">
-            <h4 className="font-medium">Asiantuntija</h4>
-            <div className="space-y-2">
-              <Label>Kuukausipalkka (€)</Label>
-              <Input type="number" value={expertSalary} onChange={(e) => setExpertSalary(Number(e.target.value))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Työtunnit/kk</Label>
-              <Input type="number" value={expertHours} onChange={(e) => setExpertHours(Number(e.target.value))} />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium">Päällikkö</h4>
-            <div className="space-y-2">
-              <Label>Kuukausipalkka (€)</Label>
-              <Input type="number" value={managerSalary} onChange={(e) => setManagerSalary(Number(e.target.value))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Työtunnit/kk</Label>
-              <Input type="number" value={managerHours} onChange={(e) => setManagerHours(Number(e.target.value))} />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium">Botin asetukset</h4>
+            <h4 className="font-medium">Kyselyasetukset</h4>
             <div className="space-y-2">
               <Label>Arvioitu kyselymäärä (kk)</Label>
               <Input
@@ -121,30 +96,25 @@ export default function ExampleTab() {
                 min="0"
               />
               <p className="text-xs text-muted-foreground">
-                Botin hinta lasketaan Asetukset-välilehden portaiden mukaan
+                Hinnat lasketaan Asetukset-välilehden Akvamariinin hinnoittelun mukaan
               </p>
-            </div>
-            <div className="space-y-2">
-              <Label>Botin kattavuus (%)</Label>
-              <Input
-                type="number"
-                value={botCoveragePercent}
-                onChange={(e) => setBotCoveragePercent(Number(e.target.value))}
-                min="0"
-                max="100"
-              />
             </div>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-medium">Muut asetukset</h4>
+            <h4 className="font-medium">Hybridiasetuks</h4>
             <div className="space-y-2">
-              <Label>Sivukulut (%)</Label>
+              <Label>Kuukausi (hybridi)</Label>
               <Input
                 type="number"
-                value={overheadPercent}
-                onChange={(e) => setOverheadPercent(Number(e.target.value))}
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                min="1"
+                max="12"
               />
+              <p className="text-xs text-muted-foreground">
+                Valitse kuukausi (1-12) hybridimallin botin kehityksen mukaan
+              </p>
             </div>
           </div>
         </div>
@@ -155,57 +125,88 @@ export default function ExampleTab() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-semibold">Eri kuluerät</TableHead>
-              <TableHead className="text-right font-semibold">Arvo</TableHead>
+              <TableHead className="font-semibold">Malli</TableHead>
+              <TableHead className="text-right font-semibold">Asiakashinta</TableHead>
+              <TableHead className="text-right font-semibold">Säästö vs. Ihminen</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>
-                Asiantuntija (€ {expertSalary.toLocaleString("fi-FI")}, {expertHours} h/kk)
-              </TableCell>
-              <TableCell className="text-right">{formatCurrency(costs.expertCost)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Päällikkö (€ {managerSalary.toLocaleString("fi-FI")}, {managerHours} h/kk)
-              </TableCell>
-              <TableCell className="text-right">{formatCurrency(costs.managerCost)}</TableCell>
-            </TableRow>
             <TableRow className="bg-muted/50">
-              <TableCell className="font-semibold">Kokonaiskustannus ilman bottia</TableCell>
-              <TableCell className="text-right font-semibold">{formatCurrency(costs.totalWithoutBot)}</TableCell>
+              <TableCell className="font-semibold">Ihmisvetoinen malli</TableCell>
+              <TableCell className="text-right font-semibold">{formatCurrency(costs.humanPrice)}</TableCell>
+              <TableCell className="text-right">-</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Botin kuukausimaksu ({estimatedQueries} kyselyä/kk)</TableCell>
-              <TableCell className="text-right">{formatCurrency(costs.botMonthlyFee)}</TableCell>
+              <TableCell>Bottimalli (100% botti)</TableCell>
+              <TableCell className="text-right">{formatCurrency(costs.botPrice)}</TableCell>
+              <TableCell className="text-right text-primary font-semibold">
+                {formatCurrency(costs.savingsBot)}
+              </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Ihmisen työksi jää ({100 - botCoveragePercent} %)</TableCell>
-              <TableCell className="text-right">{formatCurrency(costs.humanWorkRemaining)}</TableCell>
-            </TableRow>
-            <TableRow className="bg-muted/50">
-              <TableCell className="font-semibold">Kokonaiskustannus botin kanssa</TableCell>
-              <TableCell className="text-right font-semibold">{formatCurrency(costs.totalWithBot)}</TableCell>
-            </TableRow>
-            <TableRow className="bg-primary/10">
-              <TableCell className="font-bold">Nettosäästö kuukaudessa</TableCell>
-              <TableCell className="text-right font-bold text-primary">
-                {formatCurrency(costs.monthlySavings)}
+              <TableCell>Hybridi (kk {selectedMonth})</TableCell>
+              <TableCell className="text-right">{formatCurrency(costs.hybridPrice)}</TableCell>
+              <TableCell className="text-right text-primary font-semibold">
+                {formatCurrency(costs.savingsHybrid)}
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </Card>
 
+      <Card className="p-6">
+        <h3 className="text-xl font-semibold mb-4">Visualisointi</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis 
+              dataKey="name" 
+              tick={{ fill: 'hsl(var(--foreground))' }}
+            />
+            <YAxis 
+              tick={{ fill: 'hsl(var(--foreground))' }}
+              label={{ 
+                value: 'Asiakashinta (€)', 
+                angle: -90, 
+                position: 'insideLeft',
+                style: { fill: 'hsl(var(--foreground))' }
+              }}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '8px'
+              }}
+              formatter={(value: number) => formatCurrency(value)}
+            />
+            <Legend />
+            <Bar 
+              dataKey="Asiakashinta" 
+              fill="hsl(var(--primary))" 
+              radius={[8, 8, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+
       <div className="bg-muted/50 p-6 rounded-lg border">
-        <p className="text-sm text-muted-foreground">
-          <strong>Huomio:</strong> Kaikki ihmistyön kustannukset sisältävät sivukulut ({overheadPercent}%). Break-even
-          saavutettiin jo ennen {botCoveragePercent}% kattavuutta. Ihmistyön kokonaiskustannus (
-          {formatCurrency(costs.totalWithoutBot)}/kk) on suurempi kuin botin ja jäljelle jäävän ihmistyön yhteiskulut (
-          {formatCurrency(costs.totalWithBot)}/kk). Säästö kuukaudessa: {formatCurrency(costs.monthlySavings)}. Lisäksi
-          on huomioitava kasvatettavissa työtiimeissä käytettävä työtyytyväisyys.
-        </p>
+        <h4 className="font-semibold mb-2">Hinnoittelulogiikka:</h4>
+        <div className="text-sm text-muted-foreground space-y-2">
+          <p>
+            <strong>Ihmisvetoinen:</strong> Lasketaan Akvamariinin ihmisvetoisen mallin kustannukset + kate
+          </p>
+          <p>
+            <strong>Bottimalli:</strong> Lasketaan Akvamariinin bottikohtaiset kustannukset (ylläpito + järjestelmä) + kate
+          </p>
+          <p>
+            <strong>Hybridi:</strong> Yhdistelmä botti- ja ihmiskustannuksista botin kehitysasteen mukaan (kuukausi 1-12)
+          </p>
+          <p className="pt-2 border-t">
+            <strong>Huomio:</strong> Kaikki hinnat sisältävät Akvamariinin katteen ({settings.providerMarginPercentage}%). 
+            Hinnat vaihtelevat kyselymäärien ja portaiden mukaan.
+          </p>
+        </div>
       </div>
     </div>
   );

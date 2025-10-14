@@ -20,15 +20,18 @@ export default function ScenariosTab() {
   const formatCurrency = (value: number) => `${value.toFixed(2)} €`;
   const formatPercentage = (value: number) => `${value.toFixed(1)} %`;
 
+  // Käytetään valittua kyselymäärää
+  const customSettings = { ...settings, monthlyQueries: comparisonQueries };
+  
   // Lasketaan ihmisvetoisen mallin asiakashinta (sama kaikille)
-  const humanCustomerPrice = calculateProviderHumanCustomerPrice(settings);
+  const humanCustomerPrice = calculateProviderHumanCustomerPrice(customSettings);
 
   // Vertailutyökalun data: sama kyselymäärä, eri botin osuudet
   // Käytämme botGrowth-kuukausia jotka vastaavat tiettyjä bottiprosentteja
   const botPercentages = [0, 25, 50, 75, 100];
   const comparisonData = botPercentages.map(botPct => {
     // Etsitään lähin botGrowth-kuukausi joka vastaa tätä prosenttia
-    const closestMonth = settings.botGrowth.reduce((prev, curr) => 
+    const closestMonth = customSettings.botGrowth.reduce((prev, curr) => 
       Math.abs(curr.percentage - botPct) < Math.abs(prev.percentage - botPct) 
         ? curr 
         : prev
@@ -36,7 +39,7 @@ export default function ScenariosTab() {
     
     const hybridPrice = botPct === 0 
       ? humanCustomerPrice 
-      : calculateProviderHybridCustomerPrice(closestMonth.month, settings);
+      : calculateProviderHybridCustomerPrice(closestMonth.month, customSettings);
     
     const savings = humanCustomerPrice - hybridPrice;
     const savingsPercentage = (savings / humanCustomerPrice) * 100;
@@ -104,7 +107,7 @@ export default function ScenariosTab() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="comparisonQueries">Kyselymäärä / kk (ei käytössä tässä versiossa)</Label>
+            <Label htmlFor="comparisonQueries">Kyselymäärä / kk</Label>
             <Input
               id="comparisonQueries"
               type="number"
@@ -112,7 +115,6 @@ export default function ScenariosTab() {
               onChange={(e) => setComparisonQueries(Number(e.target.value))}
               min="0"
               className="max-w-xs"
-              disabled
             />
             <p className="text-xs text-muted-foreground">
               Hinnat lasketaan Akvamariinin asetusten mukaan
@@ -191,8 +193,8 @@ export default function ScenariosTab() {
               </TableHeader>
               <TableBody>
                 {comparisonData.map((data) => {
-                  const botQueries = Math.round((settings.monthlyQueries * data.botPercentage) / 100);
-                  const humanQueries = settings.monthlyQueries - botQueries;
+                  const botQueries = Math.round((comparisonQueries * data.botPercentage) / 100);
+                  const humanQueries = comparisonQueries - botQueries;
                   
                   return (
                     <TableRow key={data.botPercentage}>

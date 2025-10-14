@@ -71,9 +71,6 @@ export default function ComparisonTab() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Asiakas vs. Palveluntarjoaja</h2>
-        <p className="text-muted-foreground">
-          Vertailu asiakkaan maksujen ja meidän kustannustemme välillä
-        </p>
       </div>
 
       <Card className="shadow-card">
