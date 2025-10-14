@@ -39,7 +39,7 @@ export default function ScenariosTab() {
           Botin osuuden vaikutus
         </h2>
         <p className="text-muted-foreground">
-          Vertaile, miten eri botin osuudet vaikuttavat kustannuksiin ja säästöihin
+          Vertaile, miten eri botin osuudet vaikuttavat hintoihin ja säästöihin
         </p>
       </div>
 
@@ -47,14 +47,14 @@ export default function ScenariosTab() {
         <CardHeader>
           <CardTitle>Mitä tämä vertailu näyttää?</CardTitle>
           <CardDescription>
-            Ymmärrä, miten automatisaation taso vaikuttaa kustannuksiin
+            Ymmärrä, miten botin osuus vaikuttaa asiakashintoihin
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-4 rounded-lg bg-muted border border-border">
             <h4 className="font-semibold mb-3">Vertailun idea:</h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Tämä työkalu näyttää, miten <strong>kustannukset ja säästöt muuttuvat</strong>, kun botin 
+              Tämä työkalu näyttää, miten <strong>asiakashinnat ja säästöt muuttuvat</strong>, kun botin 
               osuus kyselyiden käsittelystä kasvaa. Voit asettaa haluamasi kuukausittaisen kyselymäärän 
               ja nähdä, mitä tapahtuu kun botti hoitaa 0%, 25%, 50%, 75% tai 100% kyselyistä.
             </p>
@@ -63,7 +63,7 @@ export default function ScenariosTab() {
           <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
             <h4 className="font-semibold mb-3">Miten säästö lasketaan?</h4>
             <p className="text-sm text-muted-foreground">
-              <strong>Säästö</strong> = Pelkän ihmistyön kustannus (0% botti) - Hybridimallin kustannus
+              <strong>Säästö</strong> = Ihmisvetoisen mallin hinta (0% botti) - Hybridimallin hinta
             </p>
             <p className="text-xs text-muted-foreground mt-2 italic">
               Kun botin osuus kasvaa, säästö kasvaa, koska botti hoitaa kyselyt halvemmalla kuin ihminen.
@@ -76,10 +76,10 @@ export default function ScenariosTab() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-primary" />
-            Kustannusvertailu
+            Hintavertailu
           </CardTitle>
           <CardDescription>
-            Aseta kyselymäärä ja näe kustannuserot eri automatisointiasteilla
+            Aseta kyselymäärä ja näe hintaerot eri bottitasoilla
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -113,7 +113,7 @@ export default function ScenariosTab() {
                 className="text-xs"
                 tick={{ fill: 'hsl(var(--foreground))' }}
                 label={{ 
-                  value: 'Kustannus (€)', 
+                  value: 'Asiakashinta (€)', 
                   angle: -90, 
                   position: 'insideLeft',
                   style: { fill: 'hsl(var(--foreground))' }
@@ -134,7 +134,7 @@ export default function ScenariosTab() {
               />
               <Bar 
                 dataKey="humanCost" 
-                name="Pelkkä ihminen"
+                name="Ihmisvetoinen malli"
                 fill="hsl(var(--destructive))" 
                 radius={[8, 8, 0, 0]}
               />
@@ -160,7 +160,7 @@ export default function ScenariosTab() {
                   <TableHead>Botin osuus</TableHead>
                   <TableHead>Bottikyselyt</TableHead>
                   <TableHead>Ihminen kyselyt</TableHead>
-                  <TableHead className="text-right">Kustannus</TableHead>
+                  <TableHead className="text-right">Asiakashinta</TableHead>
                   <TableHead className="text-right">Säästö</TableHead>
                   <TableHead className="text-right">Säästö %</TableHead>
                 </TableRow>
@@ -194,9 +194,9 @@ export default function ScenariosTab() {
           <div className="p-4 rounded-lg bg-muted border border-border mt-4">
             <h4 className="font-semibold mb-2">Tulkinta:</h4>
             <p className="text-sm text-muted-foreground">
-              Kun botin osuus kasvaa, <strong>kustannukset voivat joko laskea tai nousta</strong> riippuen 
+              Kun botin osuus kasvaa, <strong>asiakashinnat voivat joko laskea tai nousta</strong> riippuen 
               kyselymäärästä ja hinnoittelusta. Positiivinen säästö (vihreä) tarkoittaa, että hybridi on halvempi 
-              kuin pelkkä ihminen. Negatiivinen säästö (punainen) tarkoittaa, että hybridi on kalliimpi.
+              kuin ihmisvetoinen malli. Negatiivinen säästö (punainen) tarkoittaa, että hybridi on kalliimpi.
             </p>
           </div>
         </CardContent>

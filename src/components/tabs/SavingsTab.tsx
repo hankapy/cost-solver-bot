@@ -45,6 +45,43 @@ export default function SavingsTab() {
         </p>
       </div>
 
+      <Card className="shadow-elegant border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Perusasetukset
+          </CardTitle>
+          <CardDescription>
+            Valitse kyselymäärä ja botin osuus
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="savingsQueries">Kyselymäärä / kk</Label>
+              <Input
+                id="savingsQueries"
+                type="number"
+                value={calculatorQueries}
+                onChange={(e) => setCalculatorQueries(Number(e.target.value))}
+                min="0"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="savingsBotPercentage">Botin osuus (%)</Label>
+              <Input
+                id="savingsBotPercentage"
+                type="number"
+                value={calculatorBotPercentage}
+                onChange={(e) => setCalculatorBotPercentage(Number(e.target.value))}
+                min="0"
+                max="100"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="shadow-card bg-gradient-card border-destructive/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
