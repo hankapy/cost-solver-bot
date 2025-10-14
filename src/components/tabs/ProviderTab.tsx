@@ -222,17 +222,6 @@ export default function ProviderTab() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="providerBotMaintenanceHoursPerMonth">Ylläpitotunnit / kk</Label>
-                <Input
-                  id="providerBotMaintenanceHoursPerMonth"
-                  type="number"
-                  value={settings.providerBotMaintenanceHoursPerMonth}
-                  onChange={(e) => updateSettings({ providerBotMaintenanceHoursPerMonth: Number(e.target.value) })}
-                  min="0"
-                />
-              </div>
-              
-              <div className="space-y-2">
                 <Label>Järjestelmäkustannus (Azure) (€/kk)</Label>
                 <div className="h-10 px-3 py-2 rounded-md border border-input bg-muted flex items-center">
                   <span className="text-sm font-semibold">{botSystemCosts.toFixed(2)} €</span>
@@ -240,6 +229,44 @@ export default function ProviderTab() {
                 <p className="text-xs text-muted-foreground">
                   Arvo tulee alta Palveluntarjoajan porrastuksesta
                 </p>
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <h4 className="font-semibold mb-3 text-sm">Porrastetut ylläpitotunnit kyselymäärän mukaan</h4>
+              <div className="space-y-3">
+                {settings.providerBotMaintenanceTiers.map((tier, index) => (
+                  <div key={index} className="flex gap-3 items-end">
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor={`bot-maintenance-tier-limit-${index}`}>Kyselyraja</Label>
+                      <Input
+                        id={`bot-maintenance-tier-limit-${index}`}
+                        type="number"
+                        value={tier.queryLimit}
+                        onChange={(e) => {
+                          const newTiers = [...settings.providerBotMaintenanceTiers];
+                          newTiers[index].queryLimit = Number(e.target.value);
+                          updateSettings({ providerBotMaintenanceTiers: newTiers });
+                        }}
+                        min="0"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor={`bot-maintenance-tier-hours-${index}`}>Ylläpitotunnit (h/kk)</Label>
+                      <Input
+                        id={`bot-maintenance-tier-hours-${index}`}
+                        type="number"
+                        value={tier.maintenanceHours}
+                        onChange={(e) => {
+                          const newTiers = [...settings.providerBotMaintenanceTiers];
+                          newTiers[index].maintenanceHours = Number(e.target.value);
+                          updateSettings({ providerBotMaintenanceTiers: newTiers });
+                        }}
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 

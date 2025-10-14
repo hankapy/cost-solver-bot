@@ -14,7 +14,8 @@ export interface PricingSettings {
   providerHumanHourlyRate: number; // Oma ihmisasiakaspalvelijan palkka
   providerHumanTiers: HumanTier[]; // Palveluntarjoajan oma porrastettu hinnoittelu (meidän kulut)
   providerBotMaintenanceHourlyRate: number; // Botin ylläpitäjän palkka
-  providerBotMaintenanceHoursPerMonth: number; // Botin ylläpitotunnit per kk
+  providerBotMaintenanceHoursPerMonth: number; // Botin ylläpitotunnit per kk (oletusarvo)
+  providerBotMaintenanceTiers: BotMaintenanceTier[]; // Porrastetut ylläpitotunnit kyselymäärän mukaan
   providerBotTiers: BotTier[]; // Palveluntarjoajan oma järjestelmäkulujen porratus
   providerTechnicalCosts: number; // Tekniset kulut (eri rivi)
   providerBaseCosts: number; // Peruskulut (molemmat mallit)
@@ -55,6 +56,11 @@ export interface BotTier {
   queryLimit: number;
   price: number;
   systemCosts: number;
+}
+
+export interface BotMaintenanceTier {
+  queryLimit: number;
+  maintenanceHours: number;
 }
 
 export interface BotGrowthMonth {

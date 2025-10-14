@@ -26,6 +26,13 @@ const DEFAULT_SETTINGS: PricingSettings = {
   ],
   providerBotMaintenanceHourlyRate: 25,
   providerBotMaintenanceHoursPerMonth: 20,
+  providerBotMaintenanceTiers: [
+    { queryLimit: 50, maintenanceHours: 10 },
+    { queryLimit: 100, maintenanceHours: 15 },
+    { queryLimit: 150, maintenanceHours: 20 },
+    { queryLimit: 300, maintenanceHours: 25 },
+    { queryLimit: 500, maintenanceHours: 30 },
+  ],
   providerBotTiers: [
     { queryLimit: 50, price: 0, systemCosts: 75 },
     { queryLimit: 100, price: 0, systemCosts: 100 },

@@ -7,6 +7,21 @@ import type {
 import { calculateHumanCost, calculateBotCost } from "./pricingCalculations";
 
 /**
+ * Hakee porrastetut ylläpitotunnit kyselymäärän mukaan
+ */
+export function getBotMaintenanceHours(queries: number, settings: PricingSettings): number {
+  const sortedTiers = [...settings.providerBotMaintenanceTiers].sort((a, b) => a.queryLimit - b.queryLimit);
+  const tier = sortedTiers.find(tier => queries <= tier.queryLimit);
+  
+  if (tier) {
+    return tier.maintenanceHours;
+  }
+  
+  // Jos kyselymäärä ylittää kaikki tierit, käytä korkeimman tierin tuntimäärää
+  return sortedTiers[sortedTiers.length - 1]?.maintenanceHours || settings.providerBotMaintenanceHoursPerMonth;
+}
+
+/**
  * Laskee palveluntarjoajan (Akvamariini) kustannukset täysin ihmisvetoisessa mallissa
  */
 export function calculateProviderHumanCost(settings: PricingSettings): ProviderCostCalculation {
@@ -45,7 +60,8 @@ export function calculateProviderHumanCost(settings: PricingSettings): ProviderC
  * Laskee palveluntarjoajan kustannukset täysin bottivetoisessa mallissa
  */
 export function calculateProviderBotCost(settings: PricingSettings): ProviderCostCalculation {
-  const botMaintenanceCost = (settings.providerBotMaintenanceHoursPerMonth || 0) * (settings.providerBotMaintenanceHourlyRate || 0);
+  const maintenanceHours = getBotMaintenanceHours(settings.monthlyQueries, settings);
+  const botMaintenanceCost = maintenanceHours * (settings.providerBotMaintenanceHourlyRate || 0);
   
   // Järjestelmäkulut tulevat PALVELUNTARJOAJAN portaistuksesta (ei asiakkaan)
   const sortedTiers = [...settings.providerBotTiers].sort((a, b) => a.queryLimit - b.queryLimit);
@@ -63,7 +79,7 @@ export function calculateProviderBotCost(settings: PricingSettings): ProviderCos
     humanServiceHourlyRate: 0,
     humanServiceCost: 0,
     humanWorkCost: 0,
-    botMaintenanceHours: settings.providerBotMaintenanceHoursPerMonth || 0,
+    botMaintenanceHours: maintenanceHours,
     botMaintenanceHourlyRate: settings.providerBotMaintenanceHourlyRate || 0,
     botMaintenanceCost,
     botMaintenanceFixedCost: systemCosts, // Järjestelmäkulut tähän
@@ -87,8 +103,9 @@ export function calculateProviderHybridMonth(
   const botQueries = Math.round((monthlyQueries * botPercentage) / 100);
   const humanQueries = monthlyQueries - botQueries;
   
-  // Botin ylläpitokulut
-  const botMaintenanceCost = (settings.providerBotMaintenanceHoursPerMonth || 0) * (settings.providerBotMaintenanceHourlyRate || 0);
+  // Botin ylläpitokulut - käytetään porrastettuja ylläpitotunteja
+  const botMaintenanceHours = getBotMaintenanceHours(botQueries, settings);
+  const botMaintenanceCost = botMaintenanceHours * (settings.providerBotMaintenanceHourlyRate || 0);
   
   // Ihmisasiakaspalvelun kulut
   const humanMinutes = humanQueries * (settings.minutesPerQuery || 0);
