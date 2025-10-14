@@ -278,9 +278,9 @@ export default function ProviderTab() {
                   <th className="text-left py-2">Kk</th>
                   <th className="text-right py-2">Botti %</th>
                   <th className="text-right py-2">Bottikyselyt</th>
-                  <th className="text-right py-2">Täysin bottivetonen malli yhteensä /kk - peruskulut</th>
+                  <th className="text-right py-2">Botti yhteensä €/kk</th>
                   <th className="text-right py-2">Ihmiskyselyt</th>
-                  <th className="text-right py-2">Täysin ihmisvetoinen malli yhteensä - peruskulut</th>
+                  <th className="text-right py-2">Ihmisvetoinen malli yhteensä €/kk</th>
                   <th className="text-right py-2">Peruskulut €</th>
                   <th className="text-right py-2 font-bold">Yhteensä €</th>
                 </tr>
