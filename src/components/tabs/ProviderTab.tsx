@@ -280,7 +280,7 @@ export default function ProviderTab() {
                   <span className="text-sm font-semibold">{botSystemCosts.toFixed(2)} €</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Arvo tulee alta Palveluntarjoajan porrastuksesta
+                  Arvo tulee Asetukset-välilehdeltä
                 </p>
               </div>
             </div>
