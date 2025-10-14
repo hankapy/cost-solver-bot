@@ -1,30 +1,31 @@
 # Hinnoittelulaskuri - Pricing Calculator
 
-Tämä sovellus on suunniteltu vertailemaan ihmistyön, botin ja hybridimallin kustannuksia asiakaspalvelukyselyiden käsittelyssä.
+Tämä sovellus on suunniteltu vertailemaan ihmistyön, botin ja hybridimallin kustannuksia asiakaspalvelukyselyiden käsittelyssä. Sovellus tarjoaa kattavan näkymän sekä asiakashintoihin että palveluntarjoajan todellisiin kustannuksiin.
 
 ## Ominaisuudet
 
-### 📊 Kahdeksan välilehteä
+### 📊 Yhdeksän välilehteä
 
-1. **Asetukset** - Konfigurointi
+1. **Asetukset** - Perusasetukset ja konfigurointi
    - Perusasetukset (kyselymäärä, käsittelyaika, tuntihinta)
    - Ihmistyön portaistettu hinnoittelu
    - Botin kiinteät kulut ja portaistettu hinnoittelu
    - Botin osuuden kehitys (kuukausittain ja vuosittain)
+   - Järjestelmäkustannusten määrittely
 
-2. **Ihminen** - Pelkän ihmistyön kustannuslaskenta
+2. **Ihminen** - Pelkän ihmistyön kustannuslaskenta (asiakkaan näkökulma)
    - Kuukausittaiset kyselyt ja niiden käsittelyaika
    - Portaistettu hinnoittelu kyselymäärän mukaan
    - Tuntityön ja peruskuukausimaksun laskenta
    - Muokattava kyselymäärä suoraan välilehdellä
 
-3. **Botti** - Täysautomaation kustannuslaskenta
+3. **Botti** - Täysautomaation kustannuslaskenta (asiakkaan näkökulma)
    - Kertaluonteinen aloitusmaksu ensimmäisenä kuukautena
    - Portaistettu kuukausiveloitus + järjestelmäkulut
    - Eri hinnoittelu eri kyselymäärille
    - Muokattava kyselymäärä suoraan välilehdellä
 
-4. **Hybridi** - Yhdistelmämalli botin ja ihmistyön välillä
+4. **Hybridi** - Yhdistelmämalli botin ja ihmistyön välillä (asiakkaan näkökulma)
    - Botin osuus kasvaa asteittain kuukausittain
    - Keskittämisalennuksen huomiointi
    - Kuukausittainen kehitysnäkymä
@@ -32,21 +33,37 @@ Tämä sovellus on suunniteltu vertailemaan ihmistyön, botin ja hybridimallin k
    - Säästölaskuri verrattuna pelkkään ihmistyöhön
    - Muokattava kyselymäärä ja keskittämisalennus suoraan välilehdellä
 
-5. **Säästöt** - Kustannusvertailu ja ROI-analyysi
+5. **Palveluntarjoaja** - Palveluntarjoajan todelliset kustannukset (Akvamariini)
+   - Perusasetukset (kyselymäärä, peruskulut)
+   - Palveluntarjoajan porrastettu hinnoittelu (ihmisvetoinen malli)
+   - Porrastetut ylläpitotunnit kyselymäärän mukaan (bottivetinen malli)
+   - Täysin ihmisvetoinen malli - kustannuserittely
+   - Täysin bottivetonen malli - kustannuserittely
+   - Kateprosentti (%) ja asiakashintojen laskenta
+   - Hybridimallin kuukausittaiset kustannukset
+   - Ohitusmahdollisuudet peruskuluille ja porrastetulle hinnoittelulle
+
+6. **Vertailu** - Asiakkaan maksut vs. palveluntarjoajan kustannukset
+   - Täysin ihmisvetoinen malli: Asiakashinta vs. kustannus vs. kate
+   - Täysin bottivetonen malli: Asiakashinta vs. kustannus vs. kate
+   - Hybridimalli: Asiakashinta vs. kustannus vs. kate (kuukausittain)
+   - Katteiden ja kate-% näyttö
+
+7. **Säästöt** - Kustannusvertailu ja ROI-analyysi
    - Vertailu: Pelkkä ihminen vs. Pelkkä botti
    - Vertailu: Pelkkä ihminen vs. Hybridimalli
    - Säästöjen visualisointi ja prosenttilaskelmat
 
-6. **Skenaariot** - Eri kyselymäärien vertailu
+8. **Skenaariot** - Eri kyselymäärien vertailu
    - Vertaile eri skenaarioita rinnakkain
    - Muokattavat kyselymäärät ja botin osuudet
    - Nopea kustannusvertailu eri tilanteissa
 
-7. **Esimerkki** - Käytännön esimerkkitapaus
+9. **Esimerkki** - Käytännön esimerkkitapaus
    - Konkreettinen laskentaesimerkki
    - Yksityiskohtainen kustannuserittely
 
-8. **README** - Ohjeet ja dokumentaatio
+10. **README** - Ohjeet ja dokumentaatio
 
 ## Teknologiat
 
@@ -75,10 +92,12 @@ npm run dev
 
 ## Projektin rakenne
 
-- `/src/components/tabs/` - Välilehtien komponentit
-- `/src/contexts/` - React Context hinnoitteluasetuksille
-- `/src/lib/pricingCalculations.ts` - Kaikki laskentalogiikka
+- `/src/components/tabs/` - Välilehtien komponentit (SettingsTab, HumanTab, BotTab, HybridTab, ProviderTab, ComparisonTab, SavingsTab, ScenariosTab, ExampleTab, ReadmeTab)
+- `/src/contexts/PricingContext.tsx` - React Context hinnoitteluasetuksille
+- `/src/lib/pricingCalculations.ts` - Asiakashintojen laskentalogiikka
+- `/src/lib/providerCalculations.ts` - Palveluntarjoajan kustannuslaskenta
 - `/src/types/pricing.ts` - TypeScript-tyyppimäärittelyt
+- `/src/types/providerPricing.ts` - Palveluntarjoajan hinnoittelun tyyppimäärittelyt
 
 ## Muokkaus
 
